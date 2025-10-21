@@ -3,7 +3,7 @@
 > **Current Status**: Active Development - Phases 1-5 Complete ✅  
 > This document tracks the development roadmap. See [GAME_DESIGN.md](GAME_DESIGN.md) for game mechanics and [.github/copilot-instructions.md](.github/copilot-instructions.md) for AI coding guidelines.
 
-## 🎯 Current Progress: 5/14 Phases Complete (36%)
+## 🎯 Current Progress: 6/14 Phases Complete (43%)
 
 ## Project Structure
 
@@ -204,7 +204,58 @@ ANXRPG/
 
 ---
 
-### ⏳ Phase 6: Combat Engine (NEXT)
+### ✅ Phase 6: Combat Engine (COMPLETE)
+**Goal**: Build the core turn-based combat system
+
+#### Completed Tasks
+1. ✅ Create combat state manager
+2. ✅ Implement turn order calculation (speed-based)
+3. ✅ Add player turn order selection UI (one-time at battle start)
+4. ✅ Create action resolution system:
+   - Multi-action support (sequential ability selection with "end turn" option)
+   - Attack execution
+   - Ability usage with full damage/healing/status effects
+   - Target selection and resolution
+5. ✅ Implement damage calculation:
+   - Physical damage (ATK vs DEF)
+   - Magical damage (MAG vs RES)
+   - Critical hits (multiply final damage by 2.0)
+   - Hit/miss mechanics (ACC vs EVA formula, guaranteed hit support)
+   - Optional damage variance (±10%, configurable)
+6. ✅ Add AP management per turn
+7. ✅ Create team wipe detection
+8. ✅ Implement reserve team swap:
+   - Swap at start of next round after primary team wipe
+   - Preserve HP/AP state of reserve
+   - Option to accept defeat instead
+9. ✅ Add victory/defeat conditions (basic detection)
+10. ✅ Build combat log system with comprehensive event tracking
+
+**Deliverable**: ✅ Complete functional combat from start to victory/defeat
+
+**Files Created**:
+- `systems/combat.ts` - Combat state management (~640 lines)
+- `systems/damage.ts` - Damage calculation system (~270 lines)
+- `docs/PHASE_6_SUMMARY.md` - Technical documentation
+
+**Files Modified**:
+- `types/combat.ts` - Enhanced combat state tracking
+- `systems/statusEffects.ts` - Support for Character and Enemy types
+
+**Implementation Highlights**:
+- **Turn-Based System**: Speed-based turn order with one-time player character ordering
+- **Multi-Action**: Characters use multiple abilities per turn with AP tracking
+- **Formula Accuracy**: Exact implementation of damage formulas from GAME_DESIGN.md
+- **Status Integration**: Full DOT/HOT and control effect support
+- **Combat Log**: Comprehensive event tracking for UI rendering
+- **Reserve Swap**: Team wipe detection with reserve team activation
+- **Type Safety**: 100% TypeScript strict mode compliance
+
+**Remaining**: XP/equipment drop rewards, combat testing scenarios
+
+---
+
+### ⏳ Phase 7: Enemy System (NEXT)
 **Goal**: Build the core turn-based combat system
 
 #### Tasks
@@ -235,7 +286,7 @@ ANXRPG/
 
 ---
 
-### Phase 7: Enemy System (Day 4)
+### ⏳ Phase 7: Enemy System (NEXT)
 **Goal**: Create enemies with scaling and variety
 
 #### Tasks
@@ -521,34 +572,35 @@ if (isBoss) {
 
 ## 📈 Development Statistics
 
-**Lines of Code**: ~4,300+ TypeScript (strict mode)  
+**Lines of Code**: ~5,200+ TypeScript (strict mode)  
 **Type Definitions**: 7 core modules, 40+ interfaces  
 **Character Types**: 6 (fully balanced)  
 **Abilities**: 24 (all defined with effects)  
 **Equipment Templates**: 10+ templates across 7 rarity tiers  
 **Status Effects**: 26 predefined effects (buffs, debuffs, DOT, HOT, control)  
+**Combat Functions**: 20+ core combat system functions  
 **Build Status**: ✅ Compiles and builds successfully (21.45 KB bundle)  
 
 ## Next Steps
 
-**Current Phase**: Moving to Phase 6 - Combat Engine
+**Current Phase**: Moving to Phase 7 - Enemy System
 
-### Immediate Tasks (Phase 6)
-1. Create combat state manager
-2. Implement turn order calculation (speed-based)
-3. Add player turn order selection (one-time at battle start)
-4. Build action resolution system
-5. Implement damage calculation with formulas
-6. Add multi-action support
-7. Create team wipe detection
-8. Implement reserve team swap
-9. Add victory/defeat conditions
-10. Build combat log system
+### Immediate Tasks (Phase 7)
+1. Create enemy templates for all 7 tiers
+2. Define enemy character classes/roles
+3. Implement enemy stat scaling formulas
+4. Create boss enemy variants with enhanced stats
+5. Add enemy AI for ability selection
+6. Implement enemy team composition system
+7. Create boss summon mechanics
+8. Add procedural enemy name generation
+9. Implement equipment drop system
 
 ### Upcoming Phases
-- **Phase 7**: Enemy System (7 tiers, boss mechanics)
-- **Phase 8**: Progression System (XP, leveling, skill trees)
-- **Phase 9-14**: Campaign, Save System, UI, Polish
+- **Phase 8**: Progression System (XP, leveling, skill trees, recruitment)
+- **Phase 9**: Campaign System (100 stages)
+- **Phase 10**: Save System (LocalStorage persistence)
+- **Phase 11-14**: UI, Game Juice, Balance, Polish
 
 ---
 

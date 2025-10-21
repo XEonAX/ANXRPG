@@ -274,7 +274,7 @@ JSON.parse(localStorage.getItem('anxrpg_save')) // Inspect structure
 - **Battle Log**: Ensure combat messages don't cause memory leaks over long battles
 
 ## Phase Status (Reference IMPLEMENTATION_PLAN.md)
-**Current Status**: Active Development - 5/14 phases complete (36%)
+**Current Status**: Active Development - 6/14 phases complete (43%)
 
 Development follows 14-phase plan:
 1. ✅ Project setup (Vite + TS) - **COMPLETE**
@@ -282,8 +282,8 @@ Development follows 14-phase plan:
 3. ✅ Ability system (24 abilities) - **COMPLETE**
 4. ✅ Equipment system (8 slots) - **COMPLETE**
 5. ✅ Status effects engine - **COMPLETE**
-6. 🚧 Combat engine (turn-based + multi-action) - **NEXT**
-7. ⏳ Enemy system (7 tiers + bosses)
+6. ✅ Combat engine (turn-based + multi-action) - **COMPLETE**
+7. ⏳ Enemy system (7 tiers + bosses) - **NEXT**
 8. ⏳ Progression (leveling + skill trees + recruitment)
 9. ⏳ Campaign (100 stages)
 10. ⏳ Save system (LocalStorage)
@@ -300,6 +300,7 @@ Development follows 14-phase plan:
 - 24 abilities with varied effects
 - Equipment system (8 slots, 7 rarity tiers, procedural generation)
 - Status effects system (26 effects, stacking, DOT/HOT, control)
+- Combat engine (turn-based, multi-action, ability execution, damage calculation)
 - Character management functions
 - Formula library (damage, XP, scaling)
 - RNG utilities
