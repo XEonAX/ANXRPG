@@ -8,6 +8,7 @@ import { CHARACTER_TYPES } from '../data/characterTypes';
 import { calculateStatsAtLevel, calculateXpForLevel } from '../utils/formulas';
 import { generateId } from '../utils/random';
 import { calculateEquipmentBonuses } from './equipment';
+import { calculateStatusEffectStatModifiers } from './statusEffects';
 
 /**
  * Create a new character instance
@@ -61,7 +62,7 @@ export function createCharacter(
 }
 
 /**
- * Calculate character's current stats including equipment bonuses
+ * Calculate character's current stats including equipment bonuses and status effects
  */
 export function calculateCurrentStats(
   character: Character,
@@ -72,7 +73,7 @@ export function calculateCurrentStats(
   // Apply equipment bonuses (Phase 4)
   const equipmentBonuses = calculateEquipmentBonuses(character.equipment, equipmentInventory);
   
-  // Apply bonuses to stats
+  // Apply equipment bonuses to stats
   Object.entries(equipmentBonuses).forEach(([stat, value]) => {
     if (stat === 'hp') {
       // HP bonus increases max HP
@@ -86,19 +87,78 @@ export function calculateCurrentStats(
     }
   });
   
-  // TODO: Add status effect modifiers in Phase 5
+  // Apply status effect modifiers (Phase 5)
+  const { flatModifiers, multipliers } = calculateStatusEffectStatModifiers(character);
+  
+  // Apply flat modifiers first
+  Object.entries(flatModifiers).forEach(([stat, value]) => {
+    if (stat === 'hp') {
+      baseStats.maxHp += value;
+      if (value > 0) {
+        // Increase current HP if max HP increased
+        baseStats.hp = Math.min(baseStats.hp + value, baseStats.maxHp);
+      }
+    } else if (stat === 'apRegen') {
+      // apRegen is handled separately in regenerateAp
+      // Store it for future use if needed
+    } else if (stat in baseStats) {
+      (baseStats as any)[stat] += value;
+    }
+  });
+  
+  // Apply multipliers
+  Object.entries(multipliers).forEach(([stat, multiplier]) => {
+    if (stat === 'hp') {
+      const hpRatio = baseStats.hp / baseStats.maxHp;
+      baseStats.maxHp = Math.floor(baseStats.maxHp * multiplier);
+      baseStats.hp = Math.floor(baseStats.maxHp * hpRatio);
+    } else if (stat === 'apRegen') {
+      // apRegen multiplier handled separately
+    } else if (stat in baseStats) {
+      (baseStats as any)[stat] = Math.floor((baseStats as any)[stat] * multiplier);
+    }
+  });
+  
+  // Ensure stats don't go below minimum values
+  baseStats.hp = Math.max(0, baseStats.hp);
+  baseStats.maxHp = Math.max(1, baseStats.maxHp);
+  baseStats.atk = Math.max(0, baseStats.atk);
+  baseStats.def = Math.max(0, baseStats.def);
+  baseStats.mag = Math.max(0, baseStats.mag);
+  baseStats.res = Math.max(0, baseStats.res);
+  baseStats.spd = Math.max(1, baseStats.spd);
+  baseStats.crt = Math.max(0, Math.min(100, baseStats.crt)); // Crit capped at 100%
+  baseStats.eva = Math.max(0, Math.min(95, baseStats.eva));  // Eva capped at 95%
+  baseStats.acc = Math.max(5, Math.min(100, baseStats.acc)); // Acc between 5-100%
   
   return baseStats;
 }
 
 /**
  * Regenerate AP for a character at turn start
+ * Includes status effect modifiers to AP regen
  */
 export function regenerateAp(character: Character): void {
   const characterType = CHARACTER_TYPES[character.type];
+  let apRegen = characterType.baseApRegen;
+  
+  // Apply status effect modifiers to AP regen
+  const { flatModifiers, multipliers } = calculateStatusEffectStatModifiers(character);
+  
+  if (flatModifiers.apRegen) {
+    apRegen += flatModifiers.apRegen;
+  }
+  
+  if (multipliers.apRegen) {
+    apRegen = Math.floor(apRegen * multipliers.apRegen);
+  }
+  
+  // Ensure minimum 1 AP regen
+  apRegen = Math.max(1, apRegen);
+  
   const newAp = Math.min(
     characterType.maxAp,
-    character.currentAp + characterType.baseApRegen
+    character.currentAp + apRegen
   );
   character.currentAp = newAp;
 }

@@ -1,9 +1,9 @@
 # ANXRPG - Technical Implementation Plan
 
-> **Current Status**: Active Development - Phases 1-3 Complete ✅  
+> **Current Status**: Active Development - Phases 1-5 Complete ✅  
 > This document tracks the development roadmap. See [GAME_DESIGN.md](GAME_DESIGN.md) for game mechanics and [.github/copilot-instructions.md](.github/copilot-instructions.md) for AI coding guidelines.
 
-## 🎯 Current Progress: 4/14 Phases Complete (29%)
+## 🎯 Current Progress: 5/14 Phases Complete (36%)
 
 ## Project Structure
 
@@ -174,50 +174,37 @@ ANXRPG/
 
 ---
 
-### ⏳ Phase 5: Status Effect System (NEXT)
+### ✅ Phase 5: Status Effect System (COMPLETE)
 **Goal**: Implement buffs, debuffs, and afflictions
 
-#### Tasks
-1. Create equipment slot manager (8 slots)
-2. Implement equipment stat bonus application
-3. Define equipment templates by tier:
-   - Weapons (single-hand, dual-hand)
-   - Armor (head, chest, legs)
-   - Accessories (neck, wrist x2)
-4. Create equipment level system:
-   - Equipment drops at level matching stage number
-   - Equipment level gates equipping (character level requirement)
-   - Linear stat scaling based on equipment level
-5. Implement procedural equipment naming
-6. Add equipment equip/unequip logic
-7. Integrate equipment bonuses into character stats
-8. Implement unlimited inventory storage
-9. Add UI option to hide unwanted equipment
+#### Completed Tasks
+1. ✅ Create status effect manager (`systems/statusEffects.ts`)
+2. ✅ Implement effect types:
+   - Stat modifiers (ATK up, DEF down, etc.) - flat and multiplicative
+   - DOT effects (poison, burn, bleed, curse)
+   - HOT effects (regeneration, blessed)
+   - Control effects (stun, freeze, sleep, petrify)
+3. ✅ Add effect duration tracking (turn-based countdown)
+4. ✅ Implement effect stacking (stackable vs non-stackable with max stacks)
+5. ✅ Create effect tick/update logic (DOT/HOT processing)
+6. ✅ Add effect expiration handling (automatic cleanup)
+7. ✅ Create predefined status effect templates (`data/statusEffects.ts`)
+8. ✅ Integrate status effects with character stat calculation
+9. ✅ Update AP regeneration to include status effect modifiers
+10. ✅ Add utility functions for effect queries and management
 
-**Deliverable**: Characters can equip items and receive stat bonuses
+**Deliverable**: ✅ Status effects can be applied, tick each turn, stack, and expire
+
+**Files Created**:
+- `systems/statusEffects.ts` - Status effect manager (~410 lines)
+- `data/statusEffects.ts` - Predefined effect templates (~350 lines)
+
+**Status Effects Implemented**: 26 total effects
+- 8 buffs, 5 debuffs, 4 DOTs, 2 HOTs, 4 control effects, 3 special effects
 
 ---
 
-### Phase 5: Status Effect System (Day 3)
-**Goal**: Implement buffs, debuffs, and afflictions
-
-#### Tasks
-1. Create status effect manager
-2. Implement effect types:
-   - Stat modifiers (ATK up, DEF down, etc.)
-   - DOT effects (poison, burn)
-   - Control effects (stun, freeze)
-   - Regeneration effects
-3. Add effect duration tracking
-4. Implement effect stacking
-5. Create effect tick/update logic
-6. Add effect expiration handling
-
-**Deliverable**: Status effects can be applied, tick each turn, and expire
-
----
-
-### Phase 6: Combat Engine (Day 3-4)
+### ⏳ Phase 6: Combat Engine (NEXT)
 **Goal**: Build the core turn-based combat system
 
 #### Tasks
@@ -534,34 +521,38 @@ if (isBoss) {
 
 ## 📈 Development Statistics
 
-**Lines of Code**: ~3,200+ TypeScript (strict mode)  
+**Lines of Code**: ~4,300+ TypeScript (strict mode)  
 **Type Definitions**: 7 core modules, 40+ interfaces  
 **Character Types**: 6 (fully balanced)  
 **Abilities**: 24 (all defined with effects)  
 **Equipment Templates**: 10+ templates across 7 rarity tiers  
-**Build Status**: ✅ Compiles and builds successfully (20.57 KB bundle)  
+**Status Effects**: 26 predefined effects (buffs, debuffs, DOT, HOT, control)  
+**Build Status**: ✅ Compiles and builds successfully (21.45 KB bundle)  
 
 ## Next Steps
 
-**Current Phase**: Moving to Phase 5 - Status Effects Engine
+**Current Phase**: Moving to Phase 6 - Combat Engine
 
-### Immediate Tasks (Phase 5)
-1. Create status effect manager
-2. Implement effect types (stat modifiers, DOT, HOT, control)
-3. Add effect duration tracking
-4. Implement effect stacking
-5. Create effect tick/update logic
-6. Add effect expiration handling
+### Immediate Tasks (Phase 6)
+1. Create combat state manager
+2. Implement turn order calculation (speed-based)
+3. Add player turn order selection (one-time at battle start)
+4. Build action resolution system
+5. Implement damage calculation with formulas
+6. Add multi-action support
+7. Create team wipe detection
+8. Implement reserve team swap
+9. Add victory/defeat conditions
+10. Build combat log system
 
 ### Upcoming Phases
-- **Phase 6**: Combat Engine (turn-based, damage calculation, multi-action)
 - **Phase 7**: Enemy System (7 tiers, boss mechanics)
 - **Phase 8**: Progression System (XP, leveling, skill trees)
 - **Phase 9-14**: Campaign, Save System, UI, Polish
 
 ---
 
-*Plan Version: 1.2*  
+*Plan Version: 1.3*  
 *Estimated Timeline: 10 days for MVP*  
 *Last Updated: October 21, 2025*  
-*Progress: 4/14 phases complete (29%)*
+*Progress: 5/14 phases complete (36%)*

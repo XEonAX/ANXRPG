@@ -1,5 +1,96 @@
 # ANXRPG Development Changelog
 
+## Version 0.3.0 - Status Effects System Release (October 21, 2025)
+
+### ✅ Phase 5: Status Effects System (COMPLETE)
+**Status**: Fully implemented and tested
+
+#### Implementation Details
+- Created comprehensive status effect manager with application, tracking, and removal
+- Implemented effect types: buffs, debuffs, DOT, HOT, and control effects
+- Built turn-based duration tracking with expiration handling
+- Integrated stacking behavior (stackable vs non-stackable effects)
+- Implemented per-turn effect processing (tick system)
+- Applied status effect stat modifiers to character stats
+
+#### Status Effect Manager (`systems/statusEffects.ts`)
+**Core Functions**:
+- `applyStatusEffect()` - Apply effects with stacking and duration refresh logic
+- `removeStatusEffect()` - Remove specific effects from characters
+- `processStatusEffectTicks()` - Handle DOT/HOT damage and healing per turn
+- `decrementStatusEffectDurations()` - Countdown durations and expire effects
+- `calculateStatusEffectStatModifiers()` - Calculate flat and multiplicative stat changes
+- `isUnderControlEffect()` - Check for stun/freeze/sleep effects
+- `hasStatusEffect()`, `getStatusEffect()` - Effect query utilities
+- `reduceEffectStacks()` - Stack management for stackable effects
+
+**Features**:
+- **Stacking System**: Stackable effects accumulate (up to max stacks), non-stackable refresh duration
+- **Duration Tracking**: Turn-based countdown with automatic expiration
+- **Tick Timing**: Effects can tick at turn start or turn end
+- **Stat Modifiers**: Both flat bonuses (+20 ATK) and multipliers (×1.25 ATK)
+- **DOT/HOT**: Damage/healing per turn with stacking support
+- **Control Effects**: Prevent actions (stun, freeze, sleep, petrify)
+
+#### Predefined Status Effects (`data/statusEffects.ts`)
+**Buffs** (8 types):
+- Attack Up, Defense Up, Magic Up, Resistance Up
+- Haste (speed), Critical Up, Evasion Up, Accuracy Up
+
+**Debuffs** (5 types):
+- Attack Down, Defense Down, Magic Down, Resistance Down, Slow
+
+**DOT Effects** (4 types):
+- Poison (4 turns, 10 dmg/turn, 5 max stacks)
+- Burn (3 turns, 15 dmg/turn, 3 max stacks)
+- Bleed (5 turns, 8 dmg/turn, 5 max stacks)
+- Curse (6 turns, 12 dmg/turn, non-stackable)
+
+**HOT Effects** (2 types):
+- Regeneration (5 turns, 20 heal/turn, 3 max stacks)
+- Blessed (4 turns, 25 heal/turn, non-stackable)
+
+**Control Effects** (4 types):
+- Stunned (1 turn, prevents actions)
+- Frozen (2 turns, prevents actions)
+- Sleep (3 turns, breaks on damage)
+- Petrified (2 turns, +50 DEF +100% DEF multiplier)
+
+**Special Effects** (3 types):
+- Bloodlust (+50% ATK, +20% CRT, -30% DEF)
+- Berserk (+100% ATK, -50% DEF)
+- Divine Blessing (+20% all stats, +15 heal/turn)
+
+#### Character Integration
+- Updated `calculateCurrentStats()` to apply status effect stat modifiers
+- Updated `regenerateAp()` to include AP regen modifiers from effects
+- Stat modifiers apply after equipment bonuses
+- Flat modifiers apply first, then multipliers
+- Stats capped at reasonable min/max values (CRT 0-100%, EVA 0-95%, ACC 5-100%)
+
+**Example Usage**:
+```typescript
+// Apply a buff
+applyStatusEffect(character, ATTACK_BUFF);
+// character.stats.atk now +20 and ×1.25
+
+// Stack poison
+applyStatusEffect(character, POISON); // 10 dmg/turn
+applyStatusEffect(character, POISON); // 20 dmg/turn (2 stacks)
+
+// Process turn effects
+const { damage, healing } = processStatusEffectTicks(character, true);
+// Applies DOT damage and HOT healing
+
+// Decrement and expire
+decrementStatusEffectDurations(character);
+// Removes effects with duration <= 0
+```
+
+**Files Created**: 2 files, ~560 lines of TypeScript
+
+---
+
 ## Version 0.2.0 - Equipment System Release (October 21, 2025)
 
 ### ✅ Phase 4: Equipment System (COMPLETE)
@@ -210,17 +301,17 @@ Level 50 Mythic Worldbreaker Greatsword (mythic)
 ## Project Statistics
 
 ### Code Metrics
-- **Total Files**: 15 TypeScript files
-- **Total Lines**: ~3,200+ lines of code
+- **Total Files**: 17 TypeScript files
+- **Total Lines**: ~4,300+ lines of code
 - **Type Safety**: 100% (strict mode enabled)
 - **Build Status**: ✅ Passing
 - **Type Check**: ✅ No errors
-- **Bundle Size**: 20.57 KB (gzipped: 6.66 KB)
+- **Bundle Size**: 21.45 KB (gzipped: 6.93 KB)
 
 ### Game Content
 - **Character Types**: 6 (fully balanced)
 - **Abilities**: 24 (all defined with effects)
-- **Status Effects**: 14+ unique effects
+- **Status Effects**: 26 predefined effects
 - **Equipment Templates**: 10+ templates
 - **Rarity Tiers**: 7 (Basic to Mythic)
 - **Equipment Slots**: 8
@@ -236,29 +327,23 @@ Level 50 Mythic Worldbreaker Greatsword (mythic)
 
 ## Next Milestones
 
-### Phase 5: Status Effects Engine (Next)
-- [ ] Status effect manager
-- [ ] Effect application system
-- [ ] Effect tick/update logic
-- [ ] Effect expiration handling
-- [ ] Stacking behavior
-- [ ] DOT/HOT calculations
-- [ ] Control effects (stun, freeze)
-
-### Phase 6: Combat Engine
-- [ ] Status effect application
-- [ ] Effect tick/update logic
-- [ ] Effect expiration
-- [ ] Stacking behavior
-- [ ] DOT/HOT calculations
-
-### Phase 6: Combat Engine
+### Phase 6: Combat Engine (Next)
+- [ ] Combat state manager
 - [ ] Turn order calculation
-- [ ] Action resolution
+- [ ] Action resolution system
 - [ ] Damage calculation with formulas
 - [ ] Multi-action support
+- [ ] Hit/miss mechanics
+- [ ] Critical hit processing
 - [ ] Reserve team swap
 - [ ] Victory/defeat conditions
+- [ ] Combat log system
+
+### Phase 7: Enemy System
+- [ ] Enemy templates and tiers
+- [ ] Enemy stat scaling
+- [ ] Boss mechanics
+- [ ] Enemy AI
 
 ---
 
@@ -271,7 +356,8 @@ Level 50 Mythic Worldbreaker Greatsword (mythic)
 4. **Ability Balance**: AP costs scale with power level, unlock progression at levels 1/5/10/20
 5. **Character Diversity**: Each type has distinct role, stat distribution, and AP regen rate
 6. **Equipment Scaling**: Dynamic stat scaling ensures equipment remains relevant at all levels
-7. **Rarity System**: Exponential power scaling (0.6x to 6.0x) creates meaningful progression
+7. **Status Effects**: Flexible system supports stacking, DOT/HOT, and control effects
+8. **Stat Modifiers**: Flat bonuses and multiplicative modifiers for deep customization
 
 ### Technical Highlights
 - Pure TypeScript with no frameworks (as per design requirements)
@@ -289,5 +375,5 @@ Level 50 Mythic Worldbreaker Greatsword (mythic)
 ---
 
 *Changelog Last Updated: October 21, 2025*  
-*Current Version: 0.2.0 (Equipment System Release)*  
-*Next Version: 0.3.0 (Status Effects & Combat)*
+*Current Version: 0.3.0 (Status Effects System Release)*  
+*Next Version: 0.4.0 (Combat Engine)*
