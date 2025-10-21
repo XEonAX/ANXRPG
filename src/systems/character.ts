@@ -3,10 +3,11 @@
  * Character creation, stat management, and progression
  */
 
-import type { Character, CharacterTypeName, CharacterStats } from '../types';
+import type { Character, CharacterTypeName, CharacterStats, Equipment } from '../types';
 import { CHARACTER_TYPES } from '../data/characterTypes';
 import { calculateStatsAtLevel, calculateXpForLevel } from '../utils/formulas';
 import { generateId } from '../utils/random';
+import { calculateEquipmentBonuses } from './equipment';
 
 /**
  * Create a new character instance
@@ -61,12 +62,33 @@ export function createCharacter(
 
 /**
  * Calculate character's current stats including equipment bonuses
- * This will be expanded when equipment system is implemented
  */
-export function calculateCurrentStats(character: Character): CharacterStats {
-  // TODO: Add equipment stat bonuses in Phase 4
+export function calculateCurrentStats(
+  character: Character,
+  equipmentInventory: Equipment[] = []
+): CharacterStats {
+  const baseStats = { ...character.stats };
+  
+  // Apply equipment bonuses (Phase 4)
+  const equipmentBonuses = calculateEquipmentBonuses(character.equipment, equipmentInventory);
+  
+  // Apply bonuses to stats
+  Object.entries(equipmentBonuses).forEach(([stat, value]) => {
+    if (stat === 'hp') {
+      // HP bonus increases max HP
+      baseStats.maxHp += value;
+      // Also increase current HP proportionally if at max
+      if (baseStats.hp === baseStats.maxHp - value) {
+        baseStats.hp = baseStats.maxHp;
+      }
+    } else if (stat in baseStats) {
+      (baseStats as any)[stat] += value;
+    }
+  });
+  
   // TODO: Add status effect modifiers in Phase 5
-  return { ...character.stats };
+  
+  return baseStats;
 }
 
 /**
