@@ -314,6 +314,6 @@ See `GAME_DESIGN.md` for:
 
 ---
 
-*Instructions Version: 1.0*  
-*Last Updated: October 21, 2025*  
+*Instructions Version: 1.1*  
+*Last Updated: October 22, 2025*  
 *For questions on mechanics, always reference GAME_DESIGN.md first*

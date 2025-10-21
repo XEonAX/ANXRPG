@@ -317,7 +317,7 @@ Procedural generation combining tier + type + modifier
 
 ## Phase 1 Implementation Scope
 
-### Completed (Phases 1-3)
+### Completed (Phases 1-5)
 1. ✅ Project setup with Vite + TypeScript
 2. ✅ Core character system (6 types with stats)
 3. ✅ All 24 abilities (4 per character type, fully defined)
@@ -325,11 +325,11 @@ Procedural generation combining tier + type + modifier
 5. ✅ Stat calculation formulas and RNG utilities
 6. ✅ Character creation and management system
 7. ✅ AP regeneration and level-up mechanics
+8. ✅ Equipment system (8 slots, leveled equipment, 7 rarity tiers)
+9. ✅ Status effects engine (26 effects, stacking, DOT/HOT, control)
 
-### In Progress (Phases 4-14)
-8. ✅ Equipment system (8 slots, leveled equipment) - **COMPLETE**
-9. ⏳ Status effects engine (buff/debuff/DOT application) - **NEXT**
-10. ⏳ Combat system (turn-based, AP usage, multi-action)
+### In Progress (Phases 6-14)
+10. ⏳ Combat system (turn-based, AP usage, multi-action) - **NEXT**
 11. ⏳ Enemy system (basic tier scaling, 1-3 enemies, boss summons)
 12. ⏳ Level up and XP distribution
 13. ⏳ Campaign structure (100 stages)
@@ -362,5 +362,5 @@ Procedural generation combining tier + type + modifier
 
 ---
 
-*Document Version: 1.0*
-*Last Updated: October 21, 2025*
+*Document Version: 1.1*
+*Last Updated: October 22, 2025*

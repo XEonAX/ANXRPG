@@ -13,20 +13,23 @@ ANXRPG features 6 unique character types (Greek alphabet themed), a sophisticate
 - **Deployment**: Static site (GitHub Pages/Netlify ready)
 
 ## 📋 Current Status
-**Phase**: Active Development - Phases 1-4 Complete ✅
+**Phase**: Active Development - Phases 1-5 Complete ✅ (36% Complete)
 
 - ✅ **Phase 1**: Project Foundation (Types & Structure)
 - ✅ **Phase 2**: Character System (6 character types implemented)
 - ✅ **Phase 3**: Ability System (24 abilities defined)
 - ✅ **Phase 4**: Equipment System (8 slots, 7 rarity tiers)
-- 🚧 **Phase 5**: Status Effects Engine (Next)
+- ✅ **Phase 5**: Status Effects System (26 effects, stacking, DOT/HOT)
+- 🚧 **Phase 6**: Combat Engine (Next)
 
-See the implementation plan for the complete 14-phase development roadmap.
+See the [implementation plan](IMPLEMENTATION_PLAN.md) for the complete 14-phase development roadmap.
 
 ## 📖 Documentation
 - **[GAME_DESIGN.md](GAME_DESIGN.md)** - Complete game mechanics, formulas, and systems
 - **[IMPLEMENTATION_PLAN.md](IMPLEMENTATION_PLAN.md)** - 14-phase technical implementation roadmap
+- **[CHANGELOG.md](CHANGELOG.md)** - Detailed version history and phase completion notes
 - **[.github/copilot-instructions.md](.github/copilot-instructions.md)** - AI coding agent guidelines
+- **[docs/](docs/)** - Phase-specific implementation summaries
 
 ## 🎯 Key Features (Planned)
 - **6 Character Types**: Alpha (Paladin), Beta (Rogue), Gamma (Mage), Delta (Warrior), Epsilon (Cleric), Zeta (Berserker)
@@ -79,6 +82,7 @@ See [LICENSE](LICENSE) file for details.
 - **Character Types**: All 6 character types with balanced base stats and growth rates
 - **Abilities**: 24 abilities (4 per character type) with varied effects and targeting
 - **Equipment System**: 8 equipment slots, 7 rarity tiers, procedural generation with level scaling
+- **Status Effects**: 26 predefined effects with stacking, DOT/HOT, control, and stat modifiers
 - **Formulas**: Damage calculation, stat scaling, XP curves, hit/miss mechanics
 - **Utilities**: RNG system, formula library, ID generation
 
@@ -89,6 +93,14 @@ See [LICENSE](LICENSE) file for details.
 - **Stat Bonuses**: Dynamic scaling (base value + level × growth rate × rarity multiplier)
 - **Procedural Names**: "Mythic Worldbreaker Greatsword", "Rare Enchanted Amulet", etc.
 - **Dual-Weapon Support**: Two-handed weapons occupy both hand slots
+
+### Status Effects System Features
+- **26 Predefined Effects**: Buffs, debuffs, DOT, HOT, control effects, special effects
+- **Stacking Mechanics**: Stackable effects accumulate (with max stacks), non-stackable refresh duration
+- **Stat Modifiers**: Both flat bonuses (+20 ATK) and multiplicative modifiers (×1.25 ATK)
+- **Turn-Based Processing**: Effects tick at turn start or end with automatic duration tracking
+- **Control Effects**: Stun, freeze, sleep, petrify prevent character actions
+- **DOT/HOT**: Damage/healing over time with stacking support (Poison, Burn, Bleed, Regeneration)
 
 ### Character Types Implemented
 | Type | Role | HP (Lv1) | AP/Turn | Key Stats |
@@ -101,9 +113,9 @@ See [LICENSE](LICENSE) file for details.
 | Zeta (Berserker) | High Risk DPS | 90 | +5 | Very High ATK, Low DEF |
 
 ## 🤝 Contributing
-This project is in active development (Phases 1-3 complete). The core systems are established and ready for expansion. Contributions are welcome!
+This project is in active development (Phases 1-5 complete, 36% done). The core systems are established and ready for expansion. Contributions are welcome!
 
 ---
 
-*Last Updated: October 21, 2025*
+*Last Updated: October 22, 2025*
 
