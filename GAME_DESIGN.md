@@ -88,6 +88,13 @@ A turn-based fighting RPG with deep character progression, equipment systems, an
 - Characters can use multiple abilities per turn if they have sufficient AP
   - Abilities chosen one at a time with option to "end turn"
   - Turn continues until AP exhausted or player ends turn
+
+**Note on Ability Design**: Specific abilities for each character type are not yet defined. When designing abilities, they should:
+- Fit character archetypes (e.g., Paladin = defensive/healing, Rogue = fast/critical-focused)
+- Balance AP costs (1-4 AP typical) with power level
+- Include variety in target types (single, AoE, self, ally) and effects
+- Some abilities should have guaranteed hit flag (ignore ACC/EVA)
+
 - **Skill Tree**: Character-type-specific progression paths
   - ~20 nodes per character type
   - Nodes unlock in sequence (linear progression)

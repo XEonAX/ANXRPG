@@ -1,5 +1,8 @@
 # ANXRPG - Technical Implementation Plan
 
+> **Current Status**: Documentation Phase - Implementation not yet started  
+> This document outlines the planned development roadmap. See [GAME_DESIGN.md](GAME_DESIGN.md) for game mechanics and [.github/copilot-instructions.md](.github/copilot-instructions.md) for AI coding guidelines.
+
 ## Project Structure
 
 ```
@@ -97,6 +100,7 @@ ANXRPG/
 #### Tasks
 1. Create ability execution engine
 2. Define 4 abilities per character type (24 abilities total):
+   - **Note**: Specific abilities are not yet defined. Design abilities that fit character archetypes and consult with stakeholders on proposed concepts before finalizing.
    - Ability costs (AP)
    - Damage/healing formulas
    - Status effects applied
@@ -473,11 +477,18 @@ if (isBoss) {
 
 ## Next Steps
 
-Once implementation plan is approved:
-1. Initialize Vite project
-2. Set up TypeScript configuration
-3. Create basic HTML structure
-4. Begin Phase 1: Type definitions
+**Current Phase**: Documentation complete, ready to begin implementation
+
+When starting implementation:
+1. Initialize Vite project with TypeScript (`npm create vite@latest`)
+2. Set up TypeScript strict mode configuration
+3. Create basic HTML structure (`index.html`)
+4. Begin Phase 1: Core type definitions
+
+**Prerequisites Before Starting**:
+- Review and finalize ability designs (24 abilities total)
+- Confirm character stat balance formulas
+- Validate equipment tier progression
 
 ---
 
