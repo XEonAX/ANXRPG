@@ -101,10 +101,15 @@ ANXRPG/
    - Damage/healing formulas
    - Status effects applied
    - Target selection (single/AoE/self/ally)
+   - Guaranteed hit flag (some abilities never miss)
 3. Implement ability unlock system (level gates)
 4. Create ability effect resolver
+5. Add multi-action support:
+   - Sequential ability selection
+   - "End turn" option
+   - AP tracking per action
 
-**Deliverable**: All 24 abilities defined and executable
+**Deliverable**: All 24 abilities defined and executable with multi-action support
 
 ---
 
@@ -118,10 +123,15 @@ ANXRPG/
    - Weapons (single-hand, dual-hand)
    - Armor (head, chest, legs)
    - Accessories (neck, wrist x2)
-4. Create equipment level requirements
+4. Create equipment level system:
+   - Equipment drops at level matching stage number
+   - Equipment level gates equipping (character level requirement)
+   - Linear stat scaling based on equipment level
 5. Implement procedural equipment naming
 6. Add equipment equip/unequip logic
 7. Integrate equipment bonuses into character stats
+8. Implement unlimited inventory storage
+9. Add UI option to hide unwanted equipment
 
 **Deliverable**: Characters can equip items and receive stat bonuses
 
@@ -152,19 +162,24 @@ ANXRPG/
 #### Tasks
 1. Create combat state manager
 2. Implement turn order calculation (speed-based)
-3. Add player turn order selection UI
+3. Add player turn order selection UI (one-time at battle start)
 4. Create action resolution system:
+   - Multi-action support (sequential ability selection with "end turn" option)
    - Attack execution
    - Ability usage
    - Target selection
 5. Implement damage calculation:
    - Physical damage (ATK vs DEF)
    - Magical damage (MAG vs RES)
-   - Critical hits
-   - Evasion/accuracy
+   - Critical hits (multiply final damage)
+   - Hit/miss mechanics (ACC vs EVA formula, some abilities guaranteed hit)
+   - Optional damage variance (±10%, can be disabled)
 6. Add AP management per turn
 7. Create team wipe detection
-8. Implement reserve team swap
+8. Implement reserve team swap:
+   - Swap at start of next round after primary team wipe
+   - Preserve HP/AP state of reserve
+   - Option to accept defeat instead
 9. Add victory/defeat conditions
 10. Build combat log system
 
@@ -181,8 +196,15 @@ ANXRPG/
 3. Implement enemy stat scaling formulas
 4. Create boss enemy variants (enhanced stats/abilities)
 5. Add enemy AI for ability selection
-6. Implement enemy team composition
+6. Implement enemy team composition:
+   - 1-3 enemies per battle
+   - Flexible enemy count/levels per stage (can have 3 level 1 enemies at stage 5)
+   - Boss summon system:
+     - Bosses start solo
+     - Summon up to 2 minions at HP thresholds, multiple times, or every X turns
+     - Summoned minions are standard enemies (weaker than boss)
 7. Create procedural enemy name generation
+8. Implement equipment drop system (max 1 per enemy, can be 0)
 
 **Deliverable**: Diverse enemies across all 7 tiers with proper scaling
 
@@ -192,19 +214,31 @@ ANXRPG/
 **Goal**: Implement leveling, XP, and skill trees
 
 #### Tasks
-1. Create XP calculation and distribution
+1. Create XP calculation and distribution:
+   - Equal XP distribution to all 6 characters (active + reserve)
 2. Implement level-up system:
    - Stat increases per level
    - XP requirements per level
+   - 1 skill point reward per level
 3. Add ability unlock tracking
-4. Create skill tree system (basic):
-   - Skill nodes per character type
-   - Skill point allocation
-   - Passive bonuses
+4. Create skill tree system (MANDATORY):
+   - ~20 nodes per character type
+   - Sequential unlock (linear progression)
+   - Some nodes require multiple skill points
+   - Each node provides EITHER stat bonus OR new ability (not both)
+   - Skill point allocation UI
+   - Passive stat bonus application
+   - Additional ability slot unlocking (5th, 6th+ abilities)
 5. Implement starting character selection
-6. Add character recruitment system (campaign integration)
+6. Add character recruitment system:
+   - Track total battle victories (excludes very early/trivial stages)
+   - Unlock recruitment every 20 victories (20, 40, 60, 80, 100)
+   - Player chooses character type to recruit
+   - Allow duplicate character types
+   - At 100 victories (6th unlock): Option to retire existing character
+   - New characters start at level 1
 
-**Deliverable**: Characters gain XP, level up, and unlock abilities
+**Deliverable**: Characters gain XP, level up, unlock abilities, and recruit new team members
 
 ---
 

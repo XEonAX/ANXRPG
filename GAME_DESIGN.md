@@ -7,10 +7,15 @@ A turn-based fighting RPG with deep character progression, equipment systems, an
 
 ### Combat System
 - **Team Composition**: 1-3 active characters, up to 3 reserve characters (6 total max)
-- **Turn Order**: Based on Speed/Agility stat between teams, but player chooses order within their team
+- **Turn Order**: Based on Speed/Agility stat between teams, but player chooses order within their team (one-time ordering at battle start)
+- **Multi-Action**: Characters can use multiple abilities in one turn if they have enough AP
 - **Victory Condition**: Defeat all enemies
-- **Defeat Condition**: All team members (active + reserve) are downed
-- **Reserve System**: When entire active team is downed, reserve team automatically swaps in
+- **Defeat Condition**: All team members (active + reserve) are downed, or player accepts defeat
+- **Reserve System**: 
+  - When entire active team is downed, reserve team can swap in at the start of the next round
+  - Reserve characters retain their current HP/AP state when swapping
+  - Player can choose to accept defeat instead of swapping
+  - Manual swaps only allowed when primary team is wiped
 
 ### Action Points (AP) System
 - **Base Regeneration**: 3 AP per turn
@@ -66,9 +71,11 @@ A turn-based fighting RPG with deep character progression, equipment systems, an
 - **MAG (Magic)**: Magical damage output
 - **RES (Resistance)**: Magic damage reduction
 - **SPD (Speed)**: Turn order priority
-- **CRT (Critical)**: Critical hit chance %
-- **EVA (Evasion)**: Dodge chance %
-- **ACC (Accuracy)**: Hit chance %
+- **CRT (Critical)**: Critical hit chance % (multiplies final damage on proc)
+- **EVA (Evasion)**: Dodge chance % (attacks can miss, AP still consumed)
+- **ACC (Accuracy)**: Hit chance % (vs target EVA, abilities can have guaranteed hit)
+
+**Note**: Hit/miss formula uses ACC vs EVA calculation for optimal gameplay balance
 
 #### Abilities
 - Each character has **4 ability slots**
@@ -78,7 +85,16 @@ A turn-based fighting RPG with deep character progression, equipment systems, an
   - Ability 3: Unlocks at level 10
   - Ability 4: Unlocks at level 20
 - Each ability has an AP cost
+- Characters can use multiple abilities per turn if they have sufficient AP
+  - Abilities chosen one at a time with option to "end turn"
+  - Turn continues until AP exhausted or player ends turn
 - **Skill Tree**: Character-type-specific progression paths
+  - ~20 nodes per character type
+  - Nodes unlock in sequence (linear progression)
+  - 1 skill point awarded per level up
+  - Some nodes require multiple points to unlock
+  - Each node provides EITHER stat bonus OR new ability (not both)
+  - Skill tree can grant 5th, 6th+ ability slots
 
 ### Equipment System
 
@@ -98,24 +114,33 @@ At extremely high levels, additional equipment slots unlock (exact mechanics TBD
 
 #### Equipment Properties
 - Level requirements
+- **Equipment Levels**: 
+  - Equipment drops at a level matching the stage number
+  - Equipment level gates equipping (must match character level)
+  - Equipment levels affect stats with linear scaling
 - Stat bonuses (HP, ATK, DEF, etc.)
 - Special effects (AP regen, status resistance, etc.)
 - Rarity tiers
 - No durability/breaking - permanent once earned
+- **Inventory**: Unlimited stockpile capacity
+- **UI**: Option to hide unwanted equipment (no discard needed)
 
 ### Progression System
 
 #### Experience & Leveling
 - **Starting Level**: 1
 - **EXP Source**: Battle victories only
+- **EXP Distribution**: Equally among all 6 characters (active + reserve)
 - **Level Up Benefits**:
   - All stats increase (scaling formulas per character type)
-  - New abilities unlock at specific levels
+  - 1 skill point awarded (some nodes require multiple points)
+  - New abilities unlock at specific levels (5, 10, 20)
   - Skill tree progression points
 - **Scaling**: Small stats and damage at low levels → gigantic numbers at extreme levels
 
 #### Equipment Acquisition
 - Earned from battle victories
+- **Drop Rate**: Max 1 equipment per enemy defeated (can be 0)
 - Better equipment from harder battles/bosses
 - Procedurally named equipment (e.g., "Iron Sword", "Mythril Blade", "Godslayer Greatsword")
 
@@ -123,7 +148,14 @@ At extremely high levels, additional equipment slots unlock (exact mechanics TBD
 - Player selects 1 character from 6 types
 - Starting level: 1
 - Basic starting equipment for chosen character type
-- Other characters join through campaign progression
+- **Character Recruitment**: New characters unlock based on total battles WON
+  - Unlock schedule: Every 20 battle victories (20, 40, 60, 80, 100 wins)
+  - Player chooses which character type to recruit
+  - Duplicate character types allowed (e.g., two Alphas)
+  - At 6th unlock (100 battles): Option to retire one existing character for new recruit
+  - Recruited characters start at level 1
+  - **Battle Counting**: All victorious battles count, including farming same stage (excludes very early/trivial stages)
+  - Helps players who get stuck at difficult stages
 
 ### Status Effects System
 
@@ -154,6 +186,18 @@ At extremely high levels, additional equipment slots unlock (exact mechanics TBD
 Enemies also have character classes (similar to player types):
 - Enemy Tanks, Enemy Rogues, Enemy Mages, etc.
 - Boss enemies have enhanced abilities and stats
+
+#### Enemy Team Composition
+- **Team Size**: 1-3 enemies per battle
+- **Scaling**: Enemy count and levels flexible per stage (can have 3 level 1 enemies at stage 5)
+- **Boss Battles**: 
+  - Bosses appear solo initially
+  - Can summon up to 2 minions during combat
+  - Summon triggers:
+    - At specific HP thresholds (e.g., 75%, 50%, 25%)
+    - Multiple times per battle
+    - Every X turns
+  - Summoned minions are standard enemies (weaker than boss)
 
 #### Scaling
 - Stats and damage scale dramatically from Tier 1 to Tier 7
@@ -212,6 +256,32 @@ Enemies also have character classes (similar to player types):
 - **Deployment**: Static website
 - **Storage**: LocalStorage for save data
 
+## Key Formulas & Calculations
+
+### Damage Calculation
+```typescript
+// Physical Damage
+baseDamage = (ATK * abilityMultiplier) - (targetDEF * 0.5)
+finalDamage = baseDamage * critMultiplier * randomVariance (OPTIONAL)
+
+// Magical Damage
+baseDamage = (MAG * abilityMultiplier) - (targetRES * 0.5)
+finalDamage = baseDamage * critMultiplier * randomVariance (OPTIONAL)
+
+// Critical Hit
+if (random(1, 100) <= CRT) {
+  critMultiplier = 2.0
+}
+
+// Random Variance (OPTIONAL - can be disabled for consistency)
+randomVariance = random(0.9, 1.1) // ±10%
+
+// Hit/Miss Calculation
+// Use formula: hitChance = clamp(ACC - (EVA * 0.5), 5, 95)
+// Or alternative: hitChance = (100 * ACC) / (ACC + EVA)
+// Some abilities can have guaranteed hit (100% accuracy)
+```
+
 ## Procedural Naming Conventions
 
 ### Characters
@@ -235,18 +305,21 @@ Procedural generation combining tier + type + modifier
 ### Must Have
 1. ✅ Project setup with Vite + TypeScript
 2. ✅ Core character system (6 types with stats)
-3. ✅ Combat system (turn-based, AP usage)
+3. ✅ Combat system (turn-based, AP usage, multi-action)
 4. ✅ Basic abilities (4 per character type)
-5. ✅ Equipment system (8 slots)
-6. ✅ Enemy system (basic tier scaling)
+5. ✅ Equipment system (8 slots, leveled equipment)
+6. ✅ Enemy system (basic tier scaling, 1-3 enemies, boss summons)
 7. ✅ Level up and EXP
 8. ✅ Status effects engine
 9. ✅ Campaign structure (100 stages)
 10. ✅ Save/load system
 11. ✅ Basic semantic HTML UI
+12. ✅ Basic skill tree system (passive bonuses and/or abilities)
+13. ✅ Character recruitment system (battle count based)
+14. ✅ Hit/miss mechanics (ACC vs EVA)
 
 ### Nice to Have (Future)
-- Skill tree UI
+- Advanced skill tree UI with visual node graph
 - Advanced equipment effects
 - Particle/animation effects
 - Sound effects
@@ -254,6 +327,7 @@ Procedural generation combining tier + type + modifier
 - Multiple save slots
 - Character recruitment story events
 - Equipment crafting/upgrading
+- Equipment comparison tooltips
 
 ## Development Priorities
 
