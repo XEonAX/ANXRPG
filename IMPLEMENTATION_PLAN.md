@@ -3,7 +3,7 @@
 > **Current Status**: Active Development - Phases 1-3 Complete ✅  
 > This document tracks the development roadmap. See [GAME_DESIGN.md](GAME_DESIGN.md) for game mechanics and [.github/copilot-instructions.md](.github/copilot-instructions.md) for AI coding guidelines.
 
-## 🎯 Current Progress: 3/14 Phases Complete (21%)
+## 🎯 Current Progress: 4/14 Phases Complete (29%)
 
 ## Project Structure
 
@@ -129,8 +129,53 @@ ANXRPG/
 
 ---
 
-### Phase 4: Equipment System (Day 2-3)
+### ✅ Phase 4: Equipment System (COMPLETE)
 **Goal**: Implement equipment slots, items, and stat modifications
+
+#### Completed Tasks
+1. ✅ Create equipment slot manager (8 slots)
+2. ✅ Implement equipment stat bonus application
+3. ✅ Define equipment templates by tier:
+   - Weapons (single-hand: Sword, Axe, Mace, Dagger, Spear)
+   - Weapons (dual-hand: Greatsword, Greataxe, Halberd, Warhammer, Staff)
+   - Shields and off-hand weapons
+   - Armor (head, chest, legs)
+   - Accessories (amulet, bracers)
+4. ✅ Create equipment level system:
+   - Equipment drops at level matching stage number
+   - Equipment level gates equipping (character level requirement)
+   - Linear stat scaling: baseValue + (level - 1) × growthRate × rarityMultiplier
+5. ✅ Implement procedural equipment naming:
+   - 7 rarity tiers: Basic → Common → Uncommon → Rare → Epic → Legendary → Mythic
+   - Rarity prefixes: "Worn", "Iron", "Steel", "Mithril", "Dragonbone", "Godforged", "Worldbreaker"
+   - Type suffixes: "Sword", "Shield", "Armor", "Amulet", etc.
+6. ✅ Add equipment equip/unequip logic:
+   - Level requirement validation
+   - Dual-weapon support (two-handed weapons occupy both hands)
+   - Automatic unequipping when equipping new items
+7. ✅ Integrate equipment bonuses into character stats:
+   - Updated `calculateCurrentStats()` to apply equipment bonuses
+   - HP bonuses update maxHP correctly
+8. ✅ Implement unlimited inventory storage
+9. ✅ Add equipment sorting (by level and rarity)
+10. ✅ Generate flavor text for equipment
+
+**Deliverable**: ✅ Characters can equip items and receive stat bonuses dynamically
+
+**Files Created**:
+- `data/equipmentTemplates.ts` - Equipment templates, rarity system, procedural naming
+- `systems/equipment.ts` - Equipment generation, equip/unequip, stat calculation
+
+**Equipment Features**:
+- **Rarity Multipliers**: Basic (0.6x) to Mythic (6.0x)
+- **Stat Scaling**: Base + Level Growth × Rarity
+- **Example**: Level 10 Rare Mithril Sword = +32 ATK, +4 ACC
+- **Procedural Naming**: "Mythic Worldbreaker Greatsword", "Common Iron Shield"
+
+---
+
+### ⏳ Phase 5: Status Effect System (NEXT)
+**Goal**: Implement buffs, debuffs, and afflictions
 
 #### Tasks
 1. Create equipment slot manager (8 slots)
@@ -489,26 +534,26 @@ if (isBoss) {
 
 ## 📈 Development Statistics
 
-**Lines of Code**: ~2,500+ TypeScript (strict mode)  
+**Lines of Code**: ~3,200+ TypeScript (strict mode)  
 **Type Definitions**: 7 core modules, 40+ interfaces  
 **Character Types**: 6 (fully balanced)  
 **Abilities**: 24 (all defined with effects)  
-**Build Status**: ✅ Compiles and builds successfully  
+**Equipment Templates**: 10+ templates across 7 rarity tiers  
+**Build Status**: ✅ Compiles and builds successfully (20.57 KB bundle)  
 
 ## Next Steps
 
-**Current Phase**: Moving to Phase 4 - Equipment System
+**Current Phase**: Moving to Phase 5 - Status Effects Engine
 
-### Immediate Tasks (Phase 4)
-1. Create equipment slot manager (8 slots)
-2. Implement equipment stat bonus application
-3. Define equipment templates by tier
-4. Create equipment level system (drops at stage level)
-5. Implement procedural equipment naming
-6. Add equipment equip/unequip logic
+### Immediate Tasks (Phase 5)
+1. Create status effect manager
+2. Implement effect types (stat modifiers, DOT, HOT, control)
+3. Add effect duration tracking
+4. Implement effect stacking
+5. Create effect tick/update logic
+6. Add effect expiration handling
 
 ### Upcoming Phases
-- **Phase 5**: Status Effect System (buff/debuff/DOT engine)
 - **Phase 6**: Combat Engine (turn-based, damage calculation, multi-action)
 - **Phase 7**: Enemy System (7 tiers, boss mechanics)
 - **Phase 8**: Progression System (XP, leveling, skill trees)
@@ -516,7 +561,7 @@ if (isBoss) {
 
 ---
 
-*Plan Version: 1.1*  
+*Plan Version: 1.2*  
 *Estimated Timeline: 10 days for MVP*  
 *Last Updated: October 21, 2025*  
-*Progress: 3/14 phases complete (21%)*
+*Progress: 4/14 phases complete (29%)*

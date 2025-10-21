@@ -327,8 +327,8 @@ Procedural generation combining tier + type + modifier
 7. ✅ AP regeneration and level-up mechanics
 
 ### In Progress (Phases 4-14)
-8. ⏳ Equipment system (8 slots, leveled equipment)
-9. ⏳ Status effects engine (buff/debuff/DOT application)
+8. ✅ Equipment system (8 slots, leveled equipment) - **COMPLETE**
+9. ⏳ Status effects engine (buff/debuff/DOT application) - **NEXT**
 10. ⏳ Combat system (turn-based, AP usage, multi-action)
 11. ⏳ Enemy system (basic tier scaling, 1-3 enemies, boss summons)
 12. ⏳ Level up and XP distribution

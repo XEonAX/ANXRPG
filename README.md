@@ -13,12 +13,13 @@ ANXRPG features 6 unique character types (Greek alphabet themed), a sophisticate
 - **Deployment**: Static site (GitHub Pages/Netlify ready)
 
 ## 📋 Current Status
-**Phase**: Active Development - Phases 1-3 Complete ✅
+**Phase**: Active Development - Phases 1-4 Complete ✅
 
 - ✅ **Phase 1**: Project Foundation (Types & Structure)
 - ✅ **Phase 2**: Character System (6 character types implemented)
 - ✅ **Phase 3**: Ability System (24 abilities defined)
-- 🚧 **Phase 4**: Equipment System (In Progress)
+- ✅ **Phase 4**: Equipment System (8 slots, 7 rarity tiers)
+- 🚧 **Phase 5**: Status Effects Engine (Next)
 
 See the implementation plan for the complete 14-phase development roadmap.
 
@@ -77,8 +78,17 @@ See [LICENSE](LICENSE) file for details.
 - **Type Definitions**: Complete type system with 7 core modules (status, character, ability, equipment, enemy, combat, game)
 - **Character Types**: All 6 character types with balanced base stats and growth rates
 - **Abilities**: 24 abilities (4 per character type) with varied effects and targeting
+- **Equipment System**: 8 equipment slots, 7 rarity tiers, procedural generation with level scaling
 - **Formulas**: Damage calculation, stat scaling, XP curves, hit/miss mechanics
 - **Utilities**: RNG system, formula library, ID generation
+
+### Equipment System Features
+- **8 Slots**: Main Hand, Off Hand, Head, Chest, Legs, Neck, Wrist×2
+- **7 Rarity Tiers**: Basic, Common, Uncommon, Rare, Epic, Legendary, Mythic
+- **Level Requirements**: Equipment drops at stage level, requires matching character level
+- **Stat Bonuses**: Dynamic scaling (base value + level × growth rate × rarity multiplier)
+- **Procedural Names**: "Mythic Worldbreaker Greatsword", "Rare Enchanted Amulet", etc.
+- **Dual-Weapon Support**: Two-handed weapons occupy both hand slots
 
 ### Character Types Implemented
 | Type | Role | HP (Lv1) | AP/Turn | Key Stats |
