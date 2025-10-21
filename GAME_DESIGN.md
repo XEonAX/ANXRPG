@@ -84,16 +84,24 @@ A turn-based fighting RPG with deep character progression, equipment systems, an
   - Ability 2: Unlocks at level 5
   - Ability 3: Unlocks at level 10
   - Ability 4: Unlocks at level 20
-- Each ability has an AP cost
+- Each ability has an AP cost (typically 2-4 AP)
 - Characters can use multiple abilities per turn if they have sufficient AP
   - Abilities chosen one at a time with option to "end turn"
   - Turn continues until AP exhausted or player ends turn
 
-**Note on Ability Design**: Specific abilities for each character type are not yet defined. When designing abilities, they should:
-- Fit character archetypes (e.g., Paladin = defensive/healing, Rogue = fast/critical-focused)
-- Balance AP costs (1-4 AP typical) with power level
-- Include variety in target types (single, AoE, self, ally) and effects
-- Some abilities should have guaranteed hit flag (ignore ACC/EVA)
+**Ability Design**: ✅ All 24 abilities are now defined (see `src/data/abilities.ts`):
+- **Alpha (Paladin)**: Righteous Strike, Guardian's Blessing, Holy Smite, Inspiring Aura
+- **Beta (Rogue)**: Quick Slash, Backstab, Smokescreen, Execute
+- **Gamma (Mage)**: Arcane Bolt, Fireball, Frost Nova, Meteor Storm
+- **Delta (Warrior)**: Power Slash, Cleave, Rending Strike, Rampage
+- **Epsilon (Cleric)**: Healing Light, Regeneration, Divine Blessing, Mass Healing
+- **Zeta (Berserker)**: Furious Strike, Bloodlust, Devouring Strike, Berserk
+
+Abilities feature:
+- Balanced AP costs (2-4 AP) with power levels
+- Variety in target types (single, AoE, self, ally)
+- Diverse effects (damage, healing, buffs, debuffs, DOT, control)
+- Some abilities have guaranteed hit (ignore ACC/EVA)
 
 - **Skill Tree**: Character-type-specific progression paths
   - ~20 nodes per character type
@@ -309,21 +317,27 @@ Procedural generation combining tier + type + modifier
 
 ## Phase 1 Implementation Scope
 
-### Must Have
+### Completed (Phases 1-3)
 1. ✅ Project setup with Vite + TypeScript
 2. ✅ Core character system (6 types with stats)
-3. ✅ Combat system (turn-based, AP usage, multi-action)
-4. ✅ Basic abilities (4 per character type)
-5. ✅ Equipment system (8 slots, leveled equipment)
-6. ✅ Enemy system (basic tier scaling, 1-3 enemies, boss summons)
-7. ✅ Level up and EXP
-8. ✅ Status effects engine
-9. ✅ Campaign structure (100 stages)
-10. ✅ Save/load system
-11. ✅ Basic semantic HTML UI
-12. ✅ Basic skill tree system (passive bonuses and/or abilities)
-13. ✅ Character recruitment system (battle count based)
-14. ✅ Hit/miss mechanics (ACC vs EVA)
+3. ✅ All 24 abilities (4 per character type, fully defined)
+4. ✅ Type system (character, ability, equipment, enemy, combat, status, game)
+5. ✅ Stat calculation formulas and RNG utilities
+6. ✅ Character creation and management system
+7. ✅ AP regeneration and level-up mechanics
+
+### In Progress (Phases 4-14)
+8. ⏳ Equipment system (8 slots, leveled equipment)
+9. ⏳ Status effects engine (buff/debuff/DOT application)
+10. ⏳ Combat system (turn-based, AP usage, multi-action)
+11. ⏳ Enemy system (basic tier scaling, 1-3 enemies, boss summons)
+12. ⏳ Level up and XP distribution
+13. ⏳ Campaign structure (100 stages)
+14. ⏳ Save/load system
+15. ⏳ Basic semantic HTML UI
+16. ⏳ Basic skill tree system (passive bonuses and/or abilities)
+17. ⏳ Character recruitment system (battle count based)
+18. ⏳ Hit/miss mechanics (ACC vs EVA)
 
 ### Nice to Have (Future)
 - Advanced skill tree UI with visual node graph
