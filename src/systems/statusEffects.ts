@@ -6,23 +6,27 @@
  */
 
 import type { Character } from '../types/character';
+import type { Enemy } from '../types/enemy';
 import type { StatusEffect, StatusEffectType } from '../types/status';
 
+// Type for entities that can have status effects
+export type CombatEntity = Character | Enemy;
+
 /**
- * Apply a status effect to a character
+ * Apply a status effect to a character or enemy
  * Handles stacking behavior and duration refresh
  */
 export function applyStatusEffect(
-  character: Character,
+  entity: CombatEntity,
   effect: StatusEffect
 ): { applied: boolean; message: string } {
-  // Check if character already has this effect
-  const existingEffectIndex = character.statusEffects.findIndex(
+  // Check if entity already has this effect
+  const existingEffectIndex = entity.statusEffects.findIndex(
     e => e.id === effect.id
   );
 
   if (existingEffectIndex !== -1) {
-    const existingEffect = character.statusEffects[existingEffectIndex];
+    const existingEffect = entity.statusEffects[existingEffectIndex];
 
     // Handle stacking
     if (effect.stackable) {
@@ -52,14 +56,14 @@ export function applyStatusEffect(
 
         return {
           applied: true,
-          message: `${effect.name} stacked on ${character.name} (${existingEffect.currentStacks} stacks)`,
+          message: `${effect.name} stacked on ${entity.name} (${existingEffect.currentStacks} stacks)`,
         };
       } else {
         // Max stacks reached, just refresh duration
         existingEffect.duration = effect.duration;
         return {
           applied: true,
-          message: `${effect.name} duration refreshed on ${character.name} (max stacks)`,
+          message: `${effect.name} duration refreshed on ${entity.name} (max stacks)`,
         };
       }
     } else {
@@ -67,67 +71,67 @@ export function applyStatusEffect(
       existingEffect.duration = effect.duration;
       return {
         applied: true,
-        message: `${effect.name} duration refreshed on ${character.name}`,
+        message: `${effect.name} duration refreshed on ${entity.name}`,
       };
     }
   } else {
-    // New effect, add to character
+    // New effect, add to entity
     const newEffect: StatusEffect = {
       ...effect,
       currentStacks: effect.stackable ? 1 : undefined,
     };
 
-    character.statusEffects.push(newEffect);
+    entity.statusEffects.push(newEffect);
 
     return {
       applied: true,
-      message: `${character.name} is now affected by ${effect.name}`,
+      message: `${entity.name} is now affected by ${effect.name}`,
     };
   }
 }
 
 /**
- * Remove a specific status effect from a character
+ * Remove a specific status effect from a character or enemy
  */
 export function removeStatusEffect(
-  character: Character,
+  entity: CombatEntity,
   effectId: string
 ): { removed: boolean; message: string } {
-  const index = character.statusEffects.findIndex(e => e.id === effectId);
+  const index = entity.statusEffects.findIndex(e => e.id === effectId);
 
   if (index !== -1) {
-    const effect = character.statusEffects[index];
-    character.statusEffects.splice(index, 1);
+    const effect = entity.statusEffects[index];
+    entity.statusEffects.splice(index, 1);
 
     return {
       removed: true,
-      message: `${effect.name} removed from ${character.name}`,
+      message: `${effect.name} removed from ${entity.name}`,
     };
   }
 
   return {
     removed: false,
-    message: `Effect not found on ${character.name}`,
+    message: `Effect not found on ${entity.name}`,
   };
 }
 
 /**
  * Remove all status effects from a character
  */
-export function clearAllStatusEffects(character: Character): void {
-  character.statusEffects = [];
+export function clearAllStatusEffects(entity: CombatEntity): void {
+  entity.statusEffects = [];
 }
 
 /**
  * Remove all status effects of a specific type from a character
  */
 export function clearStatusEffectsByType(
-  character: Character,
+  entity: CombatEntity,
   type: StatusEffectType
 ): number {
-  const initialCount = character.statusEffects.length;
-  character.statusEffects = character.statusEffects.filter(e => e.type !== type);
-  return initialCount - character.statusEffects.length;
+  const initialCount = entity.statusEffects.length;
+  entity.statusEffects = entity.statusEffects.filter(e => e.type !== type);
+  return initialCount - entity.statusEffects.length;
 }
 
 /**
@@ -136,7 +140,7 @@ export function clearStatusEffectsByType(
  * Call this at the start or end of a turn based on effect settings
  */
 export function processStatusEffectTicks(
-  character: Character,
+  entity: CombatEntity,
   atTurnStart: boolean
 ): {
   damage: number;
@@ -148,7 +152,7 @@ export function processStatusEffectTicks(
   const messages: string[] = [];
 
   // Process effects that tick at the specified time
-  const effectsToProcess = character.statusEffects.filter(
+  const effectsToProcess = entity.statusEffects.filter(
     e => e.ticksAtTurnStart === atTurnStart
   );
 
@@ -158,7 +162,7 @@ export function processStatusEffectTicks(
       const damage = Math.floor(effect.damagePerTurn);
       totalDamage += damage;
       messages.push(
-        `${character.name} takes ${damage} damage from ${effect.name}`
+        `${entity.name} takes ${damage} damage from ${effect.name}`
       );
     }
 
@@ -167,7 +171,7 @@ export function processStatusEffectTicks(
       const healing = Math.floor(effect.healPerTurn);
       totalHealing += healing;
       messages.push(
-        `${character.name} recovers ${healing} HP from ${effect.name}`
+        `${entity.name} recovers ${healing} HP from ${effect.name}`
       );
     }
   }
@@ -185,22 +189,22 @@ export function processStatusEffectTicks(
  * Call this at the end of each turn
  */
 export function decrementStatusEffectDurations(
-  character: Character
+  entity: CombatEntity
 ): string[] {
   const expiredMessages: string[] = [];
 
   // Decrement durations
-  for (const effect of character.statusEffects) {
+  for (const effect of entity.statusEffects) {
     effect.duration--;
   }
 
   // Remove expired effects
-  const expiredEffects = character.statusEffects.filter(e => e.duration <= 0);
-  character.statusEffects = character.statusEffects.filter(e => e.duration > 0);
+  const expiredEffects = entity.statusEffects.filter(e => e.duration <= 0);
+  entity.statusEffects = entity.statusEffects.filter(e => e.duration > 0);
 
   // Generate expiration messages
   for (const effect of expiredEffects) {
-    expiredMessages.push(`${effect.name} expired on ${character.name}`);
+    expiredMessages.push(`${effect.name} expired on ${entity.name}`);
   }
 
   return expiredMessages;
@@ -210,58 +214,58 @@ export function decrementStatusEffectDurations(
  * Check if character has a specific status effect
  */
 export function hasStatusEffect(
-  character: Character,
+  entity: CombatEntity,
   effectId: string
 ): boolean {
-  return character.statusEffects.some(e => e.id === effectId);
+  return entity.statusEffects.some(e => e.id === effectId);
 }
 
 /**
  * Check if character has any status effect of a specific type
  */
 export function hasStatusEffectType(
-  character: Character,
+  entity: CombatEntity,
   type: StatusEffectType
 ): boolean {
-  return character.statusEffects.some(e => e.type === type);
+  return entity.statusEffects.some(e => e.type === type);
 }
 
 /**
  * Get a specific status effect from a character
  */
 export function getStatusEffect(
-  character: Character,
+  entity: CombatEntity,
   effectId: string
 ): StatusEffect | undefined {
-  return character.statusEffects.find(e => e.id === effectId);
+  return entity.statusEffects.find(e => e.id === effectId);
 }
 
 /**
  * Get all status effects of a specific type
  */
 export function getStatusEffectsByType(
-  character: Character,
+  entity: CombatEntity,
   type: StatusEffectType
 ): StatusEffect[] {
-  return character.statusEffects.filter(e => e.type === type);
+  return entity.statusEffects.filter(e => e.type === type);
 }
 
 /**
  * Get the number of stacks for a specific status effect
  */
 export function getEffectStacks(
-  character: Character,
+  entity: CombatEntity,
   effectId: string
 ): number {
-  const effect = getStatusEffect(character, effectId);
+  const effect = getStatusEffect(entity, effectId);
   return effect?.currentStacks || 0;
 }
 
 /**
  * Check if character is under any control effect (stun, freeze, etc.)
  */
-export function isUnderControlEffect(character: Character): boolean {
-  return character.statusEffects.some(
+export function isUnderControlEffect(entity: CombatEntity): boolean {
+  return entity.statusEffects.some(
     e => e.type === 'control' && e.preventActions
   );
 }
@@ -269,8 +273,8 @@ export function isUnderControlEffect(character: Character): boolean {
 /**
  * Get all active control effects preventing actions
  */
-export function getActiveControlEffects(character: Character): StatusEffect[] {
-  return character.statusEffects.filter(
+export function getActiveControlEffects(entity: CombatEntity): StatusEffect[] {
+  return entity.statusEffects.filter(
     e => e.type === 'control' && e.preventActions
   );
 }
@@ -279,14 +283,14 @@ export function getActiveControlEffects(character: Character): StatusEffect[] {
  * Calculate total stat modifiers from all status effects
  * Returns flat bonuses and multiplicative modifiers
  */
-export function calculateStatusEffectStatModifiers(character: Character): {
+export function calculateStatusEffectStatModifiers(entity: CombatEntity): {
   flatModifiers: Record<string, number>;
   multipliers: Record<string, number>;
 } {
   const flatModifiers: Record<string, number> = {};
   const multipliers: Record<string, number> = {};
 
-  for (const effect of character.statusEffects) {
+  for (const effect of entity.statusEffects) {
     if (effect.statModifiers) {
       for (const modifier of effect.statModifiers) {
         const stat = modifier.stat;
@@ -310,8 +314,8 @@ export function calculateStatusEffectStatModifiers(character: Character): {
 /**
  * Get a summary of all active status effects on a character
  */
-export function getStatusEffectsSummary(character: Character): string[] {
-  return character.statusEffects.map(effect => {
+export function getStatusEffectsSummary(entity: CombatEntity): string[] {
+  return entity.statusEffects.map(effect => {
     let summary = `${effect.name} (${effect.duration} turns)`;
     if (effect.currentStacks && effect.currentStacks > 1) {
       summary += ` x${effect.currentStacks}`;
@@ -324,10 +328,10 @@ export function getStatusEffectsSummary(character: Character): string[] {
  * Remove expired status effects (duration <= 0)
  * This is a utility function that can be called manually
  */
-export function removeExpiredEffects(character: Character): number {
-  const initialCount = character.statusEffects.length;
-  character.statusEffects = character.statusEffects.filter(e => e.duration > 0);
-  return initialCount - character.statusEffects.length;
+export function removeExpiredEffects(entity: CombatEntity): number {
+  const initialCount = entity.statusEffects.length;
+  entity.statusEffects = entity.statusEffects.filter(e => e.duration > 0);
+  return initialCount - entity.statusEffects.length;
 }
 
 /**
@@ -335,27 +339,27 @@ export function removeExpiredEffects(character: Character): number {
  * Removes the effect entirely if stacks reach 0
  */
 export function reduceEffectStacks(
-  character: Character,
+  entity: CombatEntity,
   effectId: string,
   amount: number = 1
 ): { removed: boolean; remainingStacks: number; message: string } {
-  const effect = getStatusEffect(character, effectId);
+  const effect = getStatusEffect(entity, effectId);
 
   if (!effect) {
     return {
       removed: false,
       remainingStacks: 0,
-      message: `Effect ${effectId} not found on ${character.name}`,
+      message: `Effect ${effectId} not found on ${entity.name}`,
     };
   }
 
   if (!effect.stackable || !effect.currentStacks) {
     // Not a stackable effect, remove it entirely
-    removeStatusEffect(character, effectId);
+    removeStatusEffect(entity, effectId);
     return {
       removed: true,
       remainingStacks: 0,
-      message: `${effect.name} removed from ${character.name}`,
+      message: `${effect.name} removed from ${entity.name}`,
     };
   }
 
@@ -363,11 +367,11 @@ export function reduceEffectStacks(
 
   if (newStacks === 0) {
     // All stacks consumed, remove effect
-    removeStatusEffect(character, effectId);
+    removeStatusEffect(entity, effectId);
     return {
       removed: true,
       remainingStacks: 0,
-      message: `${effect.name} removed from ${character.name} (all stacks consumed)`,
+      message: `${effect.name} removed from ${entity.name} (all stacks consumed)`,
     };
   } else {
     // Update stacks
@@ -394,7 +398,7 @@ export function reduceEffectStacks(
     return {
       removed: false,
       remainingStacks: newStacks,
-      message: `${effect.name} reduced to ${newStacks} stacks on ${character.name}`,
+      message: `${effect.name} reduced to ${newStacks} stacks on ${entity.name}`,
     };
   }
 }

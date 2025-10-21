@@ -1,5 +1,112 @@
 # ANXRPG Development Changelog
 
+## Version 0.4.0 - Combat Engine Release (October 22, 2025) - IN PROGRESS
+
+### 🚧 Phase 6: Combat Engine (IN PROGRESS)
+**Status**: Core system complete, rewards & testing remaining
+
+#### Implementation Details
+- Created comprehensive combat state manager with turn-based flow
+- Implemented speed-based turn order calculation with random tiebreakers
+- Built complete ability execution system with damage, healing, and status effects
+- Added multi-action support (sequential abilities with AP tracking)
+- Integrated combat logging for all events
+- Implemented team wipe detection and reserve swap mechanics
+- Created damage calculation system following game design formulas
+
+#### Combat System (`systems/combat.ts`)
+**Core Functions** (20+ functions, ~640 lines):
+- `initializeCombat()` - Initialize battle with teams
+- `calculateTurnOrder()` - Speed-based sorting with tiebreakers
+- `setPlayerTurnOrder()` - One-time player character ordering
+- `startCombat()` - Begin battle and first turn
+- `getCurrentCombatant()`, `getCombatantEntity()` - Turn management
+- `processStartOfTurn()` - AP regen, status ticks, control checks
+- `processEndOfTurn()` - Status ticks, duration decrement
+- `endTurn()` - Advance turn, check battle end
+- `executeAbility()` - Full ability resolution with all effects
+- `resolveTargets()` - Convert target IDs to entities by type
+- `checkBattleEnd()` - Victory/defeat/team-wipe detection
+- `swapReserveTeam()`, `acceptDefeat()` - Reserve mechanics
+- `addCombatLog()`, `getCurrentTurnLog()`, `getRecentLog()` - Logging
+
+**Features**:
+- **Turn Order**: Speed-based between teams, player sets character order once
+- **Multi-Action**: Use multiple abilities per turn if AP available
+- **Status Effects**: DOT/HOT at turn start/end, control effects skip turns
+- **Reserve System**: Swap in reserve team when active team wiped
+- **Combat Log**: Comprehensive event tracking with timestamps
+
+#### Damage System (`systems/damage.ts`)
+**Core Functions** (~270 lines):
+- `calculatePhysicalDamage()` - (ATK × mult) - (DEF × 0.5)
+- `calculateMagicalDamage()` - (MAG × mult) - (RES × 0.5)
+- `calculateHitChance()` - clamp(ACC - (EVA × 0.5), 5, 95)
+- `checkHit()` - Roll vs hit chance (unless guaranteed)
+- `checkCritical()` - Roll vs CRT% for 2× damage
+- `applyCriticalMultiplier()` - Double damage
+- `calculateAbilityDamage()` - Full ability damage with hit/miss/crit
+- `calculateHealing()` - Healing with overheal tracking
+- `calculateLifestealHealing()` - % of damage as HP
+- `calculateAoEDamage()`, `calculateAoEHealing()` - Multi-target support
+
+**Formula Compliance**:
+- Physical: (ATK × mult) - (DEF × 0.5)
+- Magical: (MAG × mult) - (RES × 0.5)
+- Critical: Final damage × 2.0 on CRT% proc
+- Hit/Miss: ACC - (EVA × 0.5), clamped 5-95%
+- Optional ±10% variance (configurable)
+
+#### Status Effects Updates (`systems/statusEffects.ts`)
+**Enhancement**: All functions now support both Character and Enemy
+- Created `CombatEntity = Character | Enemy` type alias
+- Updated 14 functions to accept combat entities:
+  - `applyStatusEffect()`, `removeStatusEffect()`
+  - `processStatusEffectTicks()`, `decrementStatusEffectDurations()`
+  - `isUnderControlEffect()`, `getActiveControlEffects()`
+  - `calculateStatusEffectStatModifiers()`
+  - All utility functions (has, get, clear, reduce stacks, etc.)
+
+**Combat Integration**:
+- Turn start: Process DOT/HOT, check control effects
+- Turn end: Process DOT/HOT, decrement durations, remove expired
+- Ability execution: Apply status effects with chance rolls
+
+#### Ability Execution Flow
+1. Validate actor, ability, AP availability
+2. Consume AP from actor
+3. Resolve targets by type (self, ally, enemy, AoE)
+4. Process damage (calculate, apply, check deaths, lifesteal)
+5. Process healing (calculate, apply, track overheal)
+6. Apply status effects (roll chance, apply to targets)
+7. AP restore/drain effects
+8. Log all events to combat log
+
+#### Combat Flow
+```
+Initialize → Set Player Order → Start Combat
+  ↓
+[Turn Loop]
+  → Process Start of Turn (AP regen, status ticks, control check)
+  → Execute Actions (abilities, attacks)
+  → Process End of Turn (status ticks, decrement durations)
+  → End Turn (advance to next, check battle end)
+  ↓
+Victory / Defeat / Team Wipe
+```
+
+**Files Created**: 2 files, ~910 lines of TypeScript
+**Files Modified**: 2 files (combat types, status effects)
+
+#### Remaining Tasks (Phase 6)
+- [ ] Implement XP calculation and distribution
+- [ ] Add equipment drop generation (max 1 per enemy)
+- [ ] Create battle results summary
+- [ ] Build combat testing scenarios
+- [ ] Validate all mechanics with tests
+
+---
+
 ## Version 0.3.0 - Status Effects System Release (October 21, 2025)
 
 ### ✅ Phase 5: Status Effects System (COMPLETE)

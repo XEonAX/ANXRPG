@@ -84,7 +84,14 @@ export interface CombatState {
   // Turn management
   turnOrder: TurnOrder;
   currentTurn: number;
-  playerTurnOrder: string[];      // Player-defined order within team
+  roundNumber: number;            // Combat round counter
+  playerTurnOrder: string[];      // Player-defined order within team (set once at battle start)
+  playerTurnOrderLocked: boolean; // True after first turn order set
+  
+  // Current action state
+  currentActorId?: string;        // Character currently taking actions
+  actionsThisTurn: CombatAction[]; // Actions taken in current turn
+  turnInProgress: boolean;        // True if character is mid-turn (multi-action)
   
   // Combat log
   combatLog: CombatLogEntry[];
