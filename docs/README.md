@@ -14,6 +14,31 @@ Complete status effects system with:
 - Stat modifier system
 - Character integration
 
+### 🟡 Phase 6: Combat Engine (85% Complete)
+**File**: [PHASE_6_SUMMARY.md](PHASE_6_SUMMARY.md)
+
+Core combat system with:
+- ✅ Turn-based flow with multi-action
+- ✅ Damage/healing calculations
+- ✅ Status effect integration
+- ✅ Reserve swap mechanics
+- ❌ XP/equipment rewards (pending integration)
+
+---
+
+## Project Status
+
+### 📊 Phase Audit
+**File**: [PHASE_AUDIT.md](PHASE_AUDIT.md)
+
+Comprehensive audit of all 14 phases showing:
+- Phases 1-5: 100% complete
+- Phase 6: 85% complete (core functional)
+- Phase 8: 10% complete (awardXp exists)
+- Phases 7, 9-14: Not started
+
+**Overall Progress**: ~40% complete (5.85/14 phases weighted)
+
 ---
 
 ## Quick Links

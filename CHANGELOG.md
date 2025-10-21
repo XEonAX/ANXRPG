@@ -2,8 +2,24 @@
 
 ## Version 0.4.0 - Combat Engine Release (October 22, 2025)
 
-### ✅ Phase 6: Combat Engine (COMPLETE)
-**Status**: Fully implemented and functional
+### 🟡 Phase 6: Combat Engine (85% COMPLETE)
+**Status**: Core combat fully functional, rewards integration pending
+
+**What Works**:
+- ✅ Complete turn-based combat from start to victory/defeat
+- ✅ Multi-action system with AP tracking
+- ✅ All damage/healing formulas working
+- ✅ Status effects integrated
+- ✅ Reserve swap mechanics
+- ✅ Victory/defeat detection
+
+**What's Missing** (15% remaining):
+- ❌ XP distribution on combat victory (function exists, not integrated)
+- ❌ Equipment drops on victory (function exists, not integrated)
+- ❌ Battle results summary
+- ❌ Level-up notifications from combat
+
+**Note**: The underlying `awardXp()` and `generateEquipment()` functions are fully implemented in their respective systems, but the integration into combat victory flow is pending.
 
 #### Implementation Details
 - Created comprehensive combat state manager with turn-based flow

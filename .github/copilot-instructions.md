@@ -273,8 +273,8 @@ JSON.parse(localStorage.getItem('anxrpg_save')) // Inspect structure
 - **Inventory Size**: Verify UI performance with 100+ equipment items
 - **Battle Log**: Ensure combat messages don't cause memory leaks over long battles
 
-## Phase Status (Reference IMPLEMENTATION_PLAN.md)
-**Current Status**: Active Development - 6/14 phases complete (43%)
+## Phase Status (Reference IMPLEMENTATION_PLAN.md and docs/PHASE_AUDIT.md)
+**Current Status**: Active Development - 5/14 phases complete, 2 partial (~40% overall)
 
 Development follows 14-phase plan:
 1. ✅ Project setup (Vite + TS) - **COMPLETE**
@@ -282,9 +282,9 @@ Development follows 14-phase plan:
 3. ✅ Ability system (24 abilities) - **COMPLETE**
 4. ✅ Equipment system (8 slots) - **COMPLETE**
 5. ✅ Status effects engine - **COMPLETE**
-6. ✅ Combat engine (turn-based + multi-action) - **COMPLETE**
+6. 🟡 Combat engine (turn-based + multi-action) - **85% COMPLETE** (core functional, missing reward integration)
 7. ⏳ Enemy system (7 tiers + bosses) - **NEXT**
-8. ⏳ Progression (leveling + skill trees + recruitment)
+8. 🟡 Progression (leveling + skill trees + recruitment) - **10% COMPLETE** (awardXp function exists)
 9. ⏳ Campaign (100 stages)
 10. ⏳ Save system (LocalStorage)
 11. ⏳ UI implementation (semantic HTML)
@@ -294,6 +294,12 @@ Development follows 14-phase plan:
 
 **When implementing**: Reference phase details in IMPLEMENTATION_PLAN.md for task breakdowns.
 
+**Phase 6 Remaining Work** (15%):
+- Add XP calculation based on enemy levels
+- Call awardXp() for all 6 characters on victory
+- Call generateEquipment() for enemy drops (max 1 per enemy)
+- Populate state.xpEarned and state.lootDropped fields
+
 **Completed Implementations**:
 - Type system (7 modules, 40+ interfaces)
 - 6 character types with balanced stats
@@ -301,9 +307,12 @@ Development follows 14-phase plan:
 - Equipment system (8 slots, 7 rarity tiers, procedural generation)
 - Status effects system (26 effects, stacking, DOT/HOT, control)
 - Combat engine (turn-based, multi-action, ability execution, damage calculation)
-- Character management functions
+- Character management functions (including awardXp)
 - Formula library (damage, XP, scaling)
 - RNG utilities
+
+**Partially Complete**:
+- Combat rewards integration (XP/equipment drops not connected to victory)
 
 ## Game Design Reference
 See `GAME_DESIGN.md` for:

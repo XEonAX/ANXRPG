@@ -13,17 +13,20 @@ ANXRPG features 6 unique character types (Greek alphabet themed), a sophisticate
 - **Deployment**: Static site (GitHub Pages/Netlify ready)
 
 ## 📋 Current Status
-**Phase**: Active Development - Phases 1-6 Complete ✅ (43% Complete)
+**Phase**: Active Development - 5/14 Complete, 2 Partial (~40% Overall)
 
 - ✅ **Phase 1**: Project Foundation (Types & Structure)
-- ✅ **Phase 2**: Character System (6 character types implemented)
+- ✅ **Phase 2**: Character System (6 character types, including `awardXp()`)
 - ✅ **Phase 3**: Ability System (24 abilities defined)
 - ✅ **Phase 4**: Equipment System (8 slots, 7 rarity tiers)
 - ✅ **Phase 5**: Status Effects System (26 effects, stacking, DOT/HOT)
-- ✅ **Phase 6**: Combat Engine (Turn-based, multi-action, damage calculations)
+- 🟡 **Phase 6**: Combat Engine (85% - core functional, missing reward integration)
 - 🚧 **Phase 7**: Enemy System (Next)
+- 🟡 **Phase 8**: Progression (10% - `awardXp` exists, not integrated)
 
-See the [implementation plan](IMPLEMENTATION_PLAN.md) for the complete 14-phase development roadmap.
+**Phase 6 Remaining**: Add XP/equipment drops to combat victory (15% of phase)
+
+See the [implementation plan](IMPLEMENTATION_PLAN.md) and [audit](docs/PHASE_AUDIT.md) for complete status.
 
 ## 📖 Documentation
 - **[GAME_DESIGN.md](GAME_DESIGN.md)** - Complete game mechanics, formulas, and systems
@@ -127,7 +130,9 @@ See [LICENSE](LICENSE) file for details.
 | Zeta (Berserker) | High Risk DPS | 90 | +5 | Very High ATK, Low DEF |
 
 ## 🤝 Contributing
-This project is in active development (Phases 1-6 complete, 43% done). The core combat system is now functional and ready for enemy system implementation. Contributions are welcome!
+This project is in active development (5 phases complete, 2 partial, ~40% done). The core combat system is functional and ready for enemy system implementation (Phase 7). Contributions are welcome!
+
+See [docs/PHASE_AUDIT.md](docs/PHASE_AUDIT.md) for detailed implementation status.
 
 ---
 

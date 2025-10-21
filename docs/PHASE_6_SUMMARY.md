@@ -1,11 +1,11 @@
 # Phase 6: Combat Engine - Implementation Summary
 
-**Status**: ✅ COMPLETE  
+**Status**: 🟡 85% COMPLETE (Core Functional, Rewards Integration Pending)  
 **Date**: October 22, 2025  
 **Version**: 0.4.0 (Combat Engine Release)
 
 ## Overview
-Implemented the core turn-based combat system with multi-action support, ability execution, damage/healing, status effect integration, and team management.
+Implemented the core turn-based combat system with multi-action support, ability execution, damage/healing, status effect integration, and team management. **Combat is fully functional from battle start to victory/defeat detection**, but XP distribution and equipment drops are not yet integrated.
 
 ## Implementation Details
 
@@ -295,6 +295,91 @@ All core combat mechanics are implemented and functional:
 
 ---
 
+## 🚧 Phase 6 Remaining Work (15%)
+
+### What's Missing from Combat Engine
+
+#### 1. XP/Reward Integration (NOT IMPLEMENTED)
+**Problem**: Combat detects victory but doesn't award rewards
+
+**What exists but isn't used**:
+- ✅ `awardXp()` function in `systems/character.ts` (fully implemented)
+- ✅ `generateEquipment()` function in `systems/equipment.ts`
+- ✅ `calculateXpForLevel()` formula in `utils/formulas.ts`
+- ✅ `state.xpEarned` and `state.lootDropped` fields defined in types
+
+**What needs to be implemented**:
+```typescript
+// In systems/combat.ts or new systems/rewards.ts
+
+function calculateBattleXp(enemies: Enemy[]): number {
+  // Calculate XP based on enemy levels
+  // Formula: sum of (enemyLevel * baseXP) for all defeated enemies
+}
+
+function distributeBattleXp(
+  characters: Character[], 
+  totalXp: number
+): LevelUpResult[] {
+  // Award XP equally to all 6 characters (active + reserve)
+  // Return array of level-up notifications
+}
+
+function generateBattleLoot(enemies: Enemy[]): Equipment[] {
+  // For each defeated enemy, max 1 equipment drop (can be 0)
+  // Use generateEquipment() from equipment system
+}
+```
+
+**Integration point**:
+```typescript
+// In checkBattleEnd() function when victory detected:
+if (allEnemiesDead && !state.victory) {
+  state.phase = 'victory';
+  state.victory = true;
+  
+  // ADD THESE:
+  const xpEarned = calculateBattleXp(state.enemyTeam);
+  const levelUps = distributeBattleXp(state.playerTeam, xpEarned);
+  const loot = generateBattleLoot(state.enemyTeam);
+  
+  state.xpEarned = xpEarned;
+  state.lootDropped = loot;
+  state.levelUps = levelUps; // Need to add this to CombatState type
+  
+  addCombatLog(state, {
+    type: 'system',
+    message: `Victory! Earned ${xpEarned} XP and ${loot.length} items.`,
+  });
+}
+```
+
+#### 2. Battle Results Summary (NOT IMPLEMENTED)
+**What's needed**:
+- Function to create post-battle summary
+- Level-up notification formatting
+- Reward display preparation
+- Statistics tracking (damage dealt, healing done, etc.)
+
+#### 3. Testing & Validation (NOT IMPLEMENTED)
+**What's needed**:
+- Demo battles to test full combat flow
+- Test scenarios for edge cases
+- Integration tests for reward distribution
+
+### Completion Criteria
+Phase 6 will be 100% complete when:
+- ✅ XP calculation function implemented
+- ✅ XP distribution integrated with combat victory
+- ✅ Equipment drops integrated with combat victory
+- ✅ `state.xpEarned` and `state.lootDropped` populated
+- ✅ Level-up notifications working
+- ✅ At least one test battle runs from start to rewards
+
+**Estimated remaining time**: 1-2 hours
+
+---
+
 *Phase 6 Summary Last Updated: October 22, 2025*  
-*Status: COMPLETE ✅*  
-*Total Implementation Time: ~1 session*
+*Status: 85% COMPLETE 🟡 (Core combat functional, rewards integration pending)*  
+*Total Implementation Time: ~1 session (combat core), rewards pending*
