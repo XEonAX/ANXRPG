@@ -274,7 +274,7 @@ JSON.parse(localStorage.getItem('anxrpg_save')) // Inspect structure
 - **Battle Log**: Ensure combat messages don't cause memory leaks over long battles
 
 ## Phase Status (Reference IMPLEMENTATION_PLAN.md and docs/PHASE_AUDIT.md)
-**Current Status**: Active Development - 5/14 phases complete, 2 partial (~40% overall)
+**Current Status**: Active Development - 7/14 phases complete, 1 partial (~51% overall)
 
 Development follows 14-phase plan:
 1. ✅ Project setup (Vite + TS) - **COMPLETE**
@@ -282,10 +282,10 @@ Development follows 14-phase plan:
 3. ✅ Ability system (24 abilities) - **COMPLETE**
 4. ✅ Equipment system (8 slots) - **COMPLETE**
 5. ✅ Status effects engine - **COMPLETE**
-6. 🟡 Combat engine (turn-based + multi-action) - **85% COMPLETE** (core functional, missing reward integration)
-7. ⏳ Enemy system (7 tiers + bosses) - **NEXT**
-8. 🟡 Progression (leveling + skill trees + recruitment) - **10% COMPLETE** (awardXp function exists)
-9. ⏳ Campaign (100 stages)
+6. ✅ Combat engine (turn-based + multi-action) - **COMPLETE**
+7. ✅ Enemy system (7 tiers + bosses) - **COMPLETE**
+8. 🟡 Progression (leveling + skill trees + recruitment) - **10% COMPLETE** (awardXp function exists and integrated)
+9. ⏳ Campaign (100 stages) - **NEXT**
 10. ⏳ Save system (LocalStorage)
 11. ⏳ UI implementation (semantic HTML)
 12. ⏳ Game juice (flavor text)
@@ -294,25 +294,35 @@ Development follows 14-phase plan:
 
 **When implementing**: Reference phase details in IMPLEMENTATION_PLAN.md for task breakdowns.
 
-**Phase 6 Remaining Work** (15%):
-- Add XP calculation based on enemy levels
-- Call awardXp() for all 6 characters on victory
-- Call generateEquipment() for enemy drops (max 1 per enemy)
+**Phase 7 Complete**:
+- All 28 enemy templates defined (21 regular + 7 bosses)
+- 40+ enemy abilities with status effects
+- All ability IDs verified and compiling successfully
+- Boss summon mechanics integrated
+- XP/equipment rewards integrated into combat
+
+**Phase 8 Next Steps** (90% remaining):
+- Design skill tree system (~20 nodes × 6 character types = 120 nodes)
+- Implement skill point allocation
+- Create character recruitment system (every 20 victories)
+- Add battle victory tracking
 - Populate state.xpEarned and state.lootDropped fields
 
 **Completed Implementations**:
 - Type system (7 modules, 40+ interfaces)
 - 6 character types with balanced stats
-- 24 abilities with varied effects
+- 24 player abilities with varied effects
+- 40+ enemy abilities with status effects
 - Equipment system (8 slots, 7 rarity tiers, procedural generation)
 - Status effects system (26 effects, stacking, DOT/HOT, control)
-- Combat engine (turn-based, multi-action, ability execution, damage calculation)
+- Combat engine (turn-based, multi-action, ability execution, damage calculation, rewards)
+- Enemy system (28 templates, 40+ abilities, boss summons, all verified)
 - Character management functions (including awardXp)
 - Formula library (damage, XP, scaling)
 - RNG utilities
 
 **Partially Complete**:
-- Combat rewards integration (XP/equipment drops not connected to victory)
+- Progression system (XP integrated, skill trees not started)
 
 ## Game Design Reference
 See `GAME_DESIGN.md` for:

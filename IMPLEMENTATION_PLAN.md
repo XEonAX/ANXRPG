@@ -3,7 +3,7 @@
 > **Current Status**: Active Development - Phases 1-5 Complete ✅  
 > This document tracks the development roadmap. See [GAME_DESIGN.md](GAME_DESIGN.md) for game mechanics and [.github/copilot-instructions.md](.github/copilot-instructions.md) for AI coding guidelines.
 
-## 🎯 Current Progress: 6/14 Phases Complete (43%)
+## 🎯 Current Progress: 7/14 Phases Complete (50%)
 
 ## Project Structure
 
@@ -255,61 +255,40 @@ ANXRPG/
 
 ---
 
-### ⏳ Phase 7: Enemy System (NEXT)
-**Goal**: Build the core turn-based combat system
-
-#### Tasks
-1. Create combat state manager
-2. Implement turn order calculation (speed-based)
-3. Add player turn order selection UI (one-time at battle start)
-4. Create action resolution system:
-   - Multi-action support (sequential ability selection with "end turn" option)
-   - Attack execution
-   - Ability usage
-   - Target selection
-5. Implement damage calculation:
-   - Physical damage (ATK vs DEF)
-   - Magical damage (MAG vs RES)
-   - Critical hits (multiply final damage)
-   - Hit/miss mechanics (ACC vs EVA formula, some abilities guaranteed hit)
-   - Optional damage variance (±10%, can be disabled)
-6. Add AP management per turn
-7. Create team wipe detection
-8. Implement reserve team swap:
-   - Swap at start of next round after primary team wipe
-   - Preserve HP/AP state of reserve
-   - Option to accept defeat instead
-9. Add victory/defeat conditions
-10. Build combat log system
-
-**Deliverable**: Complete functional combat from start to victory/defeat
-
----
-
-### ⏳ Phase 7: Enemy System (NEXT)
+### ✅ Phase 7: Enemy System (COMPLETE)
 **Goal**: Create enemies with scaling and variety
 
-#### Tasks
-1. Create enemy templates for each tier (7 tiers)
-2. Define enemy character classes
-3. Implement enemy stat scaling formulas
-4. Create boss enemy variants (enhanced stats/abilities)
-5. Add enemy AI for ability selection
-6. Implement enemy team composition:
-   - 1-3 enemies per battle
-   - Flexible enemy count/levels per stage (can have 3 level 1 enemies at stage 5)
-   - Boss summon system:
-     - Bosses start solo
-     - Summon up to 2 minions at HP thresholds, multiple times, or every X turns
-     - Summoned minions are standard enemies (weaker than boss)
-7. Create procedural enemy name generation
-8. Implement equipment drop system (max 1 per enemy, can be 0)
+#### Completed Tasks
+1. ✅ Create enemy templates for each tier (7 tiers)
+2. ✅ Define enemy character classes
+3. ✅ Implement enemy stat scaling formulas
+4. ✅ Create boss enemy variants (enhanced stats/abilities)
+5. ✅ Add enemy AI for ability selection (helper functions)
+6. ✅ Implement enemy team composition (1-3 enemies per battle)
+7. ✅ Create procedural enemy name generation
+8. ✅ Implement equipment drop system (max 1 per enemy, can be 0)
+9. ✅ Create 40+ enemy abilities across all tiers
+10. ✅ Integrate status effects into enemy abilities
+11. ✅ Fix all ability ID mismatches in templates
+12. ✅ Verify TypeScript compilation
 
-**Deliverable**: Diverse enemies across all 7 tiers with proper scaling
+**Deliverable**: ✅ Diverse enemies across all 7 tiers with proper scaling
+
+**Files Created**:
+- `data/enemies.ts` - 28 enemy templates (1,093 lines)
+- `data/enemyAbilities.ts` - 40+ abilities (760 lines)
+- `systems/enemy.ts` - Enemy generation system (344 lines)
+
+**Key Features**:
+- 28 enemy templates (21 regular + 7 bosses)
+- 40+ unique enemy abilities with status effects
+- Boss summon mechanics integrated
+- XP calculation (level² × 10, ×5 for bosses)
+- Equipment drop system with rarity scaling
 
 ---
 
-### Phase 8: Progression System (Day 4-5)
+### ⏳ Phase 8: Progression System (NEXT)
 **Goal**: Implement leveling, XP, and skill trees
 
 #### Tasks
