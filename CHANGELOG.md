@@ -1,5 +1,66 @@
 # ANXRPG Development Changelog
 
+## Version 0.5.0 - Enemy System Release (October 22, 2025) - PARTIAL
+
+### 🟡 Phase 7: Enemy System (75% COMPLETE)
+**Status**: Core system complete, needs testing and proper enemy abilities
+
+**What Works**:
+- ✅ All 7 enemy tiers defined (28 templates total: 21 regular + 7 bosses)
+- ✅ Enemy generation system fully functional
+- ✅ Boss summon mechanics integrated into combat
+- ✅ XP calculation formula implemented
+- ✅ Equipment drop system ready
+- ✅ Stat scaling with level progression
+- ✅ Boss multipliers (2.5× stats)
+
+**What's Missing** (25% remaining):
+- ❌ Enemy abilities need proper formatting (placeholder only)
+- ❌ Comprehensive testing required
+- ❌ Integration testing with full combat loop
+
+#### Implementation Details
+
+**Enemy Data** (`src/data/enemies.ts` - 1,093 lines):
+- 28 enemy templates across 7 tiers
+- Tier 1: Slime, Rat, Bat + Slime King
+- Tier 2: Goblin, Wolf, Skeleton + Goblin Chieftain
+- Tier 3: Orc, Troll, Wraith + Orc Warlord
+- Tier 4: Demon, Young Dragon, Fire Elemental + Demon Lord
+- Tier 5: Ancient Behemoth, Stone Titan, Storm Wyrm + Elder Dragon
+- Tier 6: Fallen Angel, Demigod Warrior, Celestial Guardian + Archangel
+- Tier 7: Lesser God, Primordial Titan, Void Entity + World Destroyer
+
+**Enemy System** (`src/systems/enemy.ts` - 344 lines):
+- `createEnemy()` - Instance creation with level scaling
+- `generateEnemyTeam()` - Random enemy teams for stages
+- `generateBossEncounter()` - Boss battles every 10 stages
+- `checkBossSummonTriggers()` - HP threshold detection
+- `summonMinions()` - Boss summon execution
+- `cleanupDeadSummons()` - Dead minion tracking
+- `calculateEnemyXpReward()` - XP formula: level² × 10 (×5 for bosses)
+- `rollEquipmentDrop()` - Drop chance system (max 1 per enemy)
+- `getEnemyDisplayName()` - Formatted display names
+- `isBossStage()` - Boss stage detection
+
+**Boss Summon Mechanics**:
+- HP threshold triggers (75%, 50%, 25%, etc.)
+- Max 2 simultaneous summons per boss
+- Dynamic turn order recalculation when minions appear
+- Summon tracking and cleanup on death
+- Integrated into `executeAbility()` after damage
+
+**Enemy Abilities**:
+- Placeholder `enemy_basic_attack` created
+- Full abilities need proper status effect references
+- Template: See character abilities in `src/data/abilities.ts`
+- Use `cloneStatusEffect()` from `src/data/statusEffects.ts`
+
+**Files Created**: 2 files (~1,437 lines)
+**Files Modified**: 1 file (combat.ts - boss summon integration)
+
+---
+
 ## Version 0.4.0 - Combat Engine Release (October 22, 2025)
 
 ### 🟡 Phase 6: Combat Engine (85% COMPLETE)
