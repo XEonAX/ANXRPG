@@ -6,6 +6,7 @@ import type { CombatState } from '../types/combat';
 import type { Equipment } from '../types/equipment';
 import { saveGame } from '../utils/storage';
 import { completeStage } from '../systems/campaign';
+import { fullyRestoreCharacter } from '../systems/character';
 
 /**
  * Render the battle results screen showing victory/defeat, rewards, and level-ups
@@ -71,6 +72,11 @@ export function renderBattleResults(context: ScreenContext): HTMLElement {
           combat.lootDropped || []
         );
         
+        // Fully restore all characters after victory (heal HP and AP)
+        uiState.saveData.roster.forEach(char => {
+          fullyRestoreCharacter(char);
+        });
+        
         // Auto-save
         saveGame(uiState.saveData);
         EventBus.emit(GameEvents.GAME_SAVED);
@@ -78,7 +84,7 @@ export function renderBattleResults(context: ScreenContext): HTMLElement {
         // Emit stage completion event
         EventBus.emit(GameEvents.STAGE_COMPLETED, stageNumber);
         
-        showNotification('✅ Progress saved!', 'success');
+        showNotification('✅ Party fully healed! Progress saved!', 'success');
       }
       
       // Return to campaign map

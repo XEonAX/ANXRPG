@@ -85,7 +85,8 @@ class ScreenManagerClass {
     }
 
     const previousScreen = this.screenHistory.pop()!;
-    this.navigateTo(previousScreen, {}, false);
+    // Preserve the current context when going back (keeps uiState, etc.)
+    this.navigateTo(previousScreen, this.context, false);
   }
 
   /**

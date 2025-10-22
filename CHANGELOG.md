@@ -1,5 +1,100 @@
 # ANXRPG Development Changelog
 
+## Version 1.2.2 - Feature: Auto-Healing Between Battles (October 22, 2025) - 🏥 HEALING
+
+### Added
+- ✅ **Auto-Healing After Victory** - All characters fully restored between battles
+  - **What**: After winning a battle, all 6 characters (active + reserve) get full HP and AP restored
+  - **When**: Happens when clicking "Continue" on Battle Results screen
+  - **Why**: Prevents death spiral, makes game more player-friendly, focuses strategy on individual battles
+  - **Function**: Uses `fullyRestoreCharacter()` to restore HP to maxHp, AP to maxAp, and revive dead characters
+  - **Notification**: Updated to "Party fully healed! Progress saved!"
+
+### Changed
+- Battle Results screen now heals entire roster after victory
+- No healing after defeat (return with damaged team)
+
+### Design Decision
+- **Full restore** (100% HP/AP) chosen over partial restore
+- **Rationale**: Player-friendly, faster gameplay, consistent with genre conventions
+- **Alternative considered**: 50% restore (rejected - adds tedium)
+
+### Impact
+- **User Experience**: Much more forgiving, encourages experimentation
+- **Strategic**: In-combat decisions still critical, but no attrition between battles
+- **Difficulty**: Challenge per-battle, not resource management across campaign
+
+### Files Modified
+- `src/ui/BattleResultsScreen.ts` - Added healing after victory
+
+### Documentation
+- Created `docs/FEATURE_AUTO_HEAL_BETWEEN_BATTLES.md` - Full implementation details
+
+---
+
+## Version 1.2.1 - Bug Fix: Inventory Back Button (October 22, 2025) - 🐛 FIX
+
+### Fixed
+- ✅ **Inventory Back Button Error** - Fixed crash when clicking "Back" from Inventory
+  - **Problem**: `goBack()` was navigating with empty context, losing `uiState`
+  - **Solution**: Preserve `this.context` when navigating back
+  - **File**: `src/ui/core/ScreenManager.ts` line 78
+  - **Impact**: Can now navigate back from Inventory to Team Management or Character Sheet without errors
+
+### Technical
+- Changed `goBack()` to preserve current context instead of passing empty object
+- Navigation flow: Screen A → Inventory (with context) → Back to Screen A (with same context)
+
+---
+
+## Version 1.2.0 - Inventory Screen Complete! (October 22, 2025) - 🎒 EQUIPMENT MANAGEMENT
+
+### ✅ Phase 11 Progress: UI Implementation - 90% COMPLETE (9/10 screens)
+**Status**: Inventory management complete! Can now equip/unequip gear, filter, sort, and manage all equipment.
+
+**What's New This Session (Late Evening)**:
+- ✅ **Inventory Screen** (717 lines TS + 385 lines CSS) - Complete equipment management
+- ✅ **Equipment Filtering** - By slot, rarity, level range, equipped status
+- ✅ **Equipment Sorting** - By rarity, level, name, slot (ascending/descending)
+- ✅ **Character Selector** - Choose which character to equip on
+- ✅ **Equip/Unequip System** - Full CRUD with confirmations and validation
+- ✅ **Confirmation Dialogs** - `showConfirm()` helper for async confirmations
+- ✅ **Auto-Save Integration** - Equipment changes persist immediately
+
+**Inventory Features**:
+- Filter by slot (All, Main Hand, Off Hand, Head, Chest, Legs, Neck, Wrist 1, Wrist 2)
+- Filter by rarity (All, Basic → Mythic)
+- Filter by level range (1-100)
+- Toggle "Show Equipped Only"
+- Toggle "Hide Low Rarity" (Basic/Common) - persists to settings
+- Sort by: Rarity, Level, Name, Slot (with direction toggle)
+- Character selector dropdown (shows name, type, level)
+- Equipped items section (8 slots per character):
+  - Shows current equipment or "Empty" placeholder
+  - Unequip button for equipped items
+- Inventory grid (responsive, auto-fill):
+  - Equipment cards with rarity-based color borders
+  - Stats preview (+HP, +ATK, +DEF, etc.)
+  - Equip button with level requirement validation
+  - Confirmation when replacing existing equipment
+  - "EQUIPPED" badge indicator
+- Integration with equipment system:
+  - Uses `equipItem()`, `unequipItem()`, `canEquipItem()`
+  - Correct function signatures (equipment object, level param)
+  - Auto-save after changes
+
+**Bundle Size**:
+- JS: 173.52 KB (gzip: 42.54 KB) - +10.56 KB (+6.5%)
+- CSS: 37.79 KB (gzip: 6.24 KB) - +6.38 KB (+20%)
+
+**Documentation**:
+- Created `docs/INVENTORY_SCREEN_COMPLETE.md` - Full implementation details
+- Updated `NEXT_STEPS.md` - Settings screen now only remaining UI
+
+**Next Up**: Settings Screen (1-2 hours) → Phase 11 COMPLETE!
+
+---
+
 ## Version 1.1.0 - Combat Screen Complete + Critical Bug Fixes (October 22, 2025) - ✅ GAME IS PLAYABLE!
 
 ### ✅ Phase 11 Progress: UI Implementation - 80% COMPLETE (8/10 screens)

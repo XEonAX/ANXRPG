@@ -379,6 +379,60 @@ export function createModal(
 }
 
 /**
+ * Show a confirmation dialog
+ * Returns a Promise that resolves to true if confirmed, false if cancelled
+ */
+export function showConfirm(
+  message: string,
+  title: string = 'Confirm'
+): Promise<boolean> {
+  return new Promise((resolve) => {
+    const overlay = createElement('div', 'modal-overlay');
+    const modal = createElement('div', 'modal');
+    
+    const header = createElement('div', 'modal__header');
+    const titleEl = createElement('h2', 'modal__title');
+    titleEl.textContent = title;
+    header.appendChild(titleEl);
+    
+    const body = createElement('div', 'modal__body');
+    const messageEl = createElement('p');
+    messageEl.textContent = message;
+    body.appendChild(messageEl);
+    
+    const footer = createElement('div', 'modal__footer');
+    
+    const cancelBtn = createButton('Cancel', () => {
+      overlay.remove();
+      resolve(false);
+    }, 'btn btn--secondary');
+    
+    const confirmBtn = createButton('Confirm', () => {
+      overlay.remove();
+      resolve(true);
+    }, 'btn btn--primary');
+    
+    footer.appendChild(cancelBtn);
+    footer.appendChild(confirmBtn);
+    
+    modal.appendChild(header);
+    modal.appendChild(body);
+    modal.appendChild(footer);
+    overlay.appendChild(modal);
+    
+    // Close on overlay click (counts as cancel)
+    overlay.addEventListener('click', (e) => {
+      if (e.target === overlay) {
+        overlay.remove();
+        resolve(false);
+      }
+    });
+    
+    document.body.appendChild(overlay);
+  });
+}
+
+/**
  * Debounce function for performance
  */
 export function debounce<T extends (...args: any[]) => void>(
