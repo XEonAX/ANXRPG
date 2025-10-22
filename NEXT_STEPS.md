@@ -1,210 +1,104 @@
 # ANXRPG - Next Steps for Continuation
 
-**Date**: October 22, 2025 (Updated - Late Evening)  
-**Current Status**: Phase 11 - 90% Complete (9/10 screens done)  
-**Overall Progress**: ~11.5/14 phases complete (~82%)  
-**Game Status**: ✅ **FULLY PLAYABLE + INVENTORY!** 🎮🎒
+**Date**: October 22, 2025 (Updated - Phase 11 COMPLETE!)  
+**Current Status**: ✅ **PHASE 11 COMPLETE - ALL UI DONE!** 🎉  
+**Overall Progress**: ~12/14 phases complete (~85%)  
+**Game Status**: ✅ **FULLY PLAYABLE + COMPLETE UI!** 🎮✨
 
 ---
 
-## 🎉 Major Achievement: INVENTORY SCREEN COMPLETE!
+## 🎉 MAJOR MILESTONE: PHASE 11 COMPLETE!
 
-**What Works Now**:
-- ✅ Complete combat with enemy AI
-- ✅ Enemies attack correctly on their turns
-- ✅ Multi-action combat system
-- ✅ Click-to-target enemy selection
-- ✅ Battle results with XP/loot
-- ✅ Character progression (leveling, skill trees)
-- ✅ **Equipment inventory management** (NEW!)
-- ✅ Save/load system
-- ✅ Full campaign map (100 stages)
+### All 10 UI Screens Complete! ✅
+1. ✅ Main Menu (New/Continue/Load/Settings)
+2. ✅ Team Management (Active/Reserve/Roster)
+3. ✅ Campaign Map (100 stages, progressive unlock)
+4. ✅ Combat Screen (Turn-based, multi-action, enemy AI, click-to-target)
+5. ✅ Battle Results (XP, loot, level-ups, auto-heal)
+6. ✅ Character Sheet (Stats, equipment, skill tree)
+7. ✅ Inventory (Filter, sort, equip/unequip)
+8. ✅ **Settings** (8 settings, save management, statistics) **NEW!**
+9. ✅ UI Foundation (ScreenManager, EventBus, UIHelpers)
+10. ✅ CSS System (2,754 lines, dark theme)
 
-**Latest Addition - Inventory Screen** (717 lines TS + 385 lines CSS):
-- ✅ Equipment list with filtering (slot, rarity, level)
-- ✅ Sorting system (rarity, level, name, slot)
-- ✅ Character selector dropdown
-- ✅ Equipped items display (8 slots per character)
-- ✅ Equip/Unequip functionality with confirmations
-- ✅ Auto-swap when slot occupied
-- ✅ Level requirement validation
-- ✅ Rarity-based color coding
-- ✅ "Hide low rarity" toggle (persists to settings)
-- ✅ Responsive grid layout
+**Total UI Code**: 8,955 lines (6,201 TS + 2,754 CSS)  
+**Build Size**: 186.48 KB JS (45.72 KB gzipped), 44.03 KB CSS (7.14 KB gzipped)
 
 ---
 
-## 🎯 Immediate Next Steps
+## 🎯 Immediate Next Steps - PHASE 12: GAME JUICE
 
-### 1. Settings Screen (FINAL UI SCREEN!)
-**Estimated Time**: 1-2 hours  
-**File**: `src/ui/SettingsScreen.ts` (new file)
+**Estimated Time**: 2-3 hours  
+**Goal**: Polish and flavor to make the game feel alive
 
-**Requirements**:
-- [ ] Equipment list with cards/rows
-  - Display: Name, slot, level requirement, rarity (color-coded)
-  - Stats preview (HP, ATK, DEF, MAG, RES, SPD bonuses)
-  - Equipped indicator (checkmark or "EQUIPPED" badge)
+### 1. Flavor Text (1-1.5 hours)
+**File**: Create `src/data/flavorText.ts`
 
-- [ ] Filtering system
-  - Filter by slot: All, Main Hand, Off Hand, Head, Chest, Legs, Neck, Wrist
-  - Filter by rarity: All, Basic, Common, Uncommon, Rare, Epic, Legendary, Mythic
-  - Filter by level requirement (slider or dropdown)
-  - "Show equipped only" toggle
-  - "Hide low rarity" toggle (respects `settings.autoHideLowRarityEquipment`)
-
-- [ ] Sorting options
-  - Sort by: Rarity (desc), Level (desc), Name (asc), Slot (asc)
-  - Sort direction toggle
-
-- [ ] Character selection
-  - Dropdown or sidebar to select which character to equip on
-  - Show character's current equipment in highlighted section
-  - Display character level and stats
-
-- [ ] Equip/Unequip actions
-  - "Equip" button on inventory items (disabled if level too low or slot occupied)
-  - "Unequip" button on equipped items
-  - Confirmation modal if replacing existing equipment
-  - Auto-swap if slot occupied (old item returns to inventory)
-
-- [ ] Comparison tooltips
-  - Hover over item shows stat comparison vs currently equipped
-  - Green/red numbers for stat increases/decreases
-  - "Better" / "Worse" indicator
-
-- [ ] Navigation
-  - Navigate FROM: Team Management, Character Sheet, Campaign Map
-  - Back button returns to previous screen
-
-**CSS Styling** (~150 lines):
-- Equipment card styling with rarity borders
-- Filter/sort control styling
-- Character selector styling
-- Comparison tooltip styling
-- Responsive grid layout
-
-**Integration**:
-- Use `src/systems/equipment.ts` functions:
-  - `equipItem(character, equipment)` - Equip to character
-  - `unequipItem(character, slot)` - Remove from slot
-  - `getEquippedItem(character, slot)` - Get current item
-- Use `src/utils/storage.ts` to save after equipment changes
-- Use `UIGameState.inventory` for equipment list
-
-**Example Structure**:
-```typescript
-// src/ui/InventoryScreen.ts
-export function renderInventory(context: ScreenContext): HTMLElement {
-  const container = createElement('div', 'screen screen--inventory');
+- [ ] Ability flavor text (24 player abilities)
+  - Each ability gets a descriptive "flavor" line
+  - Example: "Strike" → "A swift, calculated blow that finds weakness in armor"
   
-  // Header with title and back button
-  // Character selector dropdown
-  // Filter controls (slot, rarity, level)
-  // Sort controls (dropdown + direction)
-  // Equipment grid/list
-  // Equipped items section (current character's gear)
+- [ ] Equipment flavor text
+  - Basic tier: Simple descriptions
+  - Legendary tier: Epic lore
+  - Example: "Worldbreaker Sword" → "Forged in the heart of a dying star, this blade has ended empires"
   
-  return container;
-}
-```
+- [ ] Enemy descriptions
+  - Each enemy type gets lore text
+  - Boss enemies get dramatic introductions
+  - Example: "Shadow Dragon" → "An ancient terror that feeds on fear itself"
 
----
+### 2. Animation Polish (0.5-1 hour)
+**Files**: Update `src/style.css` and combat screen
 
-### 2. Settings Screen
-**Estimated Time**: 1-2 hours  
-**File**: `src/ui/SettingsScreen.ts` (new file)
+- [ ] Screen transitions
+  - Fade in/out when changing screens
+  - Slide transitions for modals
+  
+- [ ] Combat animations
+  - Ability use effects (shake, flash, glow)
+  - Damage number pop-ups (floating, fading)
+  - HP bar smooth transitions
+  
+- [ ] Victory/Defeat animations
+  - Confetti or celebration effect on victory
+  - Fade to dark on defeat
 
-**Requirements**:
-- [ ] Game Settings Section
-  - Toggle: Damage Variance Enabled (`settings.damageVarianceEnabled`)
-  - Slider: Combat Animation Speed (`settings.combatAnimationSpeed`, 0.5-2.0×)
-  - Toggle: Auto-Save Enabled (`settings.autoSaveEnabled`)
-  - Toggle: Show Damage Numbers (`settings.showDamageNumbers`)
-  - Toggle: Detailed Combat Log (`settings.detailedCombatLog`)
-  - Toggle: Auto-Hide Low Rarity Equipment (`settings.autoHideLowRarityEquipment`)
-  - Toggle: Sound Enabled (`settings.soundEnabled`)
-  - Slider: Sound Volume (`settings.soundVolume`, 0-100%)
-  - Save button (calls `saveGame()`)
+### 3. Sound Effects (Optional - 1 hour)
+**Files**: Create `src/utils/sound.ts`
 
-- [ ] Save Management Section
-  - "Save Game" button (manual save to `anxrpg_save`)
-  - "Load Game" button (load from `anxrpg_save`)
-  - "Export Save" button (download JSON file)
-  - "Import Save" button (upload JSON file)
-  - Save file info: Last saved, playtime, highest level
+If you want sounds (optional):
+- [ ] Basic combat sounds
+  - Sword swing, magic cast, healing chime
+  - Critical hit special sound
+  - Miss/dodge whoosh
+  
+- [ ] UI sounds
+  - Button clicks
+  - Navigation transitions
+  - Notification pops
+  
+- [ ] Victory/Defeat jingles
+  - Short victory fanfare
+  - Defeat sound
+  
+**Note**: Can use Web Audio API or just skip sounds for v1.0
 
-- [ ] Danger Zone Section
-  - "Clear All Data" button (with confirmation modal)
-  - Warning text about data loss
+### 4. Achievement Notifications (0.5 hour)
+**Files**: Update `src/ui/core/UIHelpers.ts`
 
-- [ ] Credits Section
-  - Game title and version
-  - Development info
-  - Link to GitHub repo (optional)
-
-**CSS Styling** (~100 lines):
-- Settings panel styling
-- Toggle switch styling
-- Slider styling
-- Section dividers
-- Danger zone warning styling
-
-**Integration**:
-- Use `src/utils/storage.ts`:
-  - `saveGame(saveData, false)` - Manual save
-  - `loadGame(false)` - Manual load
-  - `exportSaveToFile(saveData, 'anxrpg_save.json')` - Export
-  - `importSaveFromFile(file)` - Import
-  - `clearAllSaves()` - Delete all data
-- Use `src/systems/game.ts`:
-  - `updateSettings(newSettings)` - Update settings
-  - `getSaveMetadata()` - Get save info
-
----
-
-### 3. Final Polish & Testing
-**Estimated Time**: 2-3 hours
-
-**Tasks**:
-- [ ] Full game flow testing
-  - New Game → Character Select → Team Setup → Campaign → Combat → Victory → Repeat
-  - Test all 6 character types
-  - Test multi-action combat (use 2-3 abilities per turn)
-  - Test reserve swap on team wipe
-  - Test boss battles (stages 10, 20, 30...)
-  - Test equipment drops and leveling
-  - Test save/load at various points
-
-- [ ] Bug fixes
-  - Fix any bugs discovered during testing
-  - Verify turn order works with 3+ enemies
-  - Test status effects in combat
-  - Test critical hits and misses
-  - Test skill tree unlocking
-
-- [ ] UI polish
-  - Add missing CSS transitions
-  - Improve mobile responsiveness
-  - Add loading states where needed
-  - Polish combat animations
-  - Add toast notifications for important events
-
-- [ ] Performance optimization
-  - Check bundle size (target < 200 KB)
-  - Optimize combat log rendering
-  - Test with large inventory (100+ items)
-
-- [ ] Documentation
-  - Update README.md with "How to Play"
-  - Create player guide
-  - Update GAME_DESIGN.md if needed
+- [ ] Special notifications for milestones
+  - First victory
+  - 10 victories (recruit trigger)
+  - Beat first boss
+  - Reach level 10
+  - Unlock legendary equipment
 
 ---
 
 ## 📊 Current Progress Breakdown
 
-### ✅ Completed Phases (11/14)
+### ✅ Completed Phases (12/14) - 85%
 1. ✅ Project Foundation (Vite + TypeScript)
 2. ✅ Character System (6 types, stats, leveling)
 3. ✅ Ability System (24 player + 40+ enemy abilities)
@@ -215,20 +109,10 @@ export function renderInventory(context: ScreenContext): HTMLElement {
 8. ✅ Progression (XP, skill trees, recruitment)
 9. ✅ Campaign (100 stages, boss battles)
 10. ✅ Save/Load System (LocalStorage, import/export)
-11. 🔄 **UI Implementation - 80% COMPLETE**
-    - ✅ UI Foundation (ScreenManager, EventBus, UIHelpers, UIState)
-    - ✅ Main Menu (New/Continue/Load)
-    - ✅ Team Management (Active/Reserve/Roster)
-    - ✅ Campaign Map (100 stages, tier sections)
-    - ✅ **Combat Screen** (turn-based, enemy AI, click-to-target) **FIXED!**
-    - ✅ Battle Results (XP, loot, level-ups)
-    - ✅ Character Sheet (stats, equipment, skill tree)
-    - ✅ CSS System (1200+ lines, dark theme)
-    - ⏳ **Inventory Screen** (NEXT)
-    - ⏳ Settings Screen
+11. ✅ **UI Implementation - 100% COMPLETE** 🎉
+12. ⏳ Game Juice (NEXT - flavor text, animations)
 
-### ⏳ Remaining Phases (3/14)
-12. ⏳ Game Juice (flavor text, animations)
+### ⏳ Remaining Phases (2/14) - 15%
 13. ⏳ Balance & Testing
 14. ⏳ Final Polish & Deployment
 
@@ -243,7 +127,7 @@ npm run dev
 # Opens on http://localhost:5173 or :5174
 ```
 
-### 2. Play the Game!
+### 2. Full Game Flow Available!
 - Click "New Game"
 - Select a character type (Alpha/Beta/Gamma/Delta/Epsilon/Zeta)
 - Name your character

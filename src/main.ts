@@ -13,6 +13,7 @@ import { renderCombat } from './ui/CombatScreen';
 import { renderBattleResults } from './ui/BattleResultsScreen';
 import { renderCharacterSheet } from './ui/CharacterSheetScreen';
 import { renderInventory } from './ui/InventoryScreen';
+import { renderSettings } from './ui/SettingsScreen';
 
 // Development: Make test functions available in console
 import {
@@ -71,9 +72,7 @@ if (!app) {
   ScreenManager.registerScreen('battleResults', renderBattleResults);
   ScreenManager.registerScreen('characterSheet', renderCharacterSheet);
   ScreenManager.registerScreen('inventory', renderInventory);
-  
-  // TODO: Register Settings screen when built
-  // ScreenManager.registerScreen('settings', renderSettings);
+  ScreenManager.registerScreen('settings', renderSettings);
   
   // Event listeners
   EventBus.on(GameEvents.GAME_LOADED, (gameState) => {

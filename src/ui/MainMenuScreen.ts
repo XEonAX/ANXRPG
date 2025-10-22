@@ -68,10 +68,29 @@ export function renderMainMenu(_context: ScreenContext): HTMLElement {
     menu.appendChild(loadBtn);
   }
   
-  // Settings button
+  // Settings button (accessible even without a save)
   const settingsBtn = createButton(
     '⚙️ Settings',
-    () => ScreenManager.navigateTo('settings'),
+    () => {
+      // If we have a save, load it for settings screen
+      let uiState = null;
+      if (hasAutoSave) {
+        const saveData = loadGame(true);
+        if (saveData) {
+          uiState = initializeUIState(saveData);
+        }
+      }
+      
+      // Navigate to settings (works even without save)
+      if (uiState) {
+        ScreenManager.navigateTo('settings', { uiState });
+      } else {
+        // Create a default state for settings screen
+        const defaultSave = initializeNewGame('Alpha', 'Default').saveData;
+        uiState = initializeUIState(defaultSave);
+        ScreenManager.navigateTo('settings', { uiState });
+      }
+    },
     'btn btn--secondary btn--large'
   );
   menu.appendChild(settingsBtn);
