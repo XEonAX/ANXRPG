@@ -1,250 +1,124 @@
 # ANXRPG - Next Steps for Continuation
 
 **Date**: October 22, 2025  
-**Current Status**: Phase 6 Complete (100%), Phase 7 Nearly Complete (90%)  
-**Overall Progress**: 6/14 phases complete, 2 partial (~47%)
+**Current Status**: Phase 9 Complete (100%)  
+**Overall Progress**: 9/14 phases complete (~64%)
 
 ---
 
 ## 🎯 Immediate Priorities
 
-### 1. Complete Phase 7: Enemy System (10% Remaining)
-**Estimated Time**: 30-60 minutes
+### 1. Start Phase 10: Save/Load System
+**Estimated Time**: 1-2 sessions (4-6 hours)
+
+**Goal**: Implement LocalStorage persistence for game state
 
 #### Tasks:
-- [ ] Fix remaining enemy template ability IDs in Tier 6-7
-  - **File**: `src/data/enemies.ts`
-  - **Issue**: Some enemies still reference old ability IDs that don't exist
-  - **Fix**: Update to use abilities from `src/data/enemyAbilities.ts`
+- [ ] Create save data type definitions
+  - **File**: `src/types/save.ts`
+  - Define serializable game state structure
+  - Include character roster, campaign progress, equipment inventory
   
-- [ ] Verify all 28 enemy templates have valid ability references
-  - Run a grep search to find any undefined ability IDs
-  - Cross-reference with `src/data/enemyAbilities.ts` exports
+- [ ] Implement serialization functions
+  - **File**: `src/utils/storage.ts`
+  - Save game state to LocalStorage
+  - Load game state from LocalStorage
+  - Validate save data structure
   
-- [ ] Test enemy abilities in combat
-  - Use `src/tests/combatDemo.ts` to run actual battles
-  - Verify abilities execute correctly
-  - Check status effects apply properly
+- [ ] Add auto-save triggers
+  - **Files**: `src/systems/combat.ts`, `src/systems/campaign.ts`
+  - Auto-save after battle victory
+  - Auto-save after stage completion
+  - Auto-save after equipment changes
+  
+- [ ] Create new game initialization
+  - **File**: `src/systems/game.ts`
+  - Initialize default game state
+  - Create starting character roster
+  - Set up initial campaign progress
+  
+- [ ] Add save data migration
+  - Handle version updates
+  - Validate save structure
+  - Error handling for corrupted saves
 
-#### How to Fix Enemy Templates:
-```bash
-# Check which abilities are defined
-grep "^const.*: Ability" src/data/enemyAbilities.ts
-
-# Check which enemy templates might have issues
-grep "abilities: \[" src/data/enemies.ts | grep -v "// Updated"
-```
-
-**Enemy Templates to Check**:
-- Tier 6: `demigod_strike`, `guardian_shield` (might not exist)
-- Tier 7: `god_smite`, `primordial_crush`, `void_annihilation` (might not exist)
-
-**Fix Pattern**:
-```typescript
-// If ability doesn't exist, use a tier-appropriate one from enemyAbilities.ts
-// Example for Tier 6:
-abilities: ['angelic_smite', 'angelic_blessing'],  // Use these
-
-// Example for Tier 7:
-abilities: ['godly_wrath', 'primordial_crush'],  // Use these
-```
+#### Expected Deliverables:
+- Complete save/load system using LocalStorage
+- Auto-save on key events
+- New game initialization
+- Save data validation
 
 ---
 
-### 2. Test Combat System End-to-End
-**Estimated Time**: 30-60 minutes
+## 🚀 Future Milestones
 
-#### Tasks:
-- [ ] Run combat demos in browser
-  ```bash
-  npm run dev
-  # Open browser, press F12 for console
-  # Run: combatDemo.simple()
-  # Run: combatDemo.xp()
-  # Run: combatDemo.boss()
-  ```
+### Phase 11: UI Implementation (Next After Phase 10)
+**Estimated Time**: 3-4 sessions (12-16 hours)
 
-- [ ] Verify XP distribution works
-  - Check all 6 characters receive XP
-  - Verify level-ups trigger correctly
-  - Check XP amounts match formula: `level² × 10` (×5 for bosses)
+**Goal**: Create complete semantic HTML interface
 
-- [ ] Verify equipment drops work
-  - Check max 1 item per enemy
-  - Verify drop chances respect enemy template settings
-  - Check equipment is generated at enemy level
+#### Key Screens:
+1. Main Menu (New Game, Load Game, Continue)
+2. Team Management (Active + Reserve roster)
+3. Character Sheet (Stats, Equipment, Skills, Abilities)
+4. Equipment Inventory (Filter, Equip, Hide items)
+5. Campaign Map (Stage selection, Progress)
+6. Combat Screen (Turn-based UI, Action bar, Log)
+7. Battle Results (Victory/Defeat, Rewards, Level-ups)
 
-- [ ] Test boss summons
-  - Boss should summon minions at HP thresholds (75%, 50%, 25%)
-  - Max 2 summons at once
-  - Turn order should recalculate when minions appear
-
-#### Expected Results:
-- Simple battle (2 slimes): ~20-30 XP total, 0-2 equipment drops
-- Boss battle: Higher XP (boss gives 5× multiplier), guaranteed drop from boss
-- Level-ups should show in combat log
+**Priority**: Combat screen first (most critical for gameplay)
 
 ---
 
-## 🚀 Next Major Milestone: Phase 8 - Progression System
+### Phase 12: Game Juice (Polish)
+**Estimated Time**: 1-2 sessions
 
-**Estimated Time**: 2-3 sessions (8-12 hours)
-
-### Overview
-Implement skill trees, character recruitment, and victory tracking.
-
-### Phase 8 Breakdown:
-
-#### 8.1 Skill Tree System (40%)
-**Files to Create/Modify**:
-- `src/types/skillTree.ts` - Type definitions
-- `src/data/skillTrees.ts` - ~20 nodes per character (120 nodes total)
-- `src/systems/skillTree.ts` - Skill point allocation, node unlocking
-
-**Key Features**:
-- ~20 nodes per character type
-- Linear progression with prerequisites
-- Each node: EITHER stat bonus OR new ability (not both)
-- 1 skill point per level
-- Some nodes require multiple points
-- Can unlock 5th, 6th+ ability slots
-
-**Skill Tree Node Structure**:
-```typescript
-interface SkillNode {
-  id: string;
-  name: string;
-  description: string;
-  characterType: CharacterTypeName;
-  requiredLevel: number;
-  skillPointCost: number;
-  prerequisites: string[];  // Node IDs that must be unlocked first
-  effect: {
-    type: 'stat-bonus' | 'unlock-ability' | 'unlock-slot';
-    statBonus?: { stat: StatType; value: number };
-    abilityId?: string;
-    slotType?: 'ability';
-  };
-}
-```
-
-#### 8.2 Character Recruitment System (30%)
-**Files to Create/Modify**:
-- `src/systems/recruitment.ts` - Recruitment logic
-- `src/types/game.ts` - Add `totalVictories` tracking
-
-**Key Features**:
-- New character every 20 battle victories (20, 40, 60, 80, 100+)
-- Player chooses character type (can pick duplicates)
-- New characters start at level 1
-- At 100 victories: option to retire existing character to make room
-
-**Recruitment Flow**:
-```typescript
-// After battle victory:
-if (totalVictories % 20 === 0) {
-  // Show recruitment screen
-  // Player selects character type
-  // Create new level 1 character
-  // Add to character roster
-}
-```
-
-#### 8.3 Victory Counter & Retirement (20%)
-**Files to Modify**:
-- `src/systems/combat.ts` - Track victories
-- `src/types/game.ts` - Add `totalVictories`, `characterRoster`
-
-**Key Features**:
-- Track total battle victories across all characters
-- At 100+ victories: allow retiring 1 character when recruiting
-- Show victory milestones (20, 40, 60, 80, 100)
-
-#### 8.4 Integration & Testing (10%)
-- Integrate skill tree UI (basic HTML)
-- Test skill point allocation
-- Test recruitment flow
-- Verify character retirement
+- Flavor text for abilities
+- Combat message generation
+- Visual feedback (CSS animations)
+- Sound effects (optional)
 
 ---
-
-## 📋 Phase 9-14 Overview (For Context)
-
-### Phase 9: Campaign System (Next After Phase 8)
-- 100 stage definitions
-- Stage unlocking progression
-- Boss stages every 10 levels
-- Stage difficulty scaling
-- **Estimated Time**: 1-2 sessions
-
-### Phase 10: Save System
-- LocalStorage persistence
-- Save/load game state
-- Auto-save on victory
-- **Estimated Time**: 1 session
-
-### Phase 11: UI Implementation
-- Semantic HTML rendering
-- Combat screen
-- Team management
-- Character sheets
-- Equipment inventory
-- Campaign map
-- **Estimated Time**: 3-4 sessions
-
-### Phase 12: Game Juice
-- Flavor text
-- Visual polish
-- Combat animations (CSS)
-- **Estimated Time**: 1-2 sessions
 
 ### Phase 13: Balance & Testing
+**Estimated Time**: 1-2 sessions
+
 - Enemy difficulty tuning
 - Ability balancing
 - Equipment drop rates
 - XP curve adjustment
-- **Estimated Time**: 1-2 sessions
-
-### Phase 14: Final Polish
-- Bug fixes
-- Performance optimization
-- Documentation
-- Deployment preparation
-- **Estimated Time**: 1 session
+- Playtesting feedback
 
 ---
 
-## 🔧 Technical Debt & Known Issues
+### Phase 14: Final Polish
+**Estimated Time**: 1 session
 
-### Current Issues:
-1. **Combat Demo**: Works but needs real enemy data to test properly
-2. **Enemy Abilities**: Some Tier 6-7 templates have placeholder IDs
-3. **Testing**: No automated tests, all manual browser testing
-
-### Quality Improvements Needed:
-- Add error handling in combat system
-- Add validation for ability execution
-- Better logging/debugging tools
-- Performance profiling for large battles
+- Bug fixes
+- Performance optimization
+- Documentation updates
+- Deployment preparation (GitHub Pages/Netlify)
 
 ---
 
 ## 📊 Progress Tracking
 
-### Completed (47%):
+### Completed (64%):
 - ✅ Phase 1: Project Foundation
-- ✅ Phase 2: Character System
-- ✅ Phase 3: Ability System
-- ✅ Phase 4: Equipment System
-- ✅ Phase 5: Status Effects System
-- ✅ Phase 6: Combat Engine (WITH REWARDS!)
+- ✅ Phase 2: Character System (6 types)
+- ✅ Phase 3: Ability System (24 abilities)
+- ✅ Phase 4: Equipment System (8 slots)
+- ✅ Phase 5: Status Effects System (26 effects)
+- ✅ Phase 6: Combat Engine (turn-based + multi-action)
+- ✅ Phase 7: Enemy System (28 templates, 40+ abilities)
+- ✅ Phase 8: Progression (skill trees + recruitment)
+- ✅ Phase 9: Campaign (100 stages)
 
-### In Progress (43%):
-- 🟡 Phase 7: Enemy System (90%)
-- 🟡 Phase 8: Progression (10% - awardXp exists)
+### In Progress (0%):
+- ⏳ Phase 10: Save/Load System (NEXT)
 
-### Remaining (10%):
-- ⏳ Phase 9-14
+### Remaining (36%):
+- ⏳ Phase 11-14
 
 ---
 
@@ -265,71 +139,76 @@ npm run dev
 Press F12 in browser, then:
 
 ```javascript
-// Test simple combat
-combatDemo.simple()
+// Test campaign system
+campaignTests.runAll()
 
-// Test XP rewards
-combatDemo.xp()
-
-// Test boss setup
-combatDemo.boss()
-
-// Run all demos
+// Test combat with Phase 9 integration
 combatDemo.all()
+
+// Test skill trees
+phase8Tests.runAll()
 ```
 
 ### 4. What to Look For
-- ✅ Combat starts successfully
-- ✅ Turn order displays
-- ✅ Abilities execute
-- ✅ Damage is dealt
-- ✅ Victory detected
-- ✅ XP awarded to all 6 characters
-- ✅ Equipment drops (0-2 items typically)
-- ✅ Combat log shows all events
+- ✅ 100 stages defined correctly
+- ✅ Boss battles every 10th stage
+- ✅ Victory tracking works
+- ✅ Stage unlocking progression
+- ✅ Reward calculation (XP, equipment, gold)
+- ✅ Integration with recruitment system
+- ✅ Enemy team generation
 
 ---
 
 ## 📚 Key Files Reference
 
 ### Core Systems:
-- `src/systems/combat.ts` - Combat engine (847 lines)
-- `src/systems/character.ts` - Character management (277 lines)
-- `src/systems/damage.ts` - Damage calculations (270 lines)
-- `src/systems/enemy.ts` - Enemy generation (344 lines)
-- `src/systems/equipment.ts` - Equipment system (250+ lines)
-- `src/systems/statusEffects.ts` - Status effects (410 lines)
+- `src/systems/combat.ts` - Combat engine
+- `src/systems/campaign.ts` - Campaign management (22 functions)
+- `src/systems/character.ts` - Character management
+- `src/systems/damage.ts` - Damage calculations
+- `src/systems/enemy.ts` - Enemy generation
+- `src/systems/equipment.ts` - Equipment system
+- `src/systems/statusEffects.ts` - Status effects
+- `src/systems/skillTree.ts` - Skill tree system
+- `src/systems/recruitment.ts` - Character recruitment
 
 ### Data Definitions:
 - `src/data/characterTypes.ts` - 6 character types
 - `src/data/abilities.ts` - 24 player abilities
 - `src/data/enemyAbilities.ts` - 40+ enemy abilities
 - `src/data/enemies.ts` - 28 enemy templates
+- `src/data/stages.ts` - 100 stage definitions
+- `src/data/skillTrees.ts` - 120 skill nodes
 - `src/data/equipmentTemplates.ts` - Equipment generation
 - `src/data/statusEffects.ts` - 26 status effects
 
 ### Types:
+- `src/types/campaign.ts` - Campaign types
 - `src/types/combat.ts` - Combat state & types
 - `src/types/character.ts` - Character types
 - `src/types/ability.ts` - Ability types
 - `src/types/enemy.ts` - Enemy types
 - `src/types/equipment.ts` - Equipment types
 - `src/types/status.ts` - Status effect types
+- `src/types/skillTree.ts` - Skill tree types
 
 ### Tests:
-- `src/tests/combatDemo.ts` - Combat testing (280 lines)
+- `src/tests/combatDemo.ts` - Combat testing
+- `src/tests/campaignTests.ts` - Campaign testing
+- `src/tests/phase8Tests.ts` - Progression testing
 - `src/tests/statusEffectsDemo.ts` - Status effects testing
 
 ---
 
 ## 💡 Tips for Next Session
 
-1. **Start with Phase 7 Completion**: The 10% remaining is quick wins
-2. **Test Thoroughly**: Use the combat demo extensively before moving to Phase 8
-3. **Read Session Summary**: Check `docs/SESSION_SUMMARY.md` for latest implementation details
-4. **Check GAME_DESIGN.md**: For skill tree design when starting Phase 8
+1. **Start with Phase 10**: Save/Load system is critical infrastructure
+2. **Reference Existing Patterns**: Look at game state types for serialization structure
+3. **Test Save/Load Cycle**: Create game → save → reload → verify state restored
+4. **Check GAME_DESIGN.md**: For any save system requirements
 5. **Build Often**: Run `npm run build` to catch TypeScript errors early
 
 ---
 
-**Good luck! The combat system is fully functional and ready for the next phase of development!** 🚀
+**Status**: Campaign system complete! Ready to implement persistent save system. 🚀

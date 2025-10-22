@@ -5,33 +5,11 @@
 import type { Character } from './character';
 import type { Equipment } from './equipment';
 import type { CombatState } from './combat';
-
-export interface StageDefinition {
-  stageNumber: number;
-  name: string;
-  description: string;
-  
-  // Enemy composition
-  enemyTemplateIds: string[];
-  enemyLevels: number[];        // Level for each enemy
-  
-  // Boss stage
-  isBossStage: boolean;
-  
-  // Rewards
-  baseXpReward: number;
-  guaranteedDrops?: string[];   // Equipment IDs
-}
+import type { CampaignProgress } from './campaign';
 
 export interface PlayerProgress {
-  // Stage progression
-  currentStage: number;
-  highestStageCleared: number;
-  totalBattlesWon: number;      // For recruitment tracking
-  
-  // Recruitment
-  characterRecruitments: number; // How many times recruited (max 6)
-  nextRecruitmentAt: number;     // Battle count for next recruitment
+  // Campaign progression (uses new campaign system)
+  campaign: CampaignProgress;
   
   // Statistics
   totalBattles: number;
