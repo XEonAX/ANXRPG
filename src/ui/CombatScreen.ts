@@ -22,7 +22,10 @@ import {
   acceptDefeat
 } from '../systems/combat';
 
-// Targeting state for click-to-target
+// Selected target state - tracks which enemy is currently selected
+let selectedTarget: string | null = null;
+
+// Targeting state for click-to-target (kept for backwards compatibility)
 let targetingState: {
   active: boolean;
   ability: Ability | null;
@@ -61,6 +64,17 @@ export function renderCombat(context: ScreenContext): HTMLElement {
   if (combatState.phase === 'setup') {
     startCombat(combatState);
   }
+  
+  // Auto-select first alive enemy if no target selected
+  if (!selectedTarget || !combatState.enemyTeam.find(e => e.id === selectedTarget && e.isAlive)) {
+    const firstAliveEnemy = combatState.enemyTeam.find(e => e.isAlive);
+    selectedTarget = firstAliveEnemy?.id || null;
+  }
+  
+  // Store state for click handlers (keep targeting state for uiState/stageNumber access)
+  targetingState.combat = combatState;
+  targetingState.uiState = uiState;
+  targetingState.stageNumber = stageNumber;
   
   // Combat header
   const header = createElement('div', 'combat-header');
@@ -224,21 +238,22 @@ function renderCharacterCard(char: Character, combat: CombatState): HTMLElement 
 function renderEnemyCard(enemy: Enemy, combat: CombatState): HTMLElement {
   const currentCombatant = getCurrentCombatant(combat);
   const isActive = currentCombatant?.id === enemy.id;
-  const isTargetable = targetingState.active && enemy.isAlive;
+  const isSelected = selectedTarget === enemy.id;
+  const isTargetable = enemy.isAlive;
   
   let cardClass = 'combat-enemy-card';
   if (isActive) cardClass += ' combat-enemy-card--active';
-  if (isTargetable) cardClass += ' combat-enemy-card--targetable';
+  if (isSelected && isTargetable) cardClass += ' combat-enemy-card--selected';
   if (!enemy.isAlive) cardClass += ' combat-enemy-card--dead';
   
   const card = createElement('div', cardClass);
   card.dataset.enemyId = enemy.id;
   
-  // Add click handler for targeting
+  // Add click handler for target selection (always enabled for alive enemies)
   if (isTargetable) {
     card.style.cursor = 'pointer';
     card.addEventListener('click', () => {
-      handleEnemyTargetClick(enemy.id);
+      handleEnemyTargetClick(enemy.id, combat);
     });
   }
   
@@ -274,10 +289,10 @@ function renderEnemyCard(enemy: Enemy, combat: CombatState): HTMLElement {
     card.appendChild(indicator);
   }
   
-  // Targeting indicator
-  if (isTargetable) {
+  // Target selection indicator
+  if (isSelected && isTargetable) {
     const targetIndicator = createElement('div', 'combat-enemy-card__target-indicator');
-    targetIndicator.textContent = '🎯 Click to Target';
+    targetIndicator.textContent = '🎯 SELECTED';
     card.appendChild(targetIndicator);
   }
   
@@ -307,23 +322,18 @@ function renderActionPanel(combat: CombatState, uiState: UIGameState, stageNumbe
   
   const title = createElement('h3', 'combat-action-panel__title');
   
-  // Show targeting message if in targeting mode
-  if (targetingState.active && targetingState.ability) {
-    title.textContent = `🎯 Select target for ${targetingState.ability.name}`;
+  // Show current target
+  if (selectedTarget) {
+    const targetEnemy = combat.enemyTeam.find(e => e.id === selectedTarget);
+    if (targetEnemy) {
+      title.textContent = `${character.name}'s Turn | Target: ${targetEnemy.name}`;
+    } else {
+      title.textContent = `${character.name}'s Turn`;
+    }
   } else {
     title.textContent = `${character.name}'s Turn`;
   }
   panel.appendChild(title);
-  
-  // If in targeting mode, show cancel button
-  if (targetingState.active) {
-    const cancelBtn = createButton('❌ Cancel Targeting', () => {
-      exitTargetingMode();
-      ScreenManager.updateContext({ combat, uiState, stage: stageNumber });
-    }, 'btn btn--danger');
-    panel.appendChild(cancelBtn);
-    return panel;
-  }
   
   // Ability buttons
   const abilityContainer = createElement('div', 'combat-action-panel__abilities');
@@ -385,7 +395,7 @@ function createAbilityButton(
 }
 
 /**
- * Handle ability button click - select target and execute
+ * Handle ability button click - execute on selected target
  */
 function handleAbilityClick(
   ability: Ability,
@@ -394,16 +404,21 @@ function handleAbilityClick(
   uiState: UIGameState,
   stageNumber?: number
 ): void {
-  // For single-enemy abilities, enter targeting mode
-  if (ability.targetType === 'single-enemy') {
-    enterTargetingMode(ability, character, combat, uiState, stageNumber);
-    return;
-  }
-  
-  // For other abilities, auto-target and execute immediately
   let targetIds: string[];
   
+  // Determine targets based on ability type
   switch (ability.targetType) {
+    case 'single-enemy':
+      // Use selected target
+      if (selectedTarget && combat.enemyTeam.find(e => e.id === selectedTarget && e.isAlive)) {
+        targetIds = [selectedTarget];
+      } else {
+        // Fallback to first alive enemy
+        const firstAliveEnemy = combat.enemyTeam.find(e => e.isAlive);
+        targetIds = firstAliveEnemy ? [firstAliveEnemy.id] : [];
+      }
+      break;
+      
     case 'self':
       targetIds = [character.id];
       break;
@@ -428,67 +443,40 @@ function handleAbilityClick(
     default:
       // Fallback: first alive enemy
       const firstAliveEnemy = combat.enemyTeam.find(e => e.isAlive);
-      targetIds = [firstAliveEnemy?.id || ''];
+      targetIds = firstAliveEnemy ? [firstAliveEnemy.id] : [];
       break;
+  }
+  
+  if (targetIds.length === 0) {
+    showNotification('❌ No valid targets', 'error');
+    return;
   }
   
   executeAbilityWithTargets(ability.id, targetIds, combat, uiState, stageNumber);
 }
 
 /**
- * Enter targeting mode for click-to-target
+ * Handle clicking on an enemy to select as target
  */
-function enterTargetingMode(
-  ability: Ability,
-  character: Character,
-  combat: CombatState,
-  uiState: UIGameState,
-  stageNumber?: number
-): void {
-  targetingState.active = true;
-  targetingState.ability = ability;
-  targetingState.character = character;
-  targetingState.combat = combat;
-  targetingState.uiState = uiState;
-  targetingState.stageNumber = stageNumber;
+function handleEnemyTargetClick(enemyId: string, combat: CombatState): void {
+  const enemy = combat.enemyTeam.find(e => e.id === enemyId);
   
-  // Re-render to show targeting UI
-  ScreenManager.updateContext({ combat, uiState, stage: stageNumber });
-  
-  showNotification('🎯 Select a target', 'info');
-}
-
-/**
- * Handle clicking on an enemy during targeting mode
- */
-function handleEnemyTargetClick(enemyId: string): void {
-  if (!targetingState.active || !targetingState.ability) {
+  // Only allow selecting alive enemies
+  if (!enemy || !enemy.isAlive) {
     return;
   }
   
-  // Execute ability on selected target
-  executeAbilityWithTargets(
-    targetingState.ability.id,
-    [enemyId],
-    targetingState.combat!,
-    targetingState.uiState!,
-    targetingState.stageNumber
-  );
+  // Update selected target
+  selectedTarget = enemyId;
   
-  // Exit targeting mode
-  exitTargetingMode();
-}
-
-/**
- * Exit targeting mode
- */
-function exitTargetingMode(): void {
-  targetingState.active = false;
-  targetingState.ability = null;
-  targetingState.character = null;
-  targetingState.combat = null;
-  targetingState.uiState = null;
-  targetingState.stageNumber = undefined;
+  // Re-render to show updated selection
+  const stageNumber = targetingState.stageNumber;
+  const uiState = targetingState.uiState;
+  
+  if (uiState) {
+    ScreenManager.updateContext({ combat, uiState, stage: stageNumber });
+    showNotification(`🎯 Target: ${enemy.name}`, 'info');
+  }
 }
 
 /**
@@ -594,6 +582,9 @@ function renderCombatLog(combat: CombatState): HTMLElement {
  */
 function checkCombatEnd(combat: CombatState, uiState: UIGameState, stageNumber?: number): void {
   if (combat.phase === 'victory') {
+    // Reset selected target on victory
+    selectedTarget = null;
+    
     // Navigate to battle results
     setTimeout(() => {
       EventBus.emit(GameEvents.COMBAT_END);
@@ -604,13 +595,17 @@ function checkCombatEnd(combat: CombatState, uiState: UIGameState, stageNumber?:
       });
     }, 1500);
   } else if (combat.phase === 'defeat') {
-    // Show defeat message
+    // Reset selected target on defeat
+    selectedTarget = null;
+    
+    // Navigate to battle results to show defeat screen
     setTimeout(() => {
       EventBus.emit(GameEvents.COMBAT_END);
-      showNotification('💀 Defeat! Returning to campaign...', 'error');
-      setTimeout(() => {
-        ScreenManager.navigateTo('campaignMap', { uiState });
-      }, 2000);
+      ScreenManager.navigateTo('battleResults', { 
+        combat, 
+        uiState, 
+        stage: stageNumber 
+      });
     }, 1500);
   } else if (combat.phase === 'team-wipe') {
     // Show reserve swap option

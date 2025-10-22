@@ -62,6 +62,11 @@ export function renderBattleResults(context: ScreenContext): HTMLElement {
   const continueBtn = createButton(
     isVictory ? '➡️ Continue' : '⬅️ Return to Campaign',
     () => {
+      // Fully restore all characters after battle (heal HP and AP) - whether victory or defeat
+      uiState.saveData.roster.forEach(char => {
+        fullyRestoreCharacter(char);
+      });
+      
       if (isVictory && stageNumber) {
         // Mark stage as complete
         completeStage(
@@ -72,11 +77,6 @@ export function renderBattleResults(context: ScreenContext): HTMLElement {
           combat.lootDropped || []
         );
         
-        // Fully restore all characters after victory (heal HP and AP)
-        uiState.saveData.roster.forEach(char => {
-          fullyRestoreCharacter(char);
-        });
-        
         // Auto-save
         saveGame(uiState.saveData);
         EventBus.emit(GameEvents.GAME_SAVED);
@@ -85,6 +85,12 @@ export function renderBattleResults(context: ScreenContext): HTMLElement {
         EventBus.emit(GameEvents.STAGE_COMPLETED, stageNumber);
         
         showNotification('✅ Party fully healed! Progress saved!', 'success');
+      } else {
+        // Defeat - just save the healing
+        saveGame(uiState.saveData);
+        EventBus.emit(GameEvents.GAME_SAVED);
+        
+        showNotification('✅ Party fully healed!', 'success');
       }
       
       // Return to campaign map

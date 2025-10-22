@@ -990,15 +990,19 @@ a:hover {
   gap: var(--spacing-md);
   height: 100vh;
   overflow: hidden;
+  padding: 0; /* Override .screen padding */
 }
 
 .combat-header {
   background: var(--bg-primary);
   padding: var(--spacing-md);
-  border-bottom: 2px solid var(--primary-color);
+  margin: var(--spacing-md) var(--spacing-md) 0 var(--spacing-md);
+  border: 2px solid var(--primary-color);
+  border-radius: var(--radius-md);
   display: flex;
   justify-content: space-between;
   align-items: center;
+  flex-shrink: 0; /* Prevent header from shrinking */
 }
 
 .combat-header__title {
@@ -1016,7 +1020,7 @@ a:hover {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: var(--spacing-lg);
-  padding: var(--spacing-md);
+  padding: 0 var(--spacing-md);
   flex: 1;
   overflow: hidden;
 }
@@ -1027,6 +1031,10 @@ a:hover {
   gap: var(--spacing-md);
   height: 100%;
   overflow-y: auto;
+  background: var(--bg-primary);
+  border: 2px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-md);
 }
 
 .combat-team__title {
@@ -1034,11 +1042,6 @@ a:hover {
   margin: 0;
   padding-bottom: var(--spacing-sm);
   border-bottom: 1px solid var(--border-color);
-}
-
-.combat-team--player {
-  border-right: 2px solid var(--border-color);
-  padding-right: var(--spacing-md);
 }
 
 .combat-team__active {
@@ -1094,6 +1097,19 @@ a:hover {
 .combat-enemy-card--targetable:hover {
   border-color: var(--primary-color);
   box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.7);
+  transform: scale(1.05);
+}
+
+/* Selected target highlighting */
+.combat-enemy-card--selected {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.6);
+  transform: scale(1.03);
+}
+
+.combat-enemy-card--selected:hover {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.8);
   transform: scale(1.05);
 }
 
@@ -1210,11 +1226,14 @@ a:hover {
 /* Action panel */
 .combat-action-panel {
   background: var(--bg-primary);
-  border-top: 2px solid var(--primary-color);
+  border: 2px solid var(--primary-color);
+  border-radius: var(--radius-md);
   padding: var(--spacing-md);
+  margin: 0 var(--spacing-md);
   display: flex;
   flex-direction: column;
   gap: var(--spacing-md);
+  flex-shrink: 0; /* Prevent panel from shrinking */
 }
 
 .combat-action-panel__waiting {
@@ -1285,11 +1304,13 @@ a:hover {
 /* Combat log */
 .combat-log {
   background: var(--bg-primary);
-  border: 1px solid var(--border-color);
+  border: 2px solid var(--border-color);
   border-radius: var(--radius-md);
   padding: var(--spacing-md);
+  margin: 0 var(--spacing-md) var(--spacing-md) var(--spacing-md);
   max-height: 200px;
   overflow-y: auto;
+  flex-shrink: 0; /* Prevent log from shrinking */
 }
 
 .combat-log__title {
@@ -1365,13 +1386,6 @@ a:hover {
 @media (max-width: 768px) {
   .combat-area {
     grid-template-columns: 1fr;
-  }
-  
-  .combat-team--player {
-    border-right: none;
-    border-bottom: 2px solid var(--border-color);
-    padding-right: 0;
-    padding-bottom: var(--spacing-md);
   }
   
   .combat-action-panel__abilities {
