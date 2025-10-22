@@ -571,6 +571,28 @@ const zetaBerserk: Ability = {
 };
 
 /**
+ * ====================
+ * PLACEHOLDER ENEMY ABILITIES
+ * ====================
+ * TODO: Properly implement enemy abilities with correct status effect references
+ * For now, enemies will use basic attack placeholder
+ */
+
+const enemyBasicAttack: Ability = {
+  id: 'enemy_basic_attack',
+  name: 'Attack',
+  description: 'A basic attack.',
+  apCost: 2,
+  targetType: 'single-enemy',
+  guaranteedHit: false,
+  effects: {
+    damageMultiplier: 1.2,
+    damageType: 'physical',
+  },
+  requiredLevel: 1,
+};
+
+/**
  * Ability Registry
  * All abilities indexed by ID for easy lookup
  */
@@ -610,6 +632,9 @@ export const ABILITIES: Record<string, Ability> = {
   zeta_bloodlust: zetaBloodlust,
   zeta_devour: zetaDevour,
   zeta_berserk: zetaBerserk,
+  
+  // Enemy abilities (placeholder until properly formatted)
+  enemy_basic_attack: enemyBasicAttack,
 };
 
 /**

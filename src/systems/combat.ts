@@ -35,6 +35,12 @@ import {
 import { consumeAp, regenerateAp, damageCharacter, healCharacter } from './character';
 import { randomInt } from '../utils/random';
 import { getAbility } from '../data/abilities';
+import { 
+  checkBossSummonTriggers,
+  summonMinions,
+  cleanupDeadSummons,
+  getEnemyTemplate
+} from './enemy';
 
 /**
  * Initialize a new combat state
@@ -445,6 +451,49 @@ export function executeAbility(
             message: `${target.name} has been defeated!`,
             targetIds: [target.id],
           });
+          
+          // Clean up boss summon tracking if this was a summoned minion
+          for (const enemy of state.enemyTeam) {
+            if (enemy.isBoss) {
+              cleanupDeadSummons(enemy, target.id);
+            }
+          }
+        }
+      }
+    }
+    
+    // Check for boss summons after damage (HP threshold triggers)
+    for (const enemy of state.enemyTeam) {
+      if (enemy.isAlive && enemy.isBoss) {
+        const template = getEnemyTemplate(enemy.templateId);
+        if (template) {
+          const minionTemplateIds = checkBossSummonTriggers(enemy, template);
+          if (minionTemplateIds.length > 0) {
+            const summonedMinions = summonMinions(enemy, minionTemplateIds);
+            
+            // Add minions to enemy team
+            state.enemyTeam.push(...summonedMinions);
+            
+            // Add minions to turn order
+            for (const minion of summonedMinions) {
+              state.turnOrder.combatants.push({
+                id: minion.id,
+                type: 'enemy',
+                enemy: minion,
+              });
+            }
+            
+            // Recalculate turn order to maintain speed-based sorting
+            state.turnOrder = calculateTurnOrder(state);
+            
+            addCombatLog(state, {
+              type: 'turn-start', // Use existing type
+              turn: state.currentTurn,
+              timestamp: Date.now(),
+              message: `${enemy.name} summons reinforcements! ${summonedMinions.map(m => m.name).join(', ')} appear!`,
+              actorId: enemy.id,
+            });
+          }
         }
       }
     }
