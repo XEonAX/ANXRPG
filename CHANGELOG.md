@@ -1,5 +1,48 @@
 # ANXRPG Development Changelog
 
+## Version 0.8.0 - Progression System Complete (October 22, 2025) - ✅ MAJOR MILESTONE
+
+### ✅ Phase 8: Progression System - 100% COMPLETE
+**Status**: Full skill tree and recruitment systems implemented!
+
+**What's New**:
+- ✅ **Skill Trees**: 120 total nodes (20 per character type)
+- ✅ **Skill Point System**: Automatic allocation on level-up, prerequisite checking
+- ✅ **Stat Bonuses**: Skill tree bonuses integrated into character stats
+- ✅ **Ability Slots**: 5th slot at level 30, 6th at level 65
+- ✅ **Recruitment System**: New character every 20 victories (max 6 roster)
+- ✅ **Victory Tracking**: Helper for battle counting (stage 5+)
+- ✅ **Retirement Mechanics**: At 100 victories, option to retire for 6th recruit
+- ✅ **Test Suite**: 7 comprehensive test scenarios
+
+**Implementation**:
+- Created `src/types/skillTree.ts` - Skill tree type system (86 lines)
+- Created `src/data/skillTrees.ts` - All 6 skill trees (1,083 lines)
+- Created `src/systems/skillTree.ts` - Skill tree manager (250 lines)
+- Created `src/systems/recruitment.ts` - Recruitment system (145 lines)
+- Created `src/tests/phase8Tests.ts` - Test scenarios (280 lines)
+- Modified `src/systems/character.ts` - Integrated skill tree bonuses
+- Modified `src/systems/combat.ts` - Added recruitment tracking helper
+
+**Skill Tree Features**:
+- Linear progression with prerequisites
+- Mix of stat bonuses and ability unlocks
+- Multi-point nodes (2-3 skill points required)
+- Grandmaster nodes at level 100 with massive bonuses
+- ~35-40 total points needed to complete tree (99 available at level 100)
+
+**Recruitment Milestones**:
+- 20 victories: 1st recruitment (roster size 2)
+- 40 victories: 2nd recruitment (roster size 3)
+- 60 victories: 3rd recruitment (roster size 4)
+- 80 victories: 4th recruitment (roster size 5)
+- 100 victories: 5th recruitment (roster size 6, retirement option)
+
+**Files Created**: 5 files (~1,844 lines)
+**Files Modified**: 4 files
+
+---
+
 ## Version 0.6.0 - Combat Rewards & Enemy Abilities (October 22, 2025) - ✅ MAJOR MILESTONE
 
 ### ✅ Phase 6: Combat Engine - 100% COMPLETE

@@ -45,6 +45,7 @@ import {
   cleanupDeadSummons,
   getEnemyTemplate
 } from './enemy';
+import { shouldCountForRecruitment } from './recruitment';
 
 /**
  * Initialize a new combat state
@@ -844,3 +845,18 @@ export function getCurrentTurnLog(state: CombatState): CombatLogEntry[] {
 export function getRecentLog(state: CombatState, count: number = 10): CombatLogEntry[] {
   return state.combatLog.slice(-count);
 }
+
+/**
+ * Check if combat victory should count toward recruitment progress
+ * 
+ * NOTE: This is called from the game loop (Phase 9) after combat ends.
+ * The game loop has access to both CombatState and GameState and can
+ * increment PlayerProgress.totalBattlesWon when appropriate.
+ * 
+ * @param stageNumber - The stage number of the completed battle
+ * @returns true if victory should count for recruitment tracking
+ */
+export function shouldVictoryCountForRecruitment(stageNumber: number): boolean {
+  return shouldCountForRecruitment(stageNumber);
+}
+

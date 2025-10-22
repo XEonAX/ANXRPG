@@ -72,32 +72,3 @@ export interface GameState {
   saveTimestamp: number;
   playtimeSeconds: number;
 }
-
-export interface SkillTreeNode {
-  id: string;
-  name: string;
-  description: string;
-  
-  // Requirements
-  requiredLevel: number;
-  pointsCost: number;           // How many skill points needed
-  prerequisiteNodeId?: string;  // Must unlock this node first
-  
-  // Rewards (mutually exclusive: stat OR ability)
-  statBonus?: {
-    stat: string;
-    value: number;
-  };
-  
-  abilityUnlock?: string;       // Ability ID to unlock
-  abilitySlotUnlock?: boolean;  // Unlocks additional ability slot
-  
-  // Position for UI rendering
-  row: number;
-  column: number;
-}
-
-export interface SkillTree {
-  characterType: string;
-  nodes: SkillTreeNode[];
-}

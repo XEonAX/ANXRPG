@@ -9,6 +9,7 @@ import { calculateStatsAtLevel, calculateXpForLevel } from '../utils/formulas';
 import { generateId } from '../utils/random';
 import { calculateEquipmentBonuses } from './equipment';
 import { calculateStatusEffectStatModifiers } from './statusEffects';
+import { calculateSkillTreeBonuses } from './skillTree';
 
 /**
  * Create a new character instance
@@ -69,6 +70,21 @@ export function calculateCurrentStats(
   equipmentInventory: Equipment[] = []
 ): CharacterStats {
   const baseStats = { ...character.stats };
+  
+  // Apply skill tree bonuses (Phase 8)
+  const skillTreeBonuses = calculateSkillTreeBonuses(character);
+  Object.entries(skillTreeBonuses.stats).forEach(([stat, value]) => {
+    if (stat === 'maxHp') {
+      // Max HP bonus increases max HP
+      baseStats.maxHp += value;
+      // Also increase current HP proportionally if at max
+      if (baseStats.hp === baseStats.maxHp - value) {
+        baseStats.hp = baseStats.maxHp;
+      }
+    } else if (stat in baseStats) {
+      (baseStats as any)[stat] += value;
+    }
+  });
   
   // Apply equipment bonuses (Phase 4)
   const equipmentBonuses = calculateEquipmentBonuses(character.equipment, equipmentInventory);

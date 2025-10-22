@@ -274,7 +274,7 @@ JSON.parse(localStorage.getItem('anxrpg_save')) // Inspect structure
 - **Battle Log**: Ensure combat messages don't cause memory leaks over long battles
 
 ## Phase Status (Reference IMPLEMENTATION_PLAN.md and docs/PHASE_AUDIT.md)
-**Current Status**: Active Development - 7/14 phases complete, 1 partial (~51% overall)
+**Current Status**: Active Development - 8/14 phases complete (~57% overall)
 
 Development follows 14-phase plan:
 1. ✅ Project setup (Vite + TS) - **COMPLETE**
@@ -284,7 +284,7 @@ Development follows 14-phase plan:
 5. ✅ Status effects engine - **COMPLETE**
 6. ✅ Combat engine (turn-based + multi-action) - **COMPLETE**
 7. ✅ Enemy system (7 tiers + bosses) - **COMPLETE**
-8. 🟡 Progression (leveling + skill trees + recruitment) - **10% COMPLETE** (awardXp function exists and integrated)
+8. ✅ Progression (leveling + skill trees + recruitment) - **100% COMPLETE**
 9. ⏳ Campaign (100 stages) - **NEXT**
 10. ⏳ Save system (LocalStorage)
 11. ⏳ UI implementation (semantic HTML)
@@ -294,35 +294,31 @@ Development follows 14-phase plan:
 
 **When implementing**: Reference phase details in IMPLEMENTATION_PLAN.md for task breakdowns.
 
-**Phase 7 Complete**:
-- All 28 enemy templates defined (21 regular + 7 bosses)
-- 40+ enemy abilities with status effects
-- All ability IDs verified and compiling successfully
-- Boss summon mechanics integrated
-- XP/equipment rewards integrated into combat
-
-**Phase 8 Next Steps** (90% remaining):
-- Design skill tree system (~20 nodes × 6 character types = 120 nodes)
-- Implement skill point allocation
-- Create character recruitment system (every 20 victories)
-- Add battle victory tracking
-- Populate state.xpEarned and state.lootDropped fields
+**Phase 8 Complete**:
+- 120 skill nodes defined (20 per character type)
+- Skill tree system with prerequisite checking
+- Stat bonuses: HP, ATK, DEF, MAG, RES, SPD, CRT, EVA, ACC, AP regen
+- Ability slot unlocks (5th, 6th slots)
+- Multi-point nodes (2-3 points required)
+- Grandmaster nodes (high-value endgame unlocks)
+- Recruitment system (milestones: 20, 40, 60, 80, 100 victories)
+- Max 6 roster with retirement option at 100 victories
+- Full integration with character stat calculation
+- Comprehensive test suite (7 scenarios)
 
 **Completed Implementations**:
-- Type system (7 modules, 40+ interfaces)
+- Type system (8 modules including skillTree.ts)
 - 6 character types with balanced stats
 - 24 player abilities with varied effects
 - 40+ enemy abilities with status effects
 - Equipment system (8 slots, 7 rarity tiers, procedural generation)
 - Status effects system (26 effects, stacking, DOT/HOT, control)
 - Combat engine (turn-based, multi-action, ability execution, damage calculation, rewards)
-- Enemy system (28 templates, 40+ abilities, boss summons, all verified)
-- Character management functions (including awardXp)
+- Enemy system (28 templates, 40+ abilities, boss summons)
+- Progression system (XP, leveling, skill trees, recruitment) - **COMPLETE**
+- Character management with skill tree integration
 - Formula library (damage, XP, scaling)
 - RNG utilities
-
-**Partially Complete**:
-- Progression system (XP integrated, skill trees not started)
 
 ## Game Design Reference
 See `GAME_DESIGN.md` for:

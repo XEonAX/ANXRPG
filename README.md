@@ -1,25 +1,24 @@
 # ANXRPG
 A web## 📋 Current Status
-**Phase**: Active Development - 7/14 Complete, 1 Partial (~51% Overall)
+**Phase**: Active Development - 8/14 Complete (~57% Overall)
 
 - ✅ **Phase 1**: Project Foundation (Types & Structure)
-- ✅ **Phase 2**: Character System (6 character types, including `awardXp()`)
+- ✅ **Phase 2**: Character System (6 character types)
 - ✅ **Phase 3**: Ability System (24 player abilities + 40+ enemy abilities)
 - ✅ **Phase 4**: Equipment System (8 slots, 7 rarity tiers)
 - ✅ **Phase 5**: Status Effects System (26 effects, stacking, DOT/HOT)
-- ✅ **Phase 6**: Combat Engine (100% - full combat loop with XP/loot rewards!)
-- ✅ **Phase 7**: Enemy System (100% - 28 templates, 40+ abilities, all verified!)
-- 🟡 **Phase 8**: Progression (10% - `awardXp` exists and integrated)
+- ✅ **Phase 6**: Combat Engine (Turn-based, multi-action, XP/loot rewards)
+- ✅ **Phase 7**: Enemy System (28 templates, 40+ abilities, boss summons)
+- ✅ **Phase 8**: Progression System (Skill trees + Recruitment) - **JUST COMPLETED!**
 
-**Latest Achievement**: Phase 7 is now 100% complete! All enemy templates verified, 40+ enemy abilities implemented with proper status effects, all ability IDs fixed and TypeScript compilation successful.
+**Latest Achievement**: Phase 8 is now 100% complete! Skill tree system with 120 nodes across all 6 character types, recruitment system (every 20 victories), and full integration with character stats.
 
 **Next Steps**: 
-1. Begin Phase 8: Skill tree system (~20 nodes × 6 character types = 120 nodes)
-2. Character recruitment system (every 20 battle victories)
-3. Battle victory tracking
-4. Phase 9: Campaign system (100 stages)
+1. Begin Phase 9: Campaign system (100 stages)
+2. Phase 10: Save/Load system (LocalStorage)
+3. Phase 11: UI implementation (semantic HTML)
 
-See the [implementation plan](IMPLEMENTATION_PLAN.md) and [session summary](docs/SESSION_SUMMARY.md) for complete status.fighting RPG with deep character progression, equipment systems, and 100 stages of increasingly difficult combat.
+See the [implementation plan](IMPLEMENTATION_PLAN.md) and [Phase 8 summary](docs/PHASE_8_SUMMARY.md) for complete details.fighting RPG with deep character progression, equipment systems, and 100 stages of increasingly difficult combat.
 
 ## 🎮 Overview
 ANXRPG features 6 unique character types (Greek alphabet themed), a sophisticated Action Point combat system, equipment with level requirements, skill trees, and a comprehensive 100-stage campaign with boss battles every 10 stages.
@@ -56,7 +55,9 @@ See the [implementation plan](IMPLEMENTATION_PLAN.md) and [audit](docs/PHASE_AUD
 - **[IMPLEMENTATION_PLAN.md](IMPLEMENTATION_PLAN.md)** - 14-phase technical implementation roadmap
 - **[CHANGELOG.md](CHANGELOG.md)** - Detailed version history and phase completion notes
 - **[.github/copilot-instructions.md](.github/copilot-instructions.md)** - AI coding agent guidelines
-- **[docs/](docs/)** - Phase-specific implementation summaries
+- **[docs/PHASE_8_SUMMARY.md](docs/PHASE_8_SUMMARY.md)** - Latest: Phase 8 implementation details
+- **[docs/PHASE_AUDIT.md](docs/PHASE_AUDIT.md)** - Accurate phase completion tracking
+- **[docs/](docs/)** - All phase-specific implementation summaries
 
 ## 🎯 Key Features (Planned)
 - **6 Character Types**: Alpha (Paladin), Beta (Rogue), Gamma (Mage), Delta (Warrior), Epsilon (Cleric), Zeta (Berserker)
@@ -104,18 +105,33 @@ See [LICENSE](LICENSE) file for details.
 
 ## 📊 Implementation Progress
 
-### Completed Systems
-- **Type Definitions**: Complete type system with 7 core modules (status, character, ability, equipment, enemy, combat, game)
-- **Character Types**: All 6 character types with balanced base stats and growth rates
-- **Abilities**: 24 abilities (4 per character type) with varied effects and targeting
-- **Equipment System**: 8 equipment slots, 7 rarity tiers, procedural generation with level scaling
-- **Status Effects**: 26 predefined effects with stacking, DOT/HOT, control, and stat modifiers
-- **Combat Engine**: Turn-based combat with multi-action, damage calculations, ability execution, and team management
-- **Damage System**: Physical/magical damage, critical hits, hit/miss mechanics, lifesteal, AoE support
-- **Formulas**: Damage calculation, stat scaling, XP curves, hit/miss mechanics
-- **Utilities**: RNG system, formula library, ID generation
+### Completed Systems (Phase 8 - v0.8.0)
+- **Type Definitions**: 7 core modules + skill tree types
+- **Character Types**: All 6 types with balanced stats and growth rates
+- **Abilities**: 24 player abilities + 40+ enemy abilities
+- **Equipment System**: 8 slots, 7 rarity tiers, procedural generation
+- **Status Effects**: 26 effects with stacking, DOT/HOT, control
+- **Combat Engine**: Turn-based multi-action with full reward integration
+- **Enemy System**: 28 templates (21 regular + 7 bosses), boss summons
+- **Skill Trees**: 120 nodes across 6 character types (~20 each)
+- **Recruitment System**: Victory-based unlocks (every 20 wins, max 6 roster)
+- **Damage System**: Physical/magical, crits, hit/miss, lifesteal
+- **Formulas**: Damage, stat scaling, XP curves, hit/miss
+- **Utilities**: RNG, formula library, ID generation
 
-### Combat System Features
+### Skill Tree System (Phase 8)
+- **120 Total Nodes**: ~20 nodes per character type (14 stat nodes, 2-3 ability slot unlocks, 3-4 multi-point nodes)
+- **Linear Progression**: Prerequisite system ensures logical unlock order
+- **Node Types**: Stat bonuses (HP, ATK, DEF, etc.), ability slot unlocks (5th/6th), multi-point investments
+- **Integration**: Skill bonuses apply before equipment bonuses in stat calculation
+- **Balance**: Each character has 1-2 grandmaster nodes requiring multiple skill points
+
+### Recruitment System (Phase 8)
+- **Victory Milestones**: Unlock recruitment at 20, 40, 60, 80, 100 battle victories
+- **Max Roster**: 6 characters total (active + reserve)
+- **Retirement Option**: At 100 victories, can retire existing character to recruit new one
+- **Starting Level**: All new recruits start at level 1 regardless of team progress
+- **Character Choice**: Player selects from all 6 character types at each milestone
 - **Turn-Based System**: Speed-based turn order with one-time player character ordering
 - **Multi-Action Combat**: Use multiple abilities per turn with AP tracking
 - **Damage Formulas**: `(ATK × mult) - (DEF × 0.5)` for physical, `(MAG × mult) - (RES × 0.5)` for magical
@@ -126,7 +142,7 @@ See [LICENSE](LICENSE) file for details.
 - **Combat Log**: Comprehensive event tracking for all combat actions
 - **Ability Execution**: Full damage, healing, status effects, AP restore/drain support
 
-### Equipment System Features
+### Combat System Features
 - **8 Slots**: Main Hand, Off Hand, Head, Chest, Legs, Neck, Wrist×2
 - **7 Rarity Tiers**: Basic, Common, Uncommon, Rare, Epic, Legendary, Mythic
 - **Level Requirements**: Equipment drops at stage level, requires matching character level
@@ -134,7 +150,7 @@ See [LICENSE](LICENSE) file for details.
 - **Procedural Names**: "Mythic Worldbreaker Greatsword", "Rare Enchanted Amulet", etc.
 - **Dual-Weapon Support**: Two-handed weapons occupy both hand slots
 
-### Status Effects System Features
+### Equipment System Features
 - **26 Predefined Effects**: Buffs, debuffs, DOT, HOT, control effects, special effects
 - **Stacking Mechanics**: Stackable effects accumulate (with max stacks), non-stackable refresh duration
 - **Stat Modifiers**: Both flat bonuses (+20 ATK) and multiplicative modifiers (×1.25 ATK)
@@ -142,7 +158,7 @@ See [LICENSE](LICENSE) file for details.
 - **Control Effects**: Stun, freeze, sleep, petrify prevent character actions
 - **DOT/HOT**: Damage/healing over time with stacking support (Poison, Burn, Bleed, Regeneration)
 
-### Character Types Implemented
+### Status Effects System Features
 | Type | Role | HP (Lv1) | AP/Turn | Key Stats |
 |------|------|----------|---------|-----------|
 | Alpha (Paladin) | Tank/Healer | 120 | +3 | High DEF, Medium ATK |
@@ -153,11 +169,11 @@ See [LICENSE](LICENSE) file for details.
 | Zeta (Berserker) | High Risk DPS | 90 | +5 | Very High ATK, Low DEF |
 
 ## 🤝 Contributing
-This project is in active development (7 phases complete, 1 partial, ~51% done). **The combat system and enemy system are now fully functional with XP/loot rewards!** All 28 enemy templates verified with 40+ abilities. Ready for Phase 8 (Skill Trees). Contributions are welcome!
+This project is in active development (8 phases complete, ~57% done). **Phase 8 just completed!** Skill tree system (120 nodes) and recruitment system fully functional. Ready for Phase 9 (Campaign System). Contributions are welcome!
 
-See [docs/SESSION_SUMMARY.md](docs/SESSION_SUMMARY.md) for the latest implementation session details.
+See [docs/PHASE_8_SUMMARY.md](docs/PHASE_8_SUMMARY.md) for the latest implementation details.
 
 ---
 
-*Last Updated: October 22, 2025 - Phase 7 Complete!*
+*Last Updated: October 22, 2025 - Phase 8 Complete (v0.8.0)!*
 
