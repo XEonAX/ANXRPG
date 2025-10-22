@@ -274,77 +274,77 @@ JSON.parse(localStorage.getItem('anxrpg_save')) // Inspect structure
 - **Battle Log**: Ensure combat messages don't cause memory leaks over long battles
 
 ## Phase Status (Reference IMPLEMENTATION_PLAN.md and docs/PHASE_AUDIT.md)
-**Current Status**: Active Development - 9/14 phases complete (~64% overall)
+**Current Status**: Active Development - 11/14 phases complete (~79% overall)  
+**Game Status**: ✅ **PLAYABLE!** 🎮
 
 Development follows 14-phase plan:
 1. ✅ Project setup (Vite + TS) - **COMPLETE**
 2. ✅ Character system (6 types) - **COMPLETE**
-3. ✅ Ability system (24 abilities) - **COMPLETE**
+3. ✅ Ability system (24 player + 40+ enemy abilities) - **COMPLETE**
 4. ✅ Equipment system (8 slots) - **COMPLETE**
 5. ✅ Status effects engine - **COMPLETE**
-6. ✅ Combat engine (turn-based + multi-action) - **COMPLETE**
+6. ✅ Combat engine (turn-based + multi-action + enemy AI) - **COMPLETE**
 7. ✅ Enemy system (7 tiers + bosses) - **COMPLETE**
 8. ✅ Progression (leveling + skill trees + recruitment) - **COMPLETE**
-9. ✅ Campaign (100 stages) - **100% COMPLETE**
-10. ⏳ Save system (LocalStorage) - **NEXT**
-11. ⏳ UI implementation (semantic HTML)
+9. ✅ Campaign (100 stages) - **COMPLETE**
+10. ✅ Save system (LocalStorage) - **COMPLETE**
+11. 🔄 UI implementation (semantic HTML) - **80% COMPLETE**
 12. ⏳ Game juice (flavor text)
 13. ⏳ Balance & testing
 14. ⏳ Final polish
 
 **When implementing**: Reference phase details in IMPLEMENTATION_PLAN.md for task breakdowns.
 
-**Phase 9 Complete**:
-- 100 stages defined across 7 enemy tiers
-- Boss battles every 10th stage (10, 20, 30... 100)
-- Progressive difficulty scaling (level 1-100+)
-- Reward multipliers (1.0× → 3.0×)
-- Enemy team composition system (1-3 enemies per stage)
-- Victory tracking integrated with recruitment system
-- Stage unlocking with prerequisite checking
-- XP/equipment/gold reward calculation
-- Comprehensive campaign progress tracking
-- 22 campaign management functions
-- Full integration with combat, enemy, and progression systems
-- Test suite with 7 comprehensive scenarios
+**Phase 11 Progress (8/10 screens complete)**:
+- ✅ UI Foundation (ScreenManager, EventBus, UIHelpers, UIState) - 835 lines
+- ✅ Main Menu (New/Continue/Load) - 271 lines
+- ✅ Team Management (Active/Reserve/Roster) - 338 lines
+- ✅ Campaign Map (100 stages, tier sections) - 264 lines
+- ✅ **Combat Screen** (Turn-based, enemy AI, multi-action, click-to-target) - 660 lines **WORKING!**
+- ✅ Battle Results (XP, loot, level-ups) - 197 lines
+- ✅ Character Sheet (Stats, equipment, skill tree) - 450 lines
+- ✅ CSS System (Dark theme, 1200+ lines)
+- ⏳ **Inventory Screen** (NEXT - equipment management)
+- ⏳ Settings Screen (game preferences)
 
-**Phase 8 Complete**:
-- 120 skill nodes defined (20 per character type)
-- Skill tree system with prerequisite checking
-- Stat bonuses: HP, ATK, DEF, MAG, RES, SPD, CRT, EVA, ACC, AP regen
-- Ability slot unlocks (5th, 6th slots)
-- Multi-point nodes (2-3 points required)
-- Grandmaster nodes (high-value endgame unlocks)
-- Recruitment system (milestones: 20, 40, 60, 80, 100 victories)
-- Max 6 roster with retirement option at 100 victories
-- Full integration with character stat calculation
-- Comprehensive test suite (7 scenarios)
-
-**Completed Implementations**:
-- Type system (9 modules: character, ability, combat, enemy, equipment, game, skillTree, status, campaign)
-- 6 character types with balanced stats
-- 24 player abilities with varied effects
-- 40+ enemy abilities with status effects
-- Equipment system (8 slots, 7 rarity tiers, procedural generation)
-- Status effects system (26 effects, stacking, DOT/HOT, control)
-- Combat engine (turn-based, multi-action, ability execution, damage calculation, rewards)
-- Enemy system (28 templates, 40+ abilities, boss summons)
-- Progression system (XP, leveling, skill trees, recruitment) - **COMPLETE**
-- Campaign system (100 stages, 7 tiers, boss battles, victory tracking) - **COMPLETE**
-- Character management with skill tree integration
-- Formula library (damage, XP, scaling)
-- RNG utilities
+**Critical Bug Fixes (Oct 22, 2025 Evening)**:
+- ✅ Fixed enemy turn skipping - enemies now attack correctly!
+- ✅ Updated `getAbility()` to check enemy ability database (was returning `undefined`)
+- ✅ Fixed auto-victory trigger
+- ✅ Added click-to-target feature with animations
+- See `docs/COMBAT_SCREEN_BUG_FIXES.md` for detailed writeup
 
 ## Game Design Reference
 See `GAME_DESIGN.md` for:
-- Complete ability lists (to be defined)
+- Complete ability lists
 - Enemy tier progression details
 - Status effect catalog
 - Equipment tier names (Wooden → Godforged → Worldbreaker)
-- Flavor text guidelines
+- Damage formulas and stat calculations
+- Campaign structure (100 stages, 7 tiers)
+
+## Quick Reference: What's Implemented
+
+**Complete Systems** (11 phases):
+- Type system (9 modules)
+- 6 character types with balanced stats
+- 24 player abilities + 40+ enemy abilities
+- Equipment system (8 slots, 7 rarity tiers, procedural generation)
+- Status effects (26 effects, stacking, DOT/HOT, control)
+- Combat engine (turn-based, multi-action, enemy AI, damage calculation)
+- Enemy system (28 templates, 7 tiers, boss summons)
+- Progression (XP, leveling, 120 skill tree nodes, recruitment every 20 victories)
+- Campaign (100 stages, boss battles every 10th, progressive unlocking)
+- Save/load (LocalStorage, auto-save, import/export)
+- UI (8/10 screens: Menu, Team, Campaign, Combat, Results, Character Sheet, CSS)
+
+**Remaining Work**:
+- Inventory Screen (equipment management UI)
+- Settings Screen (game preferences)
+- Polish and testing
 
 ---
 
-*Instructions Version: 1.1*  
-*Last Updated: October 22, 2025*  
+*Instructions Version: 1.2*  
+*Last Updated: October 22, 2025 (Evening)*  
 *For questions on mechanics, always reference GAME_DESIGN.md first*

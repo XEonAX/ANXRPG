@@ -1,54 +1,87 @@
 # ANXRPG
 A web-based turn-based fighting RPG with deep character progression, equipment systems, and 100 stages of increasingly difficult combat.
 
-## 🎮 Overview
-ANXRPG features 6 unique character types (Greek alphabet themed), a sophisticated Action Point combat system, equipment with level requirements, skill trees, and a comprehensive 100-stage campaign with boss battles every 10 stages.
+## 🎮 Game Status: **PLAYABLE!** ✨
+
+The core game loop is **fully functional**:
+- ✅ Create characters and build teams
+- ✅ Fight turn-based battles with working enemy AI
+- ✅ Enemies attack you correctly!
+- ✅ Multi-action combat system
+- ✅ Click-to-target enemy selection
+- ✅ Gain XP and loot equipment
+- ✅ Level up and unlock skill tree
+- ✅ Save/load progress
+- ✅ 100-stage campaign with boss battles
+
+**Just Missing**: Inventory management UI and Settings screen (coming soon!)
 
 ## 🚀 Tech Stack
 - **Build Tool**: Vite 5.x
 - **Language**: TypeScript (strict mode, ES2022)
-- **UI**: Pure vanilla TypeScript (no frameworks - project philosophy)
-- **Styling**: Complete CSS system with dark theme (~900 lines)
+- **UI**: Pure vanilla TypeScript + semantic HTML (no frameworks)
+- **Styling**: Complete CSS system with dark theme (1200+ lines)
 - **Storage**: Browser LocalStorage with Set/Map serialization
 - **Deployment**: Static site (GitHub Pages/Netlify ready)
 
 ## 📋 Current Status
-**Phase**: Active Development - Phase 11 In Progress (10.5/14 Complete, ~75% Overall)
+**Phase**: Active Development - Phase 11 80% Complete (11/14 phases, ~79% overall)
 
-### ✅ Completed Phases (10/14)
+### ✅ Completed Phases (11/14)
 - ✅ **Phase 1**: Project Foundation (Types & Structure)
-- ✅ **Phase 2**: Character System (6 character types)
+- ✅ **Phase 2**: Character System (6 character types with stats/leveling)
 - ✅ **Phase 3**: Ability System (24 player + 40+ enemy abilities)
 - ✅ **Phase 4**: Equipment System (8 slots, 7 rarity tiers, procedural generation)
-- ✅ **Phase 5**: Status Effects System (26 effects, stacking, DOT/HOT)
-- ✅ **Phase 6**: Combat Engine (Turn-based, multi-action, XP/loot rewards)
+- ✅ **Phase 5**: Status Effects System (26 effects, stacking, DOT/HOT, control)
+- ✅ **Phase 6**: Combat Engine (Turn-based, multi-action, enemy AI, damage calculation)
 - ✅ **Phase 7**: Enemy System (28 templates, 7 tiers, boss summons)
-- ✅ **Phase 8**: Progression System (Skill trees + Recruitment)
-- ✅ **Phase 9**: Campaign System (100 stages, progressive unlocking)
-- ✅ **Phase 10**: Save/Load System (LocalStorage with Set/Map serialization fix)
+- ✅ **Phase 8**: Progression System (XP, skill trees with 120 nodes, recruitment)
+- ✅ **Phase 9**: Campaign System (100 stages, boss battles, progressive unlocking)
+- ✅ **Phase 10**: Save/Load System (LocalStorage, auto-save, import/export)
+- 🔄 **Phase 11**: UI Implementation (80% - 8/10 screens complete)
 
-### 🔄 In Progress (Phase 11 - 50% Complete)
-- ✅ UI Foundation (ScreenManager, EventBus, UIHelpers, UIState)
-- ✅ Main Menu Screen (New/Continue/Load with character selection)
-- ✅ Team Management Screen (Active/Reserve/Roster with swapping)
-- ✅ Campaign Map Screen (100 stages, tier grouping, boss indicators)
-- ✅ Complete CSS System (Dark theme, responsive, 900+ lines)
-- 🔄 **Combat Screen** (NEXT - Critical piece for playable game)
-- ⏳ Battle Results Screen
-- ⏳ Character Sheet Screen
-- ⏳ Inventory Screen
-- ⏳ Settings Screen
+### ✅ Completed UI Screens (8/10)
+- ✅ UI Foundation (ScreenManager, EventBus, UIHelpers, UIState) - 835 lines
+- ✅ Main Menu Screen (New/Continue/Load with character selection) - 271 lines
+- ✅ Team Management Screen (Active/Reserve/Roster with swapping) - 338 lines
+- ✅ Campaign Map Screen (100 stages, tier grouping, boss indicators) - 264 lines
+- ✅ **Combat Screen** (Turn-based, enemy AI, multi-action, click-to-target) - 660 lines **WORKING!**
+- ✅ Battle Results Screen (Victory/defeat, XP, loot, level-ups) - 197 lines
+- ✅ Character Sheet Screen (Stats, equipment, skill tree) - 450 lines
+- ✅ Complete CSS System (Dark theme, responsive, animations) - 1200+ lines
 
-### ⏳ Remaining Phases
+### ⏳ Remaining UI (2/10)
+- ⏳ **Inventory Screen** (Equipment management - NEXT)
+- ⏳ **Settings Screen** (Game preferences)
+
+### ⏳ Remaining Phases (3/14)
 - ⏳ **Phase 12**: Game Juice (Flavor text, polish, animations)
 - ⏳ **Phase 13**: Balance & Testing
-- ⏳ **Phase 14**: Final Polish
+- ⏳ **Phase 14**: Final Polish & Deployment
 
-**Latest Achievement**: Phase 11 is 50% complete! UI foundation built with 5 screens functional (Main Menu, Team Management, Campaign Map). Critical Set/Map serialization bug fixed in save system. Campaign map now displays all 100 stages correctly.
+**Latest Achievement** (Oct 22, 2025 Evening): 
+- 🎉 **Combat is fully playable!** All critical bugs fixed
+- ✅ Enemy AI working - enemies attack correctly
+- ✅ Click-to-target system with animations
+- ✅ Multi-action combat functional
+- ✅ Auto-victory on enemy defeat
+- See [COMBAT_SCREEN_BUG_FIXES.md](docs/COMBAT_SCREEN_BUG_FIXES.md) for details
 
-**Estimate to Playable**: 2-4 more sessions (~6-12 hours) - Combat screen is the final critical piece
+**Estimate to 100% Complete**: 1-2 sessions (~5-8 hours) - Just need Inventory + Settings screens!
 
-See the [implementation plan](IMPLEMENTATION_PLAN.md) and [Phase 11 progress](docs/PHASE_AUDIT.md) for complete details.
+See the [Next Steps](NEXT_STEPS.md) and [Phase Audit](docs/PHASE_AUDIT.md) for complete details.
+
+## 📖 Documentation
+- **[NEXT_STEPS.md](NEXT_STEPS.md)** - **START HERE!** What to do next, current status, remaining work
+- **[GAME_DESIGN.md](GAME_DESIGN.md)** - Complete game mechanics, formulas, and systems
+- **[IMPLEMENTATION_PLAN.md](IMPLEMENTATION_PLAN.md)** - 14-phase technical implementation roadmap
+- **[CHANGELOG.md](CHANGELOG.md)** - Version history (v1.1.0 - Combat Complete!)
+- **[.github/copilot-instructions.md](.github/copilot-instructions.md)** - AI coding agent guidelines
+- **[docs/PHASE_AUDIT.md](docs/PHASE_AUDIT.md)** - Accurate phase completion tracking
+- **[docs/COMBAT_SCREEN_BUG_FIXES.md](docs/COMBAT_SCREEN_BUG_FIXES.md)** - Recent bug fixes (Oct 22)
+- **[docs/](docs/)** - All phase-specific implementation summaries
+
+## 🧪 Play It Now!
 
 ## 📖 Documentation
 
@@ -95,26 +128,49 @@ See the [implementation plan](IMPLEMENTATION_PLAN.md) and [audit](docs/PHASE_AUD
 ## 🧪 Try It Now
 ```bash
 npm install         # Install dependencies
-npm run dev         # Start at http://localhost:5173
+npm run dev         # Start at http://localhost:5173 or :5174
 ```
 
-Then navigate:
-1. **Main Menu** → New Game → Select character type (Alpha, Beta, etc.)
-2. **Team Management** → View your roster, active/reserve teams
-3. **Campaign Map** (🗺️ button) → See all 100 stages across 7 tiers
-4. Click **Stage 1** → (Combat screen in development - coming soon!)
+**Then play the game!**
+1. **Main Menu** → Click "New Game" → Select character type (Alpha/Beta/Gamma/Delta/Epsilon/Zeta)
+2. **Team Management** → Build your team (active + reserve)
+3. **Campaign Map** (🗺️ button) → Select Stage 1 or Stage 2
+4. **FIGHT BATTLES!** → Turn-based combat with working enemy AI! 🎮
+   - Use abilities (costs AP)
+   - Click enemies to target them
+   - Multi-action: use multiple abilities per turn
+   - Enemies attack you!
+   - Win and get XP/loot
+5. **Battle Results** → See rewards, level-ups
+6. **Character Sheet** → View stats, equipment, skill tree
+7. **Repeat!** → Progress through 100 stages
 
-Current flow works: Menu → Team → Campaign Map. Combat screen is the next critical piece!
+**What You Can Do Right Now**:
+- ✅ Create characters and build teams
+- ✅ Fight turn-based battles
+- ✅ Use multiple abilities per turn
+- ✅ Target specific enemies
+- ✅ Gain XP and loot equipment
+- ✅ Level up and unlock skills
+- ✅ Save/load your progress
 
-## 🎯 Key Features (Planned)
-- **6 Character Types**: Alpha (Paladin), Beta (Rogue), Gamma (Mage), Delta (Warrior), Epsilon (Cleric), Zeta (Berserker)
-- **Multi-Action Combat**: Use multiple abilities per turn with AP management
-- **Reserve System**: Swap between active and reserve teams when wiped
-- **Equipment System**: 8 equipment slots with level requirements
-- **Skill Trees**: ~20 nodes per character with stat bonuses or new abilities
-- **Progressive Recruitment**: Unlock new characters every 20 battle victories
-- **100 Stages**: 7 enemy tiers from Slimes to Gods, bosses every 10th stage
-- **Save System**: LocalStorage persistence
+**What's Missing**:
+- ❌ Inventory management UI (can't equip items yet)
+- ❌ Settings screen
+
+## 🎯 Key Features (Implemented!)
+- **6 Character Types**: Alpha (Paladin), Beta (Rogue), Gamma (Mage), Delta (Warrior), Epsilon (Cleric), Zeta (Berserker) ✅
+- **Multi-Action Combat**: Use multiple abilities per turn with AP management ✅
+- **Enemy AI**: Enemies select and use abilities intelligently ✅
+- **Click-to-Target**: Select specific enemies with visual feedback ✅
+- **Reserve System**: Swap between active and reserve teams when wiped ✅
+- **Equipment System**: 8 equipment slots with level requirements ✅
+- **Skill Trees**: 120 nodes total (20 per character) with stat bonuses and new abilities ✅
+- **Progressive Recruitment**: Unlock new characters every 20 battle victories ✅
+- **100 Stages**: 7 enemy tiers from Slimes to Gods, bosses every 10th stage ✅
+- **Save System**: LocalStorage persistence with auto-save ✅
+- **Battle Results**: XP distribution, equipment loot, level-up notifications ✅
+- **Character Sheet**: Full stats, equipment, skill tree visualization ✅
 
 ## 🛠️ Development Commands
 ```bash
