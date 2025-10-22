@@ -4,6 +4,7 @@
 
 import type { Character } from './character';
 import type { Enemy } from './enemy';
+import type { Equipment } from './equipment';
 
 export type CombatantType = 'player' | 'enemy';
 
@@ -99,7 +100,7 @@ export interface CombatState {
   // Results
   victory: boolean;
   xpEarned?: number;
-  lootDropped?: string[];         // Equipment IDs
+  lootDropped?: Equipment[];      // Equipment dropped from battle
 }
 
 export type CombatLogEntryType = 

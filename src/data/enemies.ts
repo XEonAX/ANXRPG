@@ -37,7 +37,7 @@ export const SLIME_TEMPLATE: EnemyTemplate = {
     res: 0.8,
     spd: 0.3,
   },
-  abilities: [], // TODO: Add slime_tackle, slime_split when enemy abilities are properly formatted
+  abilities: ['slime_tackle', 'slime_acid'], // Updated with new enemy abilities
   apRegen: 3,
   maxAp: 10,
   isBoss: false,
@@ -105,8 +105,8 @@ export const BAT_TEMPLATE: EnemyTemplate = {
     spd: 1,
     eva: 0.3,
   },
-  abilities: ['bat_bite', 'bat_screech'],
-  apRegen: 5,
+  abilities: ['bat_shriek', 'bat_dive'], // Updated with new enemy abilities
+  apRegen: 4,
   maxAp: 10,
   isBoss: false,
   equipmentDropChance: 0.2,
@@ -138,8 +138,8 @@ export const SLIME_KING_TEMPLATE: EnemyTemplate = {
     res: 1.5,
     spd: 0.4,
   },
-  abilities: ['slime_tackle', 'slime_split', 'slime_engulf', 'boss_roar'],
-  apRegen: 4,
+  abilities: ['slime_tackle', 'slime_acid', 'boss_summon', 'boss_enrage'], // Boss abilities
+  apRegen: 5,
   maxAp: 12,
   isBoss: true,
   bossMultiplier: 2.5,
@@ -184,7 +184,7 @@ export const GOBLIN_TEMPLATE: EnemyTemplate = {
     spd: 0.8,
     crt: 0.5,
   },
-  abilities: ['goblin_slash', 'goblin_poison_dagger'],
+  abilities: ['goblin_stab', 'goblin_rally'], // Updated with new enemy abilities
   apRegen: 4,
   maxAp: 10,
   isBoss: false,
@@ -251,7 +251,7 @@ export const SKELETON_TEMPLATE: EnemyTemplate = {
     res: 1.2,
     spd: 0.5,
   },
-  abilities: ['skeleton_slash', 'bone_shield'],
+  abilities: ['skeleton_slash', 'skeleton_defense'], // Updated with new enemy abilities
   apRegen: 3,
   maxAp: 10,
   isBoss: false,
@@ -285,7 +285,7 @@ export const GOBLIN_CHIEFTAIN_TEMPLATE: EnemyTemplate = {
     spd: 0.8,
     crt: 0.6,
   },
-  abilities: ['goblin_slash', 'goblin_poison_dagger', 'chieftain_rally', 'boss_roar'],
+  abilities: ['goblin_stab', 'goblin_rally', 'boss_summon', 'boss_enrage'], // Boss abilities
   apRegen: 5,
   maxAp: 12,
   isBoss: true,
@@ -331,7 +331,7 @@ export const ORC_TEMPLATE: EnemyTemplate = {
     res: 1,
     spd: 0.6,
   },
-  abilities: ['orc_cleave', 'orc_battlecry'],
+  abilities: ['orc_smash', 'orc_rage'], // Updated
   apRegen: 4,
   maxAp: 10,
   isBoss: false,
@@ -364,7 +364,7 @@ export const TROLL_TEMPLATE: EnemyTemplate = {
     res: 1.8,
     spd: 0.4,
   },
-  abilities: ['troll_smash', 'troll_regeneration'],
+  abilities: ['troll_club', 'troll_regeneration'], // Updated
   apRegen: 3,
   maxAp: 10,
   isBoss: false,
@@ -398,7 +398,7 @@ export const WRAITH_TEMPLATE: EnemyTemplate = {
     spd: 0.9,
     eva: 0.5,
   },
-  abilities: ['wraith_drain', 'wraith_curse'],
+  abilities: ['wraith_touch', 'wraith_curse'], // Updated
   apRegen: 5,
   maxAp: 10,
   isBoss: false,
@@ -431,8 +431,8 @@ export const ORC_WARLORD_TEMPLATE: EnemyTemplate = {
     res: 1.8,
     spd: 0.7,
   },
-  abilities: ['orc_cleave', 'orc_battlecry', 'warlord_execute', 'boss_roar'],
-  apRegen: 5,
+  abilities: ['orc_smash', 'orc_rage', 'boss_summon', 'boss_enrage'], // Boss abilities
+  apRegen: 6,
   maxAp: 12,
   isBoss: true,
   bossMultiplier: 2.5,
@@ -477,7 +477,7 @@ export const DEMON_TEMPLATE: EnemyTemplate = {
     res: 2,
     spd: 1,
   },
-  abilities: ['demon_fireball', 'demon_dark_pact'],
+  abilities: ['demon_claw', 'demon_fireball'], // Updated
   apRegen: 5,
   maxAp: 10,
   isBoss: false,
@@ -543,8 +543,8 @@ export const FIRE_ELEMENTAL_TEMPLATE: EnemyTemplate = {
     res: 2.5,
     spd: 1.2,
   },
-  abilities: ['elemental_inferno', 'elemental_immolate'],
-  apRegen: 6,
+  abilities: ['elemental_blast', 'elemental_freeze'], // Updated
+  apRegen: 5,
   maxAp: 10,
   isBoss: false,
   equipmentDropChance: 0.45,
@@ -576,8 +576,8 @@ export const DEMON_LORD_TEMPLATE: EnemyTemplate = {
     res: 4,
     spd: 1,
   },
-  abilities: ['demon_fireball', 'demon_dark_pact', 'demon_lord_hellfire', 'boss_roar'],
-  apRegen: 6,
+  abilities: ['demon_claw', 'demon_fireball', 'boss_summon', 'boss_enrage'], // Boss abilities
+  apRegen: 7,
   maxAp: 14,
   isBoss: true,
   bossMultiplier: 2.5,
@@ -622,8 +622,8 @@ export const ANCIENT_BEHEMOTH_TEMPLATE: EnemyTemplate = {
     res: 3.2,
     spd: 0.5,
   },
-  abilities: ['behemoth_trample', 'behemoth_roar'],
-  apRegen: 4,
+  abilities: ['behemoth_rampage', 'titan_slam'], // Updated (reusing slam)
+  apRegen: 5,
   maxAp: 12,
   isBoss: false,
   equipmentDropChance: 0.6,
@@ -655,7 +655,7 @@ export const STONE_TITAN_TEMPLATE: EnemyTemplate = {
     res: 3.8,
     spd: 0.4,
   },
-  abilities: ['titan_quake', 'titan_boulder'],
+  abilities: ['titan_slam', 'titan_slam'], // Updated (placeholder - using same ability twice)
   apRegen: 4,
   maxAp: 12,
   isBoss: false,
@@ -688,7 +688,7 @@ export const STORM_WYRM_TEMPLATE: EnemyTemplate = {
     res: 3.5,
     spd: 1.3,
   },
-  abilities: ['wyrm_lightning', 'wyrm_tempest'],
+  abilities: ['wyrm_lightning', 'wyrm_lightning'], // Updated (placeholder)
   apRegen: 6,
   maxAp: 12,
   isBoss: false,
@@ -721,8 +721,8 @@ export const ELDER_DRAGON_TEMPLATE: EnemyTemplate = {
     res: 4.5,
     spd: 1,
   },
-  abilities: ['dragon_breath', 'dragon_claw', 'elder_dragon_inferno', 'boss_roar'],
-  apRegen: 6,
+  abilities: ['dragon_breath', 'dragon_claw', 'boss_summon', 'boss_enrage'], // Boss abilities
+  apRegen: 7,
   maxAp: 15,
   isBoss: true,
   bossMultiplier: 2.5,
@@ -768,7 +768,7 @@ export const FALLEN_ANGEL_TEMPLATE: EnemyTemplate = {
     res: 5,
     spd: 1.4,
   },
-  abilities: ['angel_smite', 'angel_judgment'],
+  abilities: ['angelic_smite', 'angelic_blessing'], // Updated
   apRegen: 6,
   maxAp: 12,
   isBoss: false,

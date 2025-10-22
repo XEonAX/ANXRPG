@@ -12,6 +12,7 @@
 
 import type { Character } from '../types/character';
 import type { Enemy } from '../types/enemy';
+import type { Equipment } from '../types/equipment';
 import type { 
   CombatState, 
   CombatLogEntry,
@@ -27,6 +28,9 @@ import {
   applyStatusEffect,
   type CombatEntity
 } from './statusEffects';
+import { awardXp } from './character';
+import { generateEquipment } from './equipment';
+import { calculateEnemyXpReward, rollEquipmentDrop } from './enemy';
 import { 
   calculateAoEDamage,
   calculateAoEHealing,
@@ -688,16 +692,61 @@ function checkBattleEnd(state: CombatState): void {
   const alivePlayerChars = state.playerTeam.filter(c => c.isAlive);
   
   // Victory: all enemies defeated
-  if (aliveEnemies.length === 0) {
+  if (aliveEnemies.length === 0 && !state.victory) {
     state.phase = 'victory';
     state.victory = true;
     
+    // Calculate total XP from all defeated enemies
+    const totalXp = state.enemyTeam
+      .filter(e => !e.isAlive)
+      .reduce((sum, e) => sum + calculateEnemyXpReward(e), 0);
+    
+    // Award XP to all 6 characters (active + reserve)
+    const allCharacters = [...state.playerTeam, ...state.reserveTeam];
+    const levelUpMessages: string[] = [];
+    
+    for (const char of allCharacters) {
+      const xpGained = awardXp(char, totalXp);
+      if (xpGained > 0) {
+        // Check if character leveled up
+        const oldLevel = char.level;
+        // awardXp already handles level-ups internally
+        if (char.level > oldLevel) {
+          levelUpMessages.push(`${char.name} reached level ${char.level}!`);
+        }
+      }
+    }
+    
+    // Generate equipment drops (max 1 per enemy, can be 0)
+    const loot: Equipment[] = [];
+    for (const enemy of state.enemyTeam) {
+      if (!enemy.isAlive && rollEquipmentDrop(enemy)) {
+        const equipment = generateEquipment(enemy.level);
+        loot.push(equipment);
+      }
+    }
+    
+    // Populate state fields
+    state.xpEarned = totalXp;
+    state.lootDropped = loot;
+    
+    // Add victory message to combat log
     addCombatLog(state, {
       type: 'victory',
       turn: state.currentTurn,
       timestamp: Date.now(),
-      message: 'Victory! All enemies have been defeated!',
+      message: `Victory! Earned ${totalXp} XP and ${loot.length} item${loot.length !== 1 ? 's' : ''}!`,
     });
+    
+    // Add level-up notifications
+    for (const message of levelUpMessages) {
+      addCombatLog(state, {
+        type: 'turn-start',
+        turn: state.currentTurn,
+        timestamp: Date.now(),
+        message,
+      });
+    }
     
     return;
   }
