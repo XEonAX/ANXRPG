@@ -1,57 +1,84 @@
 # ANXRPG - Technical Implementation Plan
 
-> **Current Status**: Active Development - Phases 1-9 Complete ✅  
+> **Current Status**: Active Development - Phases 1-11 In Progress (Phase 11: 50% Complete) ✅  
 > This document tracks the development roadmap. See [GAME_DESIGN.md](GAME_DESIGN.md) for game mechanics and [.github/copilot-instructions.md](.github/copilot-instructions.md) for AI coding guidelines.
 
-## 🎯 Current Progress: 9/14 Phases Complete (64%)
+## 🎯 Current Progress: 10.5/14 Phases Complete (~75%)
 
 ## Project Structure
 
 ```
 ANXRPG/
 ├── src/
-│   ├── main.ts                 # Entry point
-│   ├── game.ts                 # Main game loop and state management
+│   ├── main.ts                 # Entry point with screen registration
 │   ├── types/
 │   │   ├── character.ts        # Character type definitions
 │   │   ├── equipment.ts        # Equipment type definitions
 │   │   ├── ability.ts          # Ability type definitions
 │   │   ├── enemy.ts            # Enemy type definitions
 │   │   ├── combat.ts           # Combat-related types
-│   │   └── status.ts           # Status effect types
+│   │   ├── status.ts           # Status effect types
+│   │   ├── campaign.ts         # Campaign and stage types
+│   │   ├── skillTree.ts        # Skill tree types
+│   │   ├── save.ts             # Save data types
+│   │   ├── game.ts             # Game state types
+│   │   └── index.ts            # Type exports
 │   ├── systems/
 │   │   ├── character.ts        # Character creation and management
-│   │   ├── combat.ts           # Combat engine
+│   │   ├── combat.ts           # Combat engine with multi-action
 │   │   ├── damage.ts           # Damage calculation
 │   │   ├── statusEffects.ts    # Status effect engine
-│   │   ├── progression.ts      # Leveling and XP
-│   │   ├── equipment.ts        # Equipment management
-│   │   └── campaign.ts         # Stage and campaign management
+│   │   ├── equipment.ts        # Equipment management and generation
+│   │   ├── campaign.ts         # Stage and campaign management
+│   │   ├── recruitment.ts      # Character recruitment system
+│   │   ├── skillTree.ts        # Skill tree progression
+│   │   ├── enemy.ts            # Enemy generation and AI
+│   │   └── game.ts             # Game state management
 │   ├── data/
 │   │   ├── characterTypes.ts   # 6 character type definitions
-│   │   ├── abilities.ts        # All ability definitions
-│   │   ├── equipment.ts        # Equipment templates
-│   │   ├── enemies.ts          # Enemy templates
-│   │   └── stages.ts           # Campaign stage definitions
+│   │   ├── abilities.ts        # 24 player abilities
+│   │   ├── enemyAbilities.ts   # 40+ enemy abilities
+│   │   ├── equipmentTemplates.ts # Equipment generation templates
+│   │   ├── enemies.ts          # 28 enemy templates (7 tiers)
+│   │   ├── stages.ts           # 100 campaign stages
+│   │   ├── skillTrees.ts       # 120 skill nodes (20 per type)
+│   │   └── statusEffects.ts    # Status effect definitions
 │   ├── ui/
-│   │   ├── combat.ts           # Combat UI rendering
-│   │   ├── team.ts             # Team management UI
-│   │   ├── character.ts        # Character sheet UI
-│   │   ├── campaign.ts         # Campaign/stage select UI
-│   │   └── messages.ts         # Combat message generation
+│   │   ├── core/
+│   │   │   ├── ScreenManager.ts    # Navigation system
+│   │   │   ├── EventBus.ts         # Pub/sub event system
+│   │   │   ├── UIHelpers.ts        # Reusable UI utilities
+│   │   │   └── UIState.ts          # Runtime UI state management
+│   │   ├── MainMenuScreen.ts       # Main menu with New/Continue/Load
+│   │   ├── TeamManagementScreen.ts # Team assignment UI
+│   │   ├── CampaignMapScreen.ts    # 100 stages display
+│   │   ├── CombatScreen.ts         # Turn-based combat UI (IN PROGRESS)
+│   │   └── (other screens TBD)
 │   ├── utils/
 │   │   ├── random.ts           # RNG utilities
 │   │   ├── formulas.ts         # Stat calculation formulas
-│   │   ├── nameGenerator.ts    # Procedural name generation
-│   │   └── storage.ts          # Save/load system
-│   └── styles/
-│       └── main.css            # Minimal styling (future)
+│   │   └── storage.ts          # Save/load with Set/Map serialization
+│   ├── tests/
+│   │   ├── combatDemo.ts       # Combat system tests
+│   │   ├── phase8Tests.ts      # Progression tests
+│   │   ├── campaignTests.ts    # Campaign system tests
+│   │   └── saveSystemTests.ts  # Save/load tests
+│   └── style.css               # Complete CSS system with dark theme
 ├── index.html                  # Main HTML file
 ├── package.json
 ├── tsconfig.json
 ├── vite.config.ts
 ├── GAME_DESIGN.md              # Game design document
-└── IMPLEMENTATION_PLAN.md      # This file
+├── IMPLEMENTATION_PLAN.md      # This file
+├── docs/                       # Session documentation
+│   ├── PHASE_5_SUMMARY.md
+│   ├── PHASE_6_SUMMARY.md
+│   ├── PHASE_7_SUMMARY.md
+│   ├── PHASE_8_SUMMARY.md
+│   ├── PHASE_9_SUMMARY.md
+│   ├── PHASE_10_SUMMARY.md
+│   └── PHASE_AUDIT.md
+└── TEST_SAVE_LOAD.md           # Save/load fix documentation
 ```
 
 ## Implementation Phases
@@ -370,7 +397,140 @@ ANXRPG/
 
 ---
 
-### ⏳ Phase 10: Save System (NEXT)
+### ✅ Phase 10: Save System (COMPLETE)
+**Goal**: LocalStorage persistence with serialization
+
+#### Completed Tasks
+1. ✅ Define save data structure (`types/save.ts`)
+2. ✅ Implement save/load functions with Set/Map serialization fix
+3. ✅ Add auto-save functionality
+4. ✅ Create save validation system
+5. ✅ Implement save data migration for version updates
+6. ✅ Add save metadata retrieval
+7. ✅ Create export/import functionality (JSON files)
+8. ✅ Implement manual save slots
+9. ✅ Add save data corruption handling
+10. ✅ **CRITICAL FIX**: Proper Set/Map serialization for CampaignProgress
+
+**Deliverable**: ✅ Complete save/load system with LocalStorage persistence
+
+**Files Created**:
+- `src/types/save.ts` (165 lines) - Save data type definitions
+- `src/utils/storage.ts` (385 lines) - Save/load system with Set/Map fix
+- `src/tests/saveSystemTests.ts` - Save system test suite
+- `TEST_SAVE_LOAD.md` - Documentation of Set/Map serialization fix
+
+**Critical Bug Fixed**:
+- CampaignProgress uses `Set<number>` and `Map<number, number>` which don't serialize with JSON.stringify()
+- Solution: Convert to arrays on save, restore to Set/Map on load
+- This fix enables campaign map to display correctly
+
+---
+
+### 🔄 Phase 11: UI Implementation (IN PROGRESS - 50% Complete)
+**Goal**: Build complete playable UI with vanilla TypeScript
+
+#### Completed Tasks (5/10 screens)
+1. ✅ **UI Foundation** (~835 lines):
+   - ScreenManager - Navigation with history stack
+   - EventBus - Pub/sub reactive system
+   - UIHelpers - 20+ utility functions
+   - UIState - Runtime state management (bridges SaveData)
+   
+2. ✅ **Main Menu Screen** (271 lines):
+   - New Game dialog with character type selection
+   - Continue Game (auto-save)
+   - Load Game (manual save)
+   - Settings navigation
+   - UIState initialization on game load
+
+3. ✅ **Team Management Screen** (338 lines):
+   - Active team display (1-3 characters)
+   - Reserve team display (up to 3 characters)
+   - Full roster display (max 6 characters)
+   - Character cards with HP/AP bars
+   - Team swapping functionality
+   - Navigation to Campaign/Inventory/Character Sheet
+
+4. ✅ **Campaign Map Screen** (264 lines):
+   - 100 stages organized by 7 tiers
+   - Boss stage indicators (every 10th stage)
+   - Locked/unlocked/completed status
+   - Progress tracking per tier
+   - Stage selection triggers combat initialization
+   - Debug logging for troubleshooting
+
+5. ✅ **CSS Styling System** (~900 lines):
+   - Dark theme with 60+ CSS variables
+   - BEM naming convention
+   - Responsive design (mobile-ready)
+   - Component styles for all screens
+   - Animations and transitions
+   - Toast notifications and modals
+
+#### In Progress Tasks
+6. 🔄 **Combat Screen** (CRITICAL - Next Priority):
+   - Turn-based combat UI
+   - Player team display (active + reserve)
+   - Enemy team display
+   - Ability buttons (4-6 per character)
+   - AP tracking UI
+   - Multi-action support (use multiple abilities per turn)
+   - Combat log with scrolling
+   - Victory/defeat detection
+   - Integration with combat system
+
+#### Pending Tasks (4/10 screens)
+7. ⏳ **Battle Results Screen**:
+   - Victory/defeat message
+   - XP distribution display
+   - Equipment loot display
+   - Level-up notifications
+   - Continue button → Campaign Map
+
+8. ⏳ **Character Sheet Screen**:
+   - Full stat display
+   - Equipment slots (8 slots)
+   - Skill tree visualization
+   - Abilities list (unlocked/locked)
+   - Level/XP progress bar
+
+9. ⏳ **Inventory Screen**:
+   - Equipment list with filtering
+   - Equip/unequip functionality
+   - Rarity-based sorting
+   - Hide toggle for low-rarity items
+   - Equipment comparison
+
+10. ⏳ **Settings Screen**:
+    - Game settings toggles
+    - Save/load management
+    - Export/import save files
+    - Clear save data option
+
+**Deliverable**: Complete playable HTML UI (50% done)
+
+**Files Created**:
+- `src/ui/core/ScreenManager.ts` (145 lines)
+- `src/ui/core/EventBus.ts` (105 lines)
+- `src/ui/core/UIHelpers.ts` (440 lines)
+- `src/ui/core/UIState.ts` (145 lines)
+- `src/ui/MainMenuScreen.ts` (271 lines)
+- `src/ui/TeamManagementScreen.ts` (338 lines)
+- `src/ui/CampaignMapScreen.ts` (264 lines)
+- `src/style.css` (900+ lines)
+
+**Architecture Decisions**:
+- **No frameworks** - Pure vanilla TypeScript (project philosophy)
+- **Component functions** - Not classes, functional approach
+- **Screen navigation** - Centralized ScreenManager with history
+- **State management** - UIState bridges persistent SaveData and runtime UI needs
+- **Event-driven** - EventBus for reactive updates
+- **BEM CSS** - Block__Element--Modifier naming
+
+---
+
+### ⏳ Phase 12: Game Juice & Polish
 **Goal**: Persistent game state via LocalStorage
 
 #### Tasks

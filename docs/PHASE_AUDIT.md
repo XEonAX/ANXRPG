@@ -1,7 +1,49 @@
 # ANXRPG Phase Completion Audit
 
-**Date**: October 22, 2025  
+**Date**: October 22, 2025 (Updated)  
 **Purpose**: Accurate assessment of what's actually implemented vs documented
+
+## Overall Progress: 10.5/14 Phases (~75% Complete)
+
+### Executive Summary
+**What Works**:
+✅ **Complete type system (9 modules)**  
+✅ **6 character types with balanced stats**  
+✅ **24 player abilities + 40+ enemy abilities**  
+✅ **Equipment system (8 slots, procedural generation, 7 rarity tiers)**  
+✅ **Status effects (26 effects, stacking, DOT/HOT, control)**  
+✅ **Combat engine (turn-based, multi-action, ability execution)**  
+✅ **Damage calculation (physical/magical, critical hits, hit/miss)**  
+✅ **Enemy system (28 templates, 7 tiers, boss AI)**  
+✅ **Progression (XP, leveling, skill trees with 120 nodes)**  
+✅ **Recruitment system (every 20 victories, max 6 roster)**  
+✅ **Campaign (100 stages, boss battles every 10th, progressive difficulty)**  
+✅ **Save/load system with Set/Map serialization fix**  
+✅ **UI Foundation (ScreenManager, EventBus, UIHelpers, UIState)**  
+✅ **Main Menu screen (New/Continue/Load with character selection)**  
+✅ **Team Management screen (active/reserve/roster with swapping)**  
+✅ **Campaign Map screen (100 stages, tier grouping, unlock tracking)**  
+✅ **Complete CSS system (dark theme, responsive, 900+ lines)**  
+
+**What's In Progress**:
+🔄 **Combat Screen UI** (50% of Phase 11 complete, combat screen is next)
+
+**What Doesn't Work Yet**:
+❌ No combat UI (can't play battles visually)  
+❌ No battle results screen  
+❌ No character sheet UI  
+❌ No inventory UI  
+❌ No settings screen  
+❌ No game juice/polish  
+
+### Critical Path Forward
+1. **Phase 11 remaining** (1-2 sessions): Combat Screen + 3 supporting screens
+2. **Phase 12** (1 session): Game juice (flavor text, polish)
+3. **Phase 13-14** (1 session): Balance, testing, final polish
+
+**Estimate to playable**: 2-4 more sessions (~6-12 hours)
+
+---
 
 ## Phase-by-Phase Audit
 
@@ -35,13 +77,45 @@
 ✅ **Import/export saves as JSON**  
 ✅ **Playtime tracking**  
 
-### What Doesn't Work
-❌ No UI (need Phase 11)  
+✅ **Enemy generation for stages**  
+✅ **Save/load system with LocalStorage**  
+✅ **Set/Map serialization fix (critical bug fix Oct 22, 2025)**  
+✅ **Auto-save and manual save**  
+✅ **Save validation and migration**  
+✅ **Statistics tracking (10 stats)**  
+✅ **Game settings (8 preferences)**  
+✅ **Roster and inventory management**  
+✅ **Import/export saves as JSON**  
+✅ **Playtime tracking**  
+✅ **UI Foundation (ScreenManager, EventBus, UIHelpers, UIState)**  
+✅ **Main Menu screen with New/Continue/Load**  
+✅ **Team Management screen with active/reserve/roster**  
+✅ **Campaign Map screen with 100 stages**  
+✅ **Complete CSS system (900+ lines, dark theme, responsive)**  
+
+### What's In Progress
+🔄 **Combat Screen UI** (Phase 11 is 50% complete, combat screen is next critical piece)
+
+### What Doesn't Work Yet
+❌ No combat UI (can't play battles visually yet)  
+❌ No battle results screen  
+❌ No character sheet UI  
+❌ No inventory UI  
+❌ No settings screen UI  
+❌ No game juice/polish  
+
+### Test in Browser
+Navigate to: http://localhost:5174
+1. Click "New Game" → Select character type → See team management
+2. Click "🗺️ Campaign" → See 100 stages organized by tiers
+3. Click on Stage 1 → Should trigger combat (but combat screen not built yet)
 
 ### Critical Path Forward
-1. **Phase 11** (3-4 sessions): UI implementation (campaign map, combat screen, etc.)
-2. **Phase 12** (1-2 sessions): Game juice (flavor text, polish)
-3. **Phase 13-14** (1-2 sessions): Balance, testing, final polish
+1. **Phase 11 remaining** (1-2 sessions): Combat Screen + Battle Results + 2 supporting screens
+2. **Phase 12** (1 session): Game juice (flavor text, polish, animations)
+3. **Phase 13-14** (1 session): Balance, testing, final polish
+
+**Estimate to fully playable**: 2-4 more sessions (~6-12 hours of work)
 
 ---
 
@@ -450,11 +524,204 @@
 
 ---
 
-### ❌ Phase 11-14: NOT STARTED
-- ❌ UI implementation
-- ❌ Game juice
-- ❌ Balance & testing
-- ❌ Final polish
+### ✅ Phase 10: Save System - **100% COMPLETE**
+**All Functions Implemented** (15 functions in storage.ts):
+
+**Core Functions**:
+- ✅ `saveGame(saveData, isAutoSave)` - Save with Set/Map serialization
+- ✅ `loadGame(isAutoSave)` - Load with Set/Map deserialization
+- ✅ `hasSaveData(isAutoSave)` - Check save existence
+- ✅ `deleteSave(isAutoSave)` - Delete save data
+- ✅ `getSaveMetadata(isAutoSave)` - Get save info without full load
+- ✅ `validateSaveData(data)` - Validate save structure
+- ✅ `migrateSaveData(data)` - Version migration
+- ✅ `exportSaveToFile(saveData, filename)` - JSON export
+- ✅ `importSaveFromFile(file)` - JSON import
+- ✅ `clearAllSaves()` - Clear all save data
+
+**Test Coverage** (7 comprehensive tests in saveSystemTests.ts):
+- ✅ Test 1: Initialize new game (roster, campaign, inventory, stats, settings)
+- ✅ Test 2: Save and load cycle (manual + auto-save)
+- ✅ Test 3: Auto-save functionality
+- ✅ Test 4: Save validation (valid/invalid data)
+- ✅ Test 5: Save metadata extraction
+- ✅ Test 6: Roster management (add/remove/limits)
+- ✅ Test 7: Settings persistence
+- ✅ Browser console integration (`window.saveSystemTests`)
+
+**Player Statistics Tracked** (10 stats):
+- ✅ Total battles, victories, defeats
+- ✅ Total damage dealt, healing done
+- ✅ Enemies defeated, bosses defeated
+- ✅ Equipment obtained
+- ✅ Highest level reached
+- ✅ Total playtime (milliseconds)
+
+**Game Settings** (8 preferences):
+- ✅ Damage variance enabled (±10%)
+- ✅ Combat animation speed (0.5-2.0×)
+- ✅ Auto-save enabled
+- ✅ Show damage numbers
+- ✅ Detailed combat log
+- ✅ Auto-hide low rarity equipment
+- ✅ Sound enabled and volume
+
+**Save Features**:
+- ✅ LocalStorage persistence (keys: `anxrpg_save`, `anxrpg_autosave`)
+- ✅ Save validation with error reporting
+- ✅ Version-aware migration (`1.0.0`)
+- ✅ Roster size enforcement (max 6)
+- ✅ Character data validation
+- ✅ JSON import/export
+- ✅ Auto-save on new game
+- ✅ Playtime tracking per session
+
+**Critical Bug Fixed** (October 22, 2025):
+- ❌ **Problem**: `CampaignProgress` uses `Set<number>` and `Map<number, number>` which serialize to empty objects `{}`
+- ✅ **Solution**: Convert to arrays on save, restore to Set/Map on load
+- ✅ **Files Modified**: `src/utils/storage.ts` (saveGame, loadGame, getSaveMetadata, migrateSaveData)
+- ✅ **Documentation**: `TEST_SAVE_LOAD.md` created
+
+**Integration**:
+- ✅ Auto-save trigger points identified in combat.ts
+- ✅ UI integration complete (Main Menu loads/saves correctly)
+- ✅ Campaign progress saves with proper Set/Map serialization
+- ✅ Equipment inventory unlimited storage
+- ✅ Statistics increment on battle events
+
+**Verdict**: COMPLETE ✅
+
+---
+
+### 🔄 Phase 11: UI Implementation - **50% COMPLETE (5/10 screens)**
+
+**Completed Components** (5/10):
+
+1. ✅ **UI Foundation** (4 core modules, ~835 lines):
+   - `ScreenManager.ts` (145 lines) - Navigation with history stack, context passing
+   - `EventBus.ts` (105 lines) - Pub/sub event system with GameEvents
+   - `UIHelpers.ts` (440 lines) - 20+ utility functions (createElement, buttons, progress bars, modals, toasts)
+   - `UIState.ts` (145 lines) - Runtime state management, team assignment bridge
+
+2. ✅ **Main Menu Screen** (271 lines):
+   - New Game dialog with 6 character type selection
+   - Continue Game from auto-save
+   - Load Game from manual save
+   - Settings navigation placeholder
+   - UIState initialization on all load paths
+
+3. ✅ **Team Management Screen** (338 lines):
+   - Active team display (1-3 characters)
+   - Reserve team display (up to 3 characters)
+   - Full roster display (max 6 characters)
+   - Character cards with HP/AP bars, stats display
+   - Team swapping functionality with validation
+   - Navigation to Campaign Map, Inventory, Character Sheet
+
+4. ✅ **Campaign Map Screen** (264 lines):
+   - 100 stages organized by 7 tiers (Slimes & Rats → Gods)
+   - Boss stage indicators (every 10th stage with crown icon)
+   - Locked/unlocked/completed visual states
+   - Progress tracking per tier section
+   - Stage selection validates team and triggers combat
+   - Enemy generation and combat initialization
+
+5. ✅ **CSS Styling System** (~900 lines):
+   - 60+ CSS variables (colors, spacing, typography, shadows)
+   - Dark theme with gradient accents
+   - BEM naming convention (.block__element--modifier)
+   - Responsive design with mobile breakpoints
+   - Component styles for all screens
+   - Animations and transitions
+   - Toast notifications and modal system
+   - Progress bars and HP/AP displays
+
+**In Progress** (1/10):
+
+6. 🔄 **Combat Screen** (NEXT - CRITICAL):
+   - Turn-based combat UI layout
+   - Player team display (active + reserve)
+   - Enemy team display with HP bars
+   - Ability buttons (4-6 per character based on unlocks)
+   - AP tracking and display (visual dots + numbers)
+   - Multi-action support ("Use Another Ability" vs "End Turn")
+   - Combat log with scrolling message history
+   - Turn order display
+   - Victory/defeat detection and navigation
+   - Integration with `src/systems/combat.ts`
+
+**Pending** (4/10):
+
+7. ⏳ **Battle Results Screen**:
+   - Victory/defeat message with visual feedback
+   - XP distribution display (all 6 characters gain equal XP)
+   - Equipment loot display with rarity highlighting
+   - Level-up notifications (if any characters leveled)
+   - Skill points awarded notification
+   - Continue button returns to Campaign Map
+
+8. ⏳ **Character Sheet Screen**:
+   - Full stat display (9 stats: HP, ATK, DEF, MAG, RES, SPD, CRT, EVA, ACC)
+   - Equipment slots grid (8 slots: mainHand, offHand, head, chest, legs, neck, wrist×2)
+   - Skill tree visualization (20 nodes per character type)
+   - Abilities list (unlocked vs locked status)
+   - Level/XP progress bar
+   - Character info (name, type, level)
+
+9. ⏳ **Inventory Screen**:
+   - Equipment list with filtering (slot type, rarity, level requirement)
+   - Equip/unequip functionality
+   - Rarity-based sorting and color coding
+   - Hide toggle for low-rarity items (respects settings.autoHideLowRarityEquipment)
+   - Equipment comparison tooltips
+   - Stat preview on hover
+
+10. ⏳ **Settings Screen**:
+    - Game settings toggles (8 settings from SaveData.settings)
+    - Save/load management UI
+    - Export save as JSON file
+    - Import save from JSON file
+    - Clear save data with confirmation
+    - Credits/about section
+
+**Architecture & Patterns**:
+- ✅ No frameworks - Pure vanilla TypeScript (project philosophy)
+- ✅ Component functions - Not classes, functional approach
+- ✅ Screen navigation - Centralized ScreenManager with history
+- ✅ State management - UIState bridges persistent SaveData and runtime UI needs
+- ✅ Event-driven - EventBus for reactive updates (GAME_LOADED, COMBAT_START, etc.)
+- ✅ BEM CSS - Block__Element--Modifier naming convention
+- ✅ Responsive - Mobile-first with breakpoints
+- ✅ Accessibility - ARIA labels, semantic HTML
+
+**Files Created**:
+- `src/ui/core/ScreenManager.ts` (145 lines)
+- `src/ui/core/EventBus.ts` (105 lines)
+- `src/ui/core/UIHelpers.ts` (440 lines)
+- `src/ui/core/UIState.ts` (145 lines)
+- `src/ui/MainMenuScreen.ts` (271 lines)
+- `src/ui/TeamManagementScreen.ts` (338 lines)
+- `src/ui/CampaignMapScreen.ts` (264 lines)
+- `src/style.css` (900+ lines)
+
+**Files Modified**:
+- `src/main.ts` - Screen registration and initialization
+- `index.html` - Simplified to single #app div
+
+**Integration Status**:
+- ✅ Main Menu → Team Management → Campaign Map flow working
+- ✅ UIState properly initialized on all load paths
+- ✅ Save/load working with Set/Map serialization fix
+- ✅ Character data displays correctly
+- ✅ Team swapping functional
+- ✅ Campaign stage selection ready to trigger combat
+- ⏳ Combat screen needed to complete gameplay loop
+
+**Verdict**: 50% COMPLETE (5/10 screens) 🔄
+
+---
+
+### ❌ Phase 12: Game Juice & Polish - **0% COMPLETE**
 
 ---
 
@@ -473,15 +740,15 @@
 | 8. Progression | ✅ COMPLETE | 100% |
 | 9. Campaign | ✅ COMPLETE | 100% |
 | 10. Save System | ✅ COMPLETE | 100% |
-| 11. UI | ❌ NOT STARTED | 0% |
+| 11. UI | 🔄 IN PROGRESS | 50% (5/10 screens) |
 | 12. Game Juice | ❌ NOT STARTED | 0% |
 | 13. Balance/Testing | ❌ NOT STARTED | 0% |
 | 14. Polish | ❌ NOT STARTED | 0% |
 
 ### Overall Project Completion
 - **Phases Fully Complete**: 10/14 (71%)
-- **Phases Partially Complete**: 0/14
-- **Weighted Completion**: ~71%
+- **Phases Partially Complete**: 1/14 (Phase 11 at 50%)
+- **Weighted Completion**: ~75%
 
 ### What Works Right Now
 ✅ Can create characters with all stats  
