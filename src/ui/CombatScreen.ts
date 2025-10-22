@@ -30,7 +30,10 @@ export function renderCombat(context: ScreenContext): HTMLElement {
   
   const uiState = context.uiState as UIGameState | undefined;
   const combatState = context.combat as CombatState | undefined;
-  const stageNumber = context.stage as number | undefined;
+  // Stage can be passed as either Stage object or number for backwards compatibility
+  const stageData = context.stage as any;
+  const stageNumber = typeof stageData === 'object' ? stageData?.stageNumber : stageData;
+  const stageName = typeof stageData === 'object' ? stageData?.name : undefined;
   
   if (!uiState || !combatState) {
     container.innerHTML = '<p>Error: Invalid combat state</p>';
@@ -45,7 +48,9 @@ export function renderCombat(context: ScreenContext): HTMLElement {
   // Combat header
   const header = createElement('div', 'combat-header');
   const title = createElement('h1', 'combat-header__title');
-  title.textContent = `⚔️ Stage ${stageNumber || '?'} - Battle`;
+  title.textContent = stageName 
+    ? `⚔️ Stage ${stageNumber || '?'} - ${stageName}`
+    : `⚔️ Stage ${stageNumber || '?'} - Battle`;
   
   const roundInfo = createElement('div', 'combat-header__round');
   roundInfo.textContent = `Round ${combatState.roundNumber} | Turn ${combatState.currentTurn}`;

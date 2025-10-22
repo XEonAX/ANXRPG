@@ -11,6 +11,7 @@ import { renderTeamManagement } from './ui/TeamManagementScreen';
 import { renderCampaignMap } from './ui/CampaignMapScreen';
 import { renderCombat } from './ui/CombatScreen';
 import { renderBattleResults } from './ui/BattleResultsScreen';
+import { renderCharacterSheet } from './ui/CharacterSheetScreen';
 
 // Development: Make test functions available in console
 import {
@@ -67,9 +68,9 @@ if (!app) {
   ScreenManager.registerScreen('campaignMap', renderCampaignMap);
   ScreenManager.registerScreen('combat', renderCombat);
   ScreenManager.registerScreen('battleResults', renderBattleResults);
+  ScreenManager.registerScreen('characterSheet', renderCharacterSheet);
   
   // TODO: Register other screens as we build them
-  // ScreenManager.registerScreen('characterSheet', renderCharacterSheet);
   // ScreenManager.registerScreen('inventory', renderInventory);
   // ScreenManager.registerScreen('settings', renderSettings);
   
