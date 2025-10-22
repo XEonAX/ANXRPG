@@ -1,52 +1,109 @@
 # ANXRPG - Next Steps for Continuation
 
 **Date**: October 22, 2025  
-**Current Status**: Phase 9 Complete (100%)  
-**Overall Progress**: 9/14 phases complete (~64%)
+**Current Status**: Phase 10 Complete (100%)  
+**Overall Progress**: 10/14 phases complete (~71%)
 
 ---
 
 ## 🎯 Immediate Priorities
 
-### 1. Start Phase 10: Save/Load System
-**Estimated Time**: 1-2 sessions (4-6 hours)
+### 1. Start Phase 11: UI Implementation
+**Estimated Time**: 3-4 sessions (12-16 hours)
 
-**Goal**: Implement LocalStorage persistence for game state
+**Goal**: Create complete semantic HTML interface for the game
 
-#### Tasks:
-- [ ] Create save data type definitions
-  - **File**: `src/types/save.ts`
-  - Define serializable game state structure
-  - Include character roster, campaign progress, equipment inventory
+#### Priority 1: Combat Screen (Most Critical)
+- [ ] Create combat UI layout
+  - **File**: `src/ui/combat.ts`
+  - Left panel: Player team display (HP/AP bars, character cards)
+  - Right panel: Enemy team display
+  - Bottom panel: Action bar with abilities
+  - Sidebar: Combat log with turn messages
   
-- [ ] Implement serialization functions
-  - **File**: `src/utils/storage.ts`
-  - Save game state to LocalStorage
-  - Load game state from LocalStorage
-  - Validate save data structure
+- [ ] Implement ability buttons
+  - Dynamic ability grid based on character
+  - AP cost display
+  - Disabled state when insufficient AP
+  - Target selection UI (single vs AoE)
+  - "End Turn" button
   
-- [ ] Add auto-save triggers
-  - **Files**: `src/systems/combat.ts`, `src/systems/campaign.ts`
-  - Auto-save after battle victory
-  - Auto-save after stage completion
-  - Auto-save after equipment changes
+- [ ] Add combat log rendering
+  - Turn-by-turn message display
+  - Color-coded messages (damage, healing, status effects)
+  - Auto-scroll to latest message
+  - Damage numbers display
   
-- [ ] Create new game initialization
-  - **File**: `src/systems/game.ts`
-  - Initialize default game state
-  - Create starting character roster
-  - Set up initial campaign progress
+- [ ] Status effect indicators
+  - Icon display above character cards
+  - Tooltip with effect details
+  - Duration countdown
+  - Stacking count for stackable effects
+
+#### Priority 2: Main Menu & Navigation
+- [ ] Create main menu screen
+  - **File**: `src/ui/menu.ts`
+  - New Game button (with character type selection)
+  - Continue button (load auto-save, if exists)
+  - Load Game button (load manual save, if exists)
+  - Settings button
   
-- [ ] Add save data migration
-  - Handle version updates
-  - Validate save structure
-  - Error handling for corrupted saves
+- [ ] Implement screen navigation
+  - **File**: `src/ui/navigation.ts`
+  - Screen switching logic
+  - Back button support
+  - Screen history/stack
+
+#### Priority 3: Team Management
+- [ ] Create team management UI
+  - **File**: `src/ui/team.ts`
+  - Active team display (1-3 characters)
+  - Reserve team display (up to 3 characters)
+  - Drag-and-drop or click to swap
+  - Character summary cards (level, HP, class)
+
+#### Priority 4: Character Sheet
+- [ ] Implement character detail view
+  - **File**: `src/ui/character.ts`
+  - Stats table (HP, ATK, DEF, MAG, RES, SPD, CRT, EVA, ACC)
+  - Equipment slots grid (8 slots)
+  - Abilities list with AP costs
+  - Skill tree visualization
+  - Level/XP progress bar
+
+#### Priority 5: Campaign Map
+- [ ] Create stage selection UI
+  - **File**: `src/ui/campaign.ts`
+  - Stage list with numbers (1-100)
+  - Locked/unlocked states
+  - Boss stage indicators (stages 10, 20, 30...)
+  - Current stage highlight
+  - Stage info panel (enemy info, rewards)
+  - "Start Battle" button
+
+#### Priority 6: Equipment Inventory
+- [ ] Implement equipment screen
+  - **File**: `src/ui/inventory.ts`
+  - Equipment list with filters (slot, rarity)
+  - Equip/unequip buttons
+  - Item comparison (equipped vs inventory)
+  - Stat preview on hover
+  - "Hide item" toggle for low rarity gear
+
+#### Priority 7: Battle Results
+- [ ] Create victory/defeat screens
+  - **File**: `src/ui/results.ts`
+  - Victory message with XP earned
+  - Level-up notifications
+  - Equipment loot display
+  - "Continue" button (return to campaign)
+  - Defeat message with retry option
 
 #### Expected Deliverables:
-- Complete save/load system using LocalStorage
-- Auto-save on key events
-- New game initialization
-- Save data validation
+- Functional combat UI (complete turn-based flow)
+- Main menu with save/load integration
+- All 7 screens connected and navigable
+- Basic CSS styling (minimal, functional)
 
 ---
 
@@ -103,7 +160,7 @@
 
 ## 📊 Progress Tracking
 
-### Completed (64%):
+### Completed (71%):
 - ✅ Phase 1: Project Foundation
 - ✅ Phase 2: Character System (6 types)
 - ✅ Phase 3: Ability System (24 abilities)
@@ -113,12 +170,13 @@
 - ✅ Phase 7: Enemy System (28 templates, 40+ abilities)
 - ✅ Phase 8: Progression (skill trees + recruitment)
 - ✅ Phase 9: Campaign (100 stages)
+- ✅ Phase 10: Save/Load System (LocalStorage)
 
 ### In Progress (0%):
-- ⏳ Phase 10: Save/Load System (NEXT)
+- ⏳ Phase 11: UI Implementation (NEXT)
 
-### Remaining (36%):
-- ⏳ Phase 11-14
+### Remaining (29%):
+- ⏳ Phase 12-14
 
 ---
 
@@ -139,10 +197,13 @@ npm run dev
 Press F12 in browser, then:
 
 ```javascript
+// Test save system (NEW!)
+saveSystemTests.runAll()
+
 // Test campaign system
 campaignTests.runAll()
 
-// Test combat with Phase 9 integration
+// Test combat with all integration
 combatDemo.all()
 
 // Test skill trees
@@ -150,13 +211,16 @@ phase8Tests.runAll()
 ```
 
 ### 4. What to Look For
+- ✅ Save/load cycle works correctly
+- ✅ Auto-save on new game
+- ✅ Settings and statistics preserved
+- ✅ Roster and inventory management
+- ✅ Campaign progress saves
+- ✅ All validation checks working
 - ✅ 100 stages defined correctly
 - ✅ Boss battles every 10th stage
 - ✅ Victory tracking works
 - ✅ Stage unlocking progression
-- ✅ Reward calculation (XP, equipment, gold)
-- ✅ Integration with recruitment system
-- ✅ Enemy team generation
 
 ---
 
@@ -172,6 +236,7 @@ phase8Tests.runAll()
 - `src/systems/statusEffects.ts` - Status effects
 - `src/systems/skillTree.ts` - Skill tree system
 - `src/systems/recruitment.ts` - Character recruitment
+- `src/systems/game.ts` - Game state manager (29 functions) **NEW**
 
 ### Data Definitions:
 - `src/data/characterTypes.ts` - 6 character types
@@ -192,23 +257,31 @@ phase8Tests.runAll()
 - `src/types/equipment.ts` - Equipment types
 - `src/types/status.ts` - Status effect types
 - `src/types/skillTree.ts` - Skill tree types
+- `src/types/save.ts` - Save data types **NEW**
+
+### Utilities:
+- `src/utils/storage.ts` - Save/load functions (13 functions) **NEW**
+- `src/utils/formulas.ts` - Stat calculations
+- `src/utils/random.ts` - RNG utilities
 
 ### Tests:
 - `src/tests/combatDemo.ts` - Combat testing
 - `src/tests/campaignTests.ts` - Campaign testing
 - `src/tests/phase8Tests.ts` - Progression testing
 - `src/tests/statusEffectsDemo.ts` - Status effects testing
+- `src/tests/saveSystemTests.ts` - Save/load testing **NEW**
 
 ---
 
 ## 💡 Tips for Next Session
 
-1. **Start with Phase 10**: Save/Load system is critical infrastructure
-2. **Reference Existing Patterns**: Look at game state types for serialization structure
-3. **Test Save/Load Cycle**: Create game → save → reload → verify state restored
-4. **Check GAME_DESIGN.md**: For any save system requirements
-5. **Build Often**: Run `npm run build` to catch TypeScript errors early
+1. **Start with Phase 11**: UI implementation is the next major milestone
+2. **Combat Screen First**: Most critical UI component - get it working end-to-end
+3. **Reference Existing Test Demos**: Use `combatDemo.ts` to understand combat flow
+4. **Check Game State**: Use `game.ts` functions to integrate save/load with UI
+5. **Semantic HTML**: Keep UI pure HTML/TypeScript (no frameworks)
+6. **Build Often**: Run `npm run build` to catch TypeScript errors early
 
 ---
 
-**Status**: Campaign system complete! Ready to implement persistent save system. 🚀
+**Status**: Save/Load system complete! Ready to implement UI. 🚀

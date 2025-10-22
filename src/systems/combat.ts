@@ -749,6 +749,9 @@ function checkBattleEnd(state: CombatState): void {
       });
     }
     
+    // TODO: Auto-save trigger point - call saveGame(true) from game.ts here
+    // when integrating with UI/game loop
+    
     return;
   }
   
