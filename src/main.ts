@@ -9,6 +9,8 @@ import { EventBus, GameEvents } from './ui/core/EventBus';
 import { renderMainMenu } from './ui/MainMenuScreen';
 import { renderTeamManagement } from './ui/TeamManagementScreen';
 import { renderCampaignMap } from './ui/CampaignMapScreen';
+import { renderCombat } from './ui/CombatScreen';
+import { renderBattleResults } from './ui/BattleResultsScreen';
 
 // Development: Make test functions available in console
 import {
@@ -63,12 +65,12 @@ if (!app) {
   ScreenManager.registerScreen('mainMenu', renderMainMenu);
   ScreenManager.registerScreen('teamManagement', renderTeamManagement);
   ScreenManager.registerScreen('campaignMap', renderCampaignMap);
+  ScreenManager.registerScreen('combat', renderCombat);
+  ScreenManager.registerScreen('battleResults', renderBattleResults);
   
   // TODO: Register other screens as we build them
   // ScreenManager.registerScreen('characterSheet', renderCharacterSheet);
-  // ScreenManager.registerScreen('combat', renderCombat);
   // ScreenManager.registerScreen('inventory', renderInventory);
-  // ScreenManager.registerScreen('battleResults', renderBattleResults);
   // ScreenManager.registerScreen('settings', renderSettings);
   
   // Event listeners
