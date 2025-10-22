@@ -32,8 +32,18 @@ export function saveGame(saveData: SaveData, isAutoSave: boolean = false): boole
     // Update version
     saveData.version = SAVE_VERSION;
     
+    // Convert Sets and Maps to arrays for JSON serialization
+    const serializable = {
+      ...saveData,
+      campaign: {
+        ...saveData.campaign,
+        completedStages: Array.from(saveData.campaign.completedStages),
+        victoriesPerStage: Array.from(saveData.campaign.victoriesPerStage.entries()),
+      },
+    };
+    
     // Serialize to JSON
-    const json = JSON.stringify(saveData);
+    const json = JSON.stringify(serializable);
     
     // Save to LocalStorage
     const key = isAutoSave ? AUTOSAVE_KEY : SAVE_KEY;
@@ -64,10 +74,18 @@ export function loadGame(isAutoSave: boolean = false): SaveData | null {
     }
     
     // Parse JSON
-    const data = JSON.parse(json) as SaveData;
+    const data = JSON.parse(json) as any;
+    
+    // Restore Sets and Maps from arrays
+    if (data.campaign) {
+      data.campaign.completedStages = new Set(data.campaign.completedStages || []);
+      data.campaign.victoriesPerStage = new Map(data.campaign.victoriesPerStage || []);
+    }
+    
+    const saveData = data as SaveData;
     
     // Validate save data
-    const validation = validateSaveData(data);
+    const validation = validateSaveData(saveData);
     
     if (!validation.isValid) {
       console.error('[Storage] Save data validation failed:', validation.errors);
@@ -77,7 +95,7 @@ export function loadGame(isAutoSave: boolean = false): SaveData | null {
     // Check if migration needed
     if (validation.needsMigration) {
       console.log('[Storage] Save data needs migration from version', validation.foundVersion);
-      const migrated = migrateSaveData(data);
+      const migrated = migrateSaveData(saveData);
       
       if (!migrated) {
         console.error('[Storage] Save data migration failed');
@@ -88,7 +106,7 @@ export function loadGame(isAutoSave: boolean = false): SaveData | null {
     }
     
     console.log(`[Storage] Game loaded successfully from ${isAutoSave ? 'auto-' : 'manual '}save`);
-    return data;
+    return saveData;
     
   } catch (error) {
     console.error('[Storage] Failed to load game:', error);
@@ -148,25 +166,29 @@ export function getSaveMetadata(isAutoSave: boolean = false): SaveSlotMetadata |
       };
     }
     
-    const data = JSON.parse(json) as SaveData;
+    const data = JSON.parse(json) as any;
+    
+    // Restore completedStages Set from array
+    const completedStages = Array.isArray(data.campaign?.completedStages) 
+      ? new Set(data.campaign.completedStages)
+      : (data.campaign?.completedStages || new Set());
     
     // Calculate campaign progress percentage
-    const completedStages = data.campaign.completedStages.size;
-    const campaignProgress = (completedStages / 100) * 100;
+    const campaignProgress = (completedStages.size / 100) * 100;
     
     // Find highest level character
-    const highestLevel = data.roster.reduce((max, char) => 
+    const highestLevel = data.roster?.reduce((max: number, char: any) => 
       Math.max(max, char.level), 1
-    );
+    ) || 1;
     
     return {
       slot: isAutoSave ? 0 : 1,
       hasData: true,
       lastSaved: data.timestamp,
-      playtime: data.statistics.totalPlaytime,
+      playtime: data.statistics?.totalPlaytime || 0,
       highestLevel,
       campaignProgress,
-      rosterSize: data.roster.length,
+      rosterSize: data.roster?.length || 0,
     };
     
   } catch (error) {
@@ -271,12 +293,27 @@ export function migrateSaveData(data: any): SaveData | null {
   try {
     console.log('[Storage] Migrating save data from version', data.version || 'unknown');
     
+    // Ensure campaign has proper Set/Map structures
+    let campaign = data.campaign || {};
+    if (!campaign.completedStages || !(campaign.completedStages instanceof Set)) {
+      campaign.completedStages = new Set(campaign.completedStages || []);
+    }
+    if (!campaign.victoriesPerStage || !(campaign.victoriesPerStage instanceof Map)) {
+      campaign.victoriesPerStage = new Map(campaign.victoriesPerStage || []);
+    }
+    
     // Create migrated save with current structure
     const migrated: SaveData = {
       version: SAVE_VERSION,
       timestamp: data.timestamp || Date.now(),
       roster: data.roster || [],
-      campaign: data.campaign || { unlockedStages: [1], completedStages: [], currentStage: 1, victories: {} },
+      campaign: {
+        highestStageUnlocked: campaign.highestStageUnlocked || 1,
+        completedStages: campaign.completedStages,
+        currentStage: campaign.currentStage || 1,
+        totalVictories: campaign.totalVictories || 0,
+        victoriesPerStage: campaign.victoriesPerStage,
+      },
       inventory: data.inventory || [],
       statistics: data.statistics || { ...DEFAULT_PLAYER_STATISTICS },
       settings: data.settings || { ...DEFAULT_GAME_SETTINGS },
