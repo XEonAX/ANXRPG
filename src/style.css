@@ -1083,6 +1083,48 @@ a:hover {
   animation: pulseGlow 2s ease-in-out infinite;
 }
 
+/* Targetable enemy highlighting */
+.combat-enemy-card--targetable {
+  border-color: var(--success-color);
+  box-shadow: 0 0 0 2px rgba(34, 197, 94, 0.5);
+  animation: targetPulse 1.5s ease-in-out infinite;
+  transform: scale(1.02);
+}
+
+.combat-enemy-card--targetable:hover {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.7);
+  transform: scale(1.05);
+}
+
+.combat-enemy-card--dead {
+  opacity: 0.4;
+  filter: grayscale(100%);
+}
+
+.combat-enemy-card__target-indicator {
+  margin-top: var(--spacing-sm);
+  padding: var(--spacing-xs);
+  background: var(--success-color);
+  color: var(--text-primary);
+  text-align: center;
+  font-weight: bold;
+  font-size: var(--font-size-sm);
+  border-radius: var(--radius-sm);
+  animation: targetPulse 1.5s ease-in-out infinite;
+}
+
+@keyframes targetPulse {
+  0%, 100% { 
+    box-shadow: 0 0 0 2px rgba(34, 197, 94, 0.5);
+    opacity: 1;
+  }
+  50% { 
+    box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.8);
+    opacity: 0.9;
+  }
+}
+
 @keyframes pulseGlow {
   0%, 100% { box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.3); }
   50% { box-shadow: 0 0 0 4px rgba(245, 158, 11, 0.5); }

@@ -202,7 +202,18 @@ function processStartOfTurn(state: CombatState): void {
   
   // Regenerate AP
   if ('currentAp' in entity) {
-    regenerateAp(entity as Character);
+    if (combatant.type === 'player') {
+      // Characters use regenerateAp which accesses CHARACTER_TYPES
+      regenerateAp(entity as Character);
+    } else {
+      // Enemies regenerate AP directly using template's apRegen property
+      const enemy = entity as Enemy;
+      const template = getEnemyTemplate(enemy.templateId);
+      if (template) {
+        const maxAp = template.maxAp || 10;
+        enemy.currentAp = Math.min(maxAp, enemy.currentAp + template.apRegen);
+      }
+    }
   }
   
   // Process status effect ticks (start of turn)
@@ -242,6 +253,52 @@ function processStartOfTurn(state: CombatState): void {
     
     // Skip turn
     endTurn(state);
+    return;
+  }
+  
+  // Auto-process enemy turns
+  if (combatant.type === 'enemy') {
+    processEnemyAI(state);
+    endTurn(state);
+  }
+}
+
+/**
+ * Process enemy AI (select and execute ability)
+ */
+function processEnemyAI(state: CombatState): void {
+  const currentCombatant = getCurrentCombatant(state);
+  if (!currentCombatant || currentCombatant.type !== 'enemy') {
+    return;
+  }
+  
+  const enemy = currentCombatant.enemy!;
+  
+  // Simple AI: use random ability on random player target
+  if (enemy.abilities && enemy.abilities.length > 0) {
+    const randomAbility = enemy.abilities[Math.floor(Math.random() * enemy.abilities.length)];
+    const ability = getAbility(randomAbility);
+    
+    if (ability && enemy.currentAp >= ability.apCost) {
+      let targetIds: string[];
+      
+      switch (ability.targetType) {
+        case 'self':
+          targetIds = [enemy.id];
+          break;
+        case 'all-enemies':
+        case 'aoe-enemies':
+          targetIds = state.playerTeam.map(c => c.id);
+          break;
+        default:
+          // Random player target
+          const randomPlayer = state.playerTeam[Math.floor(Math.random() * state.playerTeam.length)];
+          targetIds = [randomPlayer.id];
+          break;
+      }
+      
+      executeAbility(state, randomAbility, targetIds);
+    }
   }
 }
 
@@ -307,6 +364,19 @@ export function endTurn(state: CombatState): void {
   state.turnInProgress = false;
   state.currentActorId = undefined;
   
+  // Remove dead combatants from turn order BEFORE advancing
+  const currentCombatantId = state.turnOrder.combatants[state.turnOrder.currentIndex]?.id;
+  state.turnOrder.combatants = state.turnOrder.combatants.filter(c => {
+    const entity = getCombatantEntity(c);
+    return entity.isAlive;
+  });
+  
+  // Find the current combatant's new index after removal
+  const newIndex = state.turnOrder.combatants.findIndex(c => c.id === currentCombatantId);
+  if (newIndex !== -1) {
+    state.turnOrder.currentIndex = newIndex;
+  }
+  
   // Advance to next combatant
   state.turnOrder.currentIndex++;
   state.currentTurn++;
@@ -323,12 +393,6 @@ export function endTurn(state: CombatState): void {
       message: `Round ${state.roundNumber} begins!`,
     });
   }
-  
-  // Remove dead combatants from turn order
-  state.turnOrder.combatants = state.turnOrder.combatants.filter(c => {
-    const entity = getCombatantEntity(c);
-    return entity.isAlive;
-  });
   
   // Check victory/defeat conditions
   checkBattleEnd(state);
@@ -615,6 +679,9 @@ export function executeAbility(
     abilityId,
     targetIds,
   });
+  
+  // Check if battle ended after ability execution (e.g., all enemies defeated)
+  checkBattleEnd(state);
   
   return result;
 }

@@ -6,6 +6,7 @@
  */
 
 import type { Ability } from '../types';
+import { getEnemyAbility } from './enemyAbilities';
 
 /**
  * Alpha (Paladin) Abilities - Tank/Off-Healer
@@ -638,10 +639,17 @@ export const ABILITIES: Record<string, Ability> = {
 };
 
 /**
- * Get ability by ID
+ * Get ability by ID (checks both player and enemy abilities)
  */
 export function getAbility(abilityId: string): Ability | undefined {
-  return ABILITIES[abilityId];
+  // First check player abilities
+  const playerAbility = ABILITIES[abilityId];
+  if (playerAbility) {
+    return playerAbility;
+  }
+  
+  // Then check enemy abilities
+  return getEnemyAbility(abilityId);
 }
 
 /**

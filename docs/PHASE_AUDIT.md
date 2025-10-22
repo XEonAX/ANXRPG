@@ -1,9 +1,9 @@
 # ANXRPG Phase Completion Audit
 
-**Date**: October 22, 2025 (Updated)  
+**Date**: October 22, 2025 (Updated - Evening)  
 **Purpose**: Accurate assessment of what's actually implemented vs documented
 
-## Overall Progress: 10.5/14 Phases (~75% Complete)
+## Overall Progress: 11/14 Phases (~79% Complete)
 
 ### Executive Summary
 **What Works**:
@@ -12,36 +12,54 @@
 ✅ **24 player abilities + 40+ enemy abilities**  
 ✅ **Equipment system (8 slots, procedural generation, 7 rarity tiers)**  
 ✅ **Status effects (26 effects, stacking, DOT/HOT, control)**  
-✅ **Combat engine (turn-based, multi-action, ability execution)**  
+✅ **Combat engine (turn-based, multi-action, ability execution, enemy AI)**  
 ✅ **Damage calculation (physical/magical, critical hits, hit/miss)**  
 ✅ **Enemy system (28 templates, 7 tiers, boss AI)**  
 ✅ **Progression (XP, leveling, skill trees with 120 nodes)**  
 ✅ **Recruitment system (every 20 victories, max 6 roster)**  
 ✅ **Campaign (100 stages, boss battles every 10th, progressive difficulty)**  
-✅ **Save/load system with Set/Map serialization fix**  
+✅ **Save/load system with Set/Map serialization**  
 ✅ **UI Foundation (ScreenManager, EventBus, UIHelpers, UIState)**  
 ✅ **Main Menu screen (New/Continue/Load with character selection)**  
 ✅ **Team Management screen (active/reserve/roster with swapping)**  
 ✅ **Campaign Map screen (100 stages, tier grouping, unlock tracking)**  
-✅ **Complete CSS system (dark theme, responsive, 900+ lines)**  
+✅ **Combat Screen with enemy AI - BUGS FIXED!** ✨  
+✅ **Battle Results screen (XP, loot, level-ups)**  
+✅ **Character Sheet screen (stats, equipment, skill tree)**  
+✅ **Complete CSS system (dark theme, responsive, 1200+ lines)**  
 
 **What's In Progress**:
-🔄 **Combat Screen UI** (50% of Phase 11 complete, combat screen is next)
+🔄 **Inventory Screen** (Next up - equipment management UI)
 
 **What Doesn't Work Yet**:
-❌ No combat UI (can't play battles visually)  
-❌ No battle results screen  
-❌ No character sheet UI  
-❌ No inventory UI  
+❌ No inventory management UI  
 ❌ No settings screen  
-❌ No game juice/polish  
+❌ No game juice/polish (flavor text, animations beyond combat)  
 
 ### Critical Path Forward
-1. **Phase 11 remaining** (1-2 sessions): Combat Screen + 3 supporting screens
-2. **Phase 12** (1 session): Game juice (flavor text, polish)
-3. **Phase 13-14** (1 session): Balance, testing, final polish
+1. **Phase 11 remaining** (0.5 sessions): Inventory Screen + Settings Screen
+2. **Phase 12** (0.5 session): Game juice (flavor text, polish)
+3. **Phase 13-14** (0.5 session): Balance, testing, final polish
 
-**Estimate to playable**: 2-4 more sessions (~6-12 hours)
+**Estimate to fully complete**: 1-2 more sessions (~3-6 hours)
+
+---
+
+## Recent Critical Bug Fixes (Oct 22, 2025 - Evening Session)
+
+### 🐛 Combat Screen Bugs - ALL FIXED ✅
+See detailed writeup in `docs/COMBAT_SCREEN_BUG_FIXES.md`
+
+1. ✅ **Stage Display Bug** - Fixed "[object Object]" display
+2. ✅ **Auto-Victory** - Battle now ends immediately when all enemies defeated
+3. ✅ **Enemy AP Regeneration Crash** - Fixed type mismatch (Character vs Enemy)
+4. ✅ **Enemy Turn Skipping** - **CRITICAL FIX**: 
+   - Problem: Enemies never attacked (turns skipped T1→T3→T5)
+   - Root Cause: `getAbility()` only looked up player abilities, returned `undefined` for enemy abilities
+   - Solution: Updated `getAbility()` to check both player AND enemy ability databases
+   - Result: Enemies now attack correctly! 🎯
+5. ✅ **Targeting Dead Enemies** - Now filters for alive enemies only
+6. ✅ **Click-to-Target Feature** - NEW! Click enemies to select target (green glow + animations)
 
 ---
 
@@ -593,9 +611,9 @@ Navigate to: http://localhost:5174
 
 ---
 
-### 🔄 Phase 11: UI Implementation - **50% COMPLETE (5/10 screens)**
+### ✅ Phase 11: UI Implementation - **80% COMPLETE (8/10 screens)**
 
-**Completed Components** (5/10):
+**Completed Components** (8/10):
 
 1. ✅ **UI Foundation** (4 core modules, ~835 lines):
    - `ScreenManager.ts` (145 lines) - Navigation with history stack, context passing
@@ -626,60 +644,79 @@ Navigate to: http://localhost:5174
    - Stage selection validates team and triggers combat
    - Enemy generation and combat initialization
 
-5. ✅ **CSS Styling System** (~900 lines):
+5. ✅ **Combat Screen** (660 lines + enemy AI integration) - **BUGS FIXED!** ✨:
+   - Turn-based combat UI layout with player/enemy teams
+   - Player team display (active + reserve indicators)
+   - Enemy team display with HP bars and status effects
+   - Ability buttons (filtered by equipped abilities)
+   - AP tracking and display (visual bars + numbers)
+   - Multi-action support (sequential ability use + "End Turn" button)
+   - Combat log with scrolling message history (last 20 entries)
+   - Turn order display (Round X | Turn Y)
+   - Victory/defeat detection and auto-navigation
+   - **Click-to-target enemy selection** with green glow animations
+   - **Enemy AI fully functional** - enemies attack correctly!
+   - Reserve swap modal on team wipe
+   - Integration with `src/systems/combat.ts` ✅
+   - **Critical Bug Fixes** (Oct 22, 2025):
+     - ✅ Fixed "[object Object]" stage display
+     - ✅ Fixed auto-victory trigger
+     - ✅ Fixed enemy AP regeneration crash
+     - ✅ **Fixed enemy turn skipping** (updated `getAbility()` to check enemy abilities)
+     - ✅ Fixed targeting dead enemies
+     - ✅ Added click-to-target feature with CSS animations
+
+6. ✅ **Battle Results Screen** (197 lines):
+   - Victory/defeat message with visual feedback
+   - XP distribution display (all 6 characters gain equal XP)
+   - Equipment loot display with rarity-based color coding
+   - Level-up notifications (if any characters leveled)
+   - Skill points awarded notification
+   - Stage completion tracking
+   - Continue button returns to Campaign Map
+   - Auto-save integration
+
+7. ✅ **Character Sheet Screen** (450 lines + 330 CSS):
+   - Complete stats table (10 stats: HP, ATK, DEF, MAG, RES, SPD, CRT, EVA, ACC, AP Regen)
+   - Equipment slots grid (8 slots with equip/unequip buttons)
+   - Skill tree visualization (20 nodes per character type)
+   - Skill tree unlocking with skill point spending
+   - Abilities list (equipped vs unlocked abilities)
+   - Level/XP progress bar
+   - Skill points display and management
+   - Navigation back to Team Management
+
+8. ✅ **CSS Styling System** (~1200 lines):
    - 60+ CSS variables (colors, spacing, typography, shadows)
    - Dark theme with gradient accents
    - BEM naming convention (.block__element--modifier)
    - Responsive design with mobile breakpoints
-   - Component styles for all screens
+   - Component styles for all screens (including combat + character sheet)
    - Animations and transitions
    - Toast notifications and modal system
    - Progress bars and HP/AP displays
+   - **Combat-specific animations** (targeting pulse, dead enemy grayscale)
+   - **Skill tree node styling** (locked/unlocked/active states)
 
-**In Progress** (1/10):
+**Pending** (2/10):
 
-6. 🔄 **Combat Screen** (NEXT - CRITICAL):
-   - Turn-based combat UI layout
-   - Player team display (active + reserve)
-   - Enemy team display with HP bars
-   - Ability buttons (4-6 per character based on unlocks)
-   - AP tracking and display (visual dots + numbers)
-   - Multi-action support ("Use Another Ability" vs "End Turn")
-   - Combat log with scrolling message history
-   - Turn order display
-   - Victory/defeat detection and navigation
-   - Integration with `src/systems/combat.ts`
-
-**Pending** (4/10):
-
-7. ⏳ **Battle Results Screen**:
-   - Victory/defeat message with visual feedback
-   - XP distribution display (all 6 characters gain equal XP)
-   - Equipment loot display with rarity highlighting
-   - Level-up notifications (if any characters leveled)
-   - Skill points awarded notification
-   - Continue button returns to Campaign Map
-
-8. ⏳ **Character Sheet Screen**:
-   - Full stat display (9 stats: HP, ATK, DEF, MAG, RES, SPD, CRT, EVA, ACC)
-   - Equipment slots grid (8 slots: mainHand, offHand, head, chest, legs, neck, wrist×2)
-   - Skill tree visualization (20 nodes per character type)
-   - Abilities list (unlocked vs locked status)
-   - Level/XP progress bar
-   - Character info (name, type, level)
-
-9. ⏳ **Inventory Screen**:
-   - Equipment list with filtering (slot type, rarity, level requirement)
-   - Equip/unequip functionality
-   - Rarity-based sorting and color coding
-   - Hide toggle for low-rarity items (respects settings.autoHideLowRarityEquipment)
-   - Equipment comparison tooltips
-   - Stat preview on hover
+9. ⏳ **Inventory Screen** (NEXT):
+   - Equipment list with filters (slot, rarity, level)
+   - Sort options (rarity, level, name, slot)
+   - Equip/unequip with character selection
+   - Comparison tooltips (stat differences)
+   - Hide low-rarity toggle
+   - Navigate from Team Management, Character Sheet, Campaign Map
 
 10. ⏳ **Settings Screen**:
     - Game settings toggles (8 settings from SaveData.settings)
     - Save/load management UI
     - Export save as JSON file
+    - Import save from JSON file
+    - Clear all data with confirmation
+    - Credits and version info
+
+**Verdict**: Phase 11 is 80% COMPLETE - 8/10 screens done, 2 remaining ✅
     - Import save from JSON file
     - Clear save data with confirmation
     - Credits/about section

@@ -22,6 +22,23 @@ import {
   acceptDefeat
 } from '../systems/combat';
 
+// Targeting state for click-to-target
+let targetingState: {
+  active: boolean;
+  ability: Ability | null;
+  character: Character | null;
+  combat: CombatState | null;
+  uiState: UIGameState | null;
+  stageNumber: number | undefined;
+} = {
+  active: false,
+  ability: null,
+  character: null,
+  combat: null,
+  uiState: null,
+  stageNumber: undefined,
+};
+
 /**
  * Render the combat screen
  */
@@ -207,9 +224,23 @@ function renderCharacterCard(char: Character, combat: CombatState): HTMLElement 
 function renderEnemyCard(enemy: Enemy, combat: CombatState): HTMLElement {
   const currentCombatant = getCurrentCombatant(combat);
   const isActive = currentCombatant?.id === enemy.id;
+  const isTargetable = targetingState.active && enemy.isAlive;
   
-  const card = createElement('div', `combat-enemy-card${isActive ? ' combat-enemy-card--active' : ''}`);
+  let cardClass = 'combat-enemy-card';
+  if (isActive) cardClass += ' combat-enemy-card--active';
+  if (isTargetable) cardClass += ' combat-enemy-card--targetable';
+  if (!enemy.isAlive) cardClass += ' combat-enemy-card--dead';
+  
+  const card = createElement('div', cardClass);
   card.dataset.enemyId = enemy.id;
+  
+  // Add click handler for targeting
+  if (isTargetable) {
+    card.style.cursor = 'pointer';
+    card.addEventListener('click', () => {
+      handleEnemyTargetClick(enemy.id);
+    });
+  }
   
   // Name and level
   const header = createElement('div', 'combat-enemy-card__header');
@@ -243,6 +274,13 @@ function renderEnemyCard(enemy: Enemy, combat: CombatState): HTMLElement {
     card.appendChild(indicator);
   }
   
+  // Targeting indicator
+  if (isTargetable) {
+    const targetIndicator = createElement('div', 'combat-enemy-card__target-indicator');
+    targetIndicator.textContent = '🎯 Click to Target';
+    card.appendChild(targetIndicator);
+  }
+  
   return card;
 }
 
@@ -258,12 +296,8 @@ function renderActionPanel(combat: CombatState, uiState: UIGameState, stageNumbe
   if (!currentCombatant || currentCombatant.type === 'enemy') {
     panel.innerHTML = '<p class="combat-action-panel__waiting">⏳ Enemy turn...</p>';
     
-    // Auto-process enemy turn after a short delay
-    if (currentCombatant?.type === 'enemy') {
-      setTimeout(() => {
-        processEnemyTurn(combat, uiState, stageNumber);
-      }, 1000);
-    }
+    // Enemy turns are handled automatically by the combat system
+    // Do NOT auto-process here to avoid multiple turn advances
     
     return panel;
   }
@@ -272,8 +306,24 @@ function renderActionPanel(combat: CombatState, uiState: UIGameState, stageNumbe
   const character = currentCombatant.character!;
   
   const title = createElement('h3', 'combat-action-panel__title');
-  title.textContent = `${character.name}'s Turn`;
+  
+  // Show targeting message if in targeting mode
+  if (targetingState.active && targetingState.ability) {
+    title.textContent = `🎯 Select target for ${targetingState.ability.name}`;
+  } else {
+    title.textContent = `${character.name}'s Turn`;
+  }
   panel.appendChild(title);
+  
+  // If in targeting mode, show cancel button
+  if (targetingState.active) {
+    const cancelBtn = createButton('❌ Cancel Targeting', () => {
+      exitTargetingMode();
+      ScreenManager.updateContext({ combat, uiState, stage: stageNumber });
+    }, 'btn btn--danger');
+    panel.appendChild(cancelBtn);
+    return panel;
+  }
   
   // Ability buttons
   const abilityContainer = createElement('div', 'combat-action-panel__abilities');
@@ -344,7 +394,13 @@ function handleAbilityClick(
   uiState: UIGameState,
   stageNumber?: number
 ): void {
-  // Determine targets based on ability type
+  // For single-enemy abilities, enter targeting mode
+  if (ability.targetType === 'single-enemy') {
+    enterTargetingMode(ability, character, combat, uiState, stageNumber);
+    return;
+  }
+  
+  // For other abilities, auto-target and execute immediately
   let targetIds: string[];
   
   switch (ability.targetType) {
@@ -365,19 +421,88 @@ function handleAbilityClick(
       
     case 'all-enemies':
     case 'aoe-enemies':
-      // All enemies
-      targetIds = combat.enemyTeam.map(e => e.id);
+      // All alive enemies
+      targetIds = combat.enemyTeam.filter(e => e.isAlive).map(e => e.id);
       break;
       
-    case 'single-enemy':
     default:
-      // First living enemy (could add target selection UI later)
-      targetIds = [combat.enemyTeam[0]?.id || ''];
+      // Fallback: first alive enemy
+      const firstAliveEnemy = combat.enemyTeam.find(e => e.isAlive);
+      targetIds = [firstAliveEnemy?.id || ''];
       break;
   }
   
+  executeAbilityWithTargets(ability.id, targetIds, combat, uiState, stageNumber);
+}
+
+/**
+ * Enter targeting mode for click-to-target
+ */
+function enterTargetingMode(
+  ability: Ability,
+  character: Character,
+  combat: CombatState,
+  uiState: UIGameState,
+  stageNumber?: number
+): void {
+  targetingState.active = true;
+  targetingState.ability = ability;
+  targetingState.character = character;
+  targetingState.combat = combat;
+  targetingState.uiState = uiState;
+  targetingState.stageNumber = stageNumber;
+  
+  // Re-render to show targeting UI
+  ScreenManager.updateContext({ combat, uiState, stage: stageNumber });
+  
+  showNotification('🎯 Select a target', 'info');
+}
+
+/**
+ * Handle clicking on an enemy during targeting mode
+ */
+function handleEnemyTargetClick(enemyId: string): void {
+  if (!targetingState.active || !targetingState.ability) {
+    return;
+  }
+  
+  // Execute ability on selected target
+  executeAbilityWithTargets(
+    targetingState.ability.id,
+    [enemyId],
+    targetingState.combat!,
+    targetingState.uiState!,
+    targetingState.stageNumber
+  );
+  
+  // Exit targeting mode
+  exitTargetingMode();
+}
+
+/**
+ * Exit targeting mode
+ */
+function exitTargetingMode(): void {
+  targetingState.active = false;
+  targetingState.ability = null;
+  targetingState.character = null;
+  targetingState.combat = null;
+  targetingState.uiState = null;
+  targetingState.stageNumber = undefined;
+}
+
+/**
+ * Execute ability with specified targets
+ */
+function executeAbilityWithTargets(
+  abilityId: string,
+  targetIds: string[],
+  combat: CombatState,
+  uiState: UIGameState,
+  stageNumber?: number
+): void {
   // Execute ability (signature is: state, abilityId, targetIds)
-  const result = executeAbility(combat, ability.id, targetIds);
+  const result = executeAbility(combat, abilityId, targetIds);
   
   if (!result) {
     showNotification('❌ Failed to execute ability', 'error');
@@ -395,8 +520,13 @@ function handleAbilityClick(
     showNotification(`💚 ${totalHealing} HP restored!`, 'success');
   }
   
-  // Re-render combat screen with updated state
-  ScreenManager.updateContext({ combat, uiState, stage: stageNumber });
+  // Check if combat ended after ability execution
+  checkCombatEnd(combat, uiState, stageNumber);
+  
+  // Re-render combat screen with updated state (only if combat hasn't ended)
+  if (combat.phase === 'active') {
+    ScreenManager.updateContext({ combat, uiState, stage: stageNumber });
+  }
 }
 
 /**
@@ -405,53 +535,13 @@ function handleAbilityClick(
 function endCharacterTurn(combat: CombatState, uiState: UIGameState, stageNumber?: number): void {
   endTurn(combat);
   
-  // Re-render to show next combatant
-  ScreenManager.updateContext({ combat, uiState, stage: stageNumber });
-}
-
-/**
- * Process enemy turn (AI)
- */
-function processEnemyTurn(combat: CombatState, uiState: UIGameState, stageNumber?: number): void {
-  const currentCombatant = getCurrentCombatant(combat);
-  if (!currentCombatant || currentCombatant.type !== 'enemy') {
-    return;
+  // Check if combat ended
+  checkCombatEnd(combat, uiState, stageNumber);
+  
+  // Re-render to show next combatant (only if combat hasn't ended)
+  if (combat.phase === 'active') {
+    ScreenManager.updateContext({ combat, uiState, stage: stageNumber });
   }
-  
-  const enemy = currentCombatant.enemy!;
-  
-  // Simple AI: use random ability on random player target
-  if (enemy.abilities && enemy.abilities.length > 0) {
-    const randomAbility = enemy.abilities[Math.floor(Math.random() * enemy.abilities.length)];
-    const ability = getAbility(randomAbility);
-    
-    if (ability && enemy.currentAp >= ability.apCost) {
-      let targetIds: string[];
-      
-      switch (ability.targetType) {
-        case 'self':
-          targetIds = [enemy.id];
-          break;
-        case 'all-enemies':
-        case 'aoe-enemies':
-          targetIds = combat.playerTeam.map(c => c.id);
-          break;
-        default:
-          // Random player target
-          const randomPlayer = combat.playerTeam[Math.floor(Math.random() * combat.playerTeam.length)];
-          targetIds = [randomPlayer.id];
-          break;
-      }
-      
-      executeAbility(combat, randomAbility, targetIds);
-    }
-  }
-  
-  // End enemy turn
-  endTurn(combat);
-  
-  // Re-render
-  ScreenManager.updateContext({ combat, uiState, stage: stageNumber });
 }
 
 /**

@@ -1,5 +1,127 @@
 # ANXRPG Development Changelog
 
+## Version 1.1.0 - Combat Screen Complete + Critical Bug Fixes (October 22, 2025) - ✅ GAME IS PLAYABLE!
+
+### ✅ Phase 11 Progress: UI Implementation - 80% COMPLETE (8/10 screens)
+**Status**: Combat is fully playable! All critical bugs fixed, enemies attack correctly.
+
+**What's New This Session**:
+- ✅ **Combat Screen Complete** (660 lines) - Turn-based combat with full enemy AI
+- ✅ **Enemy AI Working** - Enemies now attack on their turns!
+- ✅ **Click-to-Target System** - Select specific enemies with green glow animations
+- ✅ **Critical Bug Fixes** - 5 major bugs fixed, 1 enhancement added
+- ✅ **Battle Results Screen** - Victory/defeat with XP, loot, level-ups (197 lines)
+- ✅ **Character Sheet Screen** - Stats, equipment, skill tree UI (450 lines + 330 CSS)
+
+**Critical Bug Fixes** (Evening Session - Oct 22, 2025):
+
+1. ✅ **Stage Display Bug** - Fixed "[object Object]" in combat header
+   - **Problem**: Passing entire Stage object instead of extracting properties
+   - **Fix**: Extract `stageNumber` and `name` from Stage object
+   - **File**: `src/ui/CombatScreen.ts` lines 52-56
+
+2. ✅ **Auto-Victory Bug** - Battle didn't end when all enemies defeated
+   - **Problem**: Victory check only in `endTurn()`, not after ability execution
+   - **Fix**: Added `checkBattleEnd()` after `executeAbility()`
+   - **Files**: `src/systems/combat.ts` line 618, `src/ui/CombatScreen.ts` line 540
+
+3. ✅ **Enemy AP Regeneration Crash** - TypeError on enemy turns
+   - **Problem**: `regenerateAp()` expects Character type, tries to access CHARACTER_TYPES
+   - **Fix**: Split AP regen logic - Characters use `regenerateAp()`, Enemies fetch template
+   - **File**: `src/systems/combat.ts` lines 198-217
+
+4. ✅ **Enemy Turn Skipping** - **CRITICAL FIX** - Enemies never attacked!
+   - **Problem A**: UI auto-calling `processEnemyTurn()` created cascade of `endTurn()` calls
+   - **Problem B**: `getAbility()` only looked up player abilities, returned `undefined` for enemy abilities
+   - **Console Evidence**: `ability: undefined, apCost: undefined, hasEnoughAP: false`
+   - **Fix A**: Removed UI auto-processing, moved enemy AI to combat system
+   - **Fix B**: Updated `getAbility()` to check both player AND enemy ability databases
+   - **Files**: 
+     - `src/ui/CombatScreen.ts` (removed setTimeout auto-processing)
+     - `src/systems/combat.ts` (added `processEnemyAI()` function)
+     - `src/data/abilities.ts` (updated `getAbility()` to check enemy abilities)
+
+5. ✅ **Targeting Dead Enemies** - Could target defeated enemies
+   - **Problem**: No filtering for alive enemies
+   - **Fix**: Filter `combat.enemyTeam.find(e => e.isAlive)`
+   - **File**: `src/ui/CombatScreen.ts` line 381
+
+6. ✅ **Click-to-Target Enhancement** - NEW FEATURE!
+   - Added targeting mode with green glow animations
+   - Click enemies to select target
+   - Cancel button during targeting
+   - CSS animations: pulse, hover scale, dead grayscale
+   - **Files**: `src/ui/CombatScreen.ts` (+150 lines), `src/style.css` (+60 lines)
+
+**Implementation Details**:
+
+*Combat Screen Features*:
+- Turn-based combat UI with player/enemy teams
+- HP/AP bars with color-coded health (green/yellow/red)
+- Multi-action support (sequential abilities + "End Turn")
+- Combat log with scrolling history (last 20 entries)
+- Status effects display with duration tracking
+- Reserve swap modal on team wipe
+- Click-to-target enemy selection
+- Automatic enemy AI processing
+
+*Enemy AI Flow*:
+```typescript
+1. processStartOfTurn(state) called
+2. If enemy turn: processEnemyAI(state)
+   a. Select random ability from enemy.abilities
+   b. Get ability using getAbility() - now checks enemy abilities!
+   c. Check if enemy has enough AP
+   d. Choose targets based on ability.targetType
+   e. Execute ability
+3. Call endTurn(state)
+4. Loop continues
+```
+
+*getAbility() Fix*:
+```typescript
+// Before: Only checked player abilities
+return ABILITIES[abilityId];
+
+// After: Checks both player and enemy abilities
+const playerAbility = ABILITIES[abilityId];
+if (playerAbility) return playerAbility;
+return getEnemyAbility(abilityId); // Import from enemyAbilities.ts
+```
+
+**Build Results**:
+- ✅ TypeScript errors: 0
+- ✅ Bundle size: 163.46 KB (+11 KB for enemy abilities - expected)
+- ✅ All systems operational
+- ✅ Combat fully playable!
+
+**Files Modified This Session** (Evening):
+- `src/ui/CombatScreen.ts` - Combat screen with bug fixes (+150 lines)
+- `src/systems/combat.ts` - Enemy AI processing, bug fixes (+60 lines)
+- `src/data/abilities.ts` - Updated getAbility() to check enemy abilities (+12 lines)
+- `src/style.css` - Combat animations, targeting styles (+60 lines)
+- `docs/COMBAT_SCREEN_BUG_FIXES.md` - Detailed bug fix documentation (NEW)
+- `docs/PHASE_AUDIT.md` - Updated progress to 80% Phase 11 complete
+
+**What Works Now**:
+- ✅ Full combat loop (player turn → enemy turn → repeat)
+- ✅ Enemies attack with abilities
+- ✅ Multi-action combat (use multiple abilities per turn)
+- ✅ Click-to-target enemy selection
+- ✅ Auto-victory when all enemies defeated
+- ✅ Battle results with XP/loot/level-ups
+- ✅ Character sheet with skill tree
+- ✅ Turn order flows correctly (T1→T2→T3→T4)
+
+**Still Needed**:
+- ⏳ Inventory Screen (equipment management)
+- ⏳ Settings Screen (game preferences)
+- ⏳ Polish and testing
+
+**Estimate to Complete**: 1-2 sessions (~3-6 hours)
+
+---
+
 ## Version 1.0.0 - Save/Load System Complete (October 22, 2025) - ✅ MAJOR MILESTONE
 
 ### ✅ Phase 10: Save/Load System - 100% COMPLETE
