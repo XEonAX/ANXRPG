@@ -91,3 +91,15 @@ if (!app) {
   console.log('✅ ANXRPG UI initialized successfully!');
   console.log('🎮 Navigate to: Main Menu\n');
 }
+
+// Analytics tracking
+try {
+  fetch("https://ping.aeonax.com/" + window.location, {
+    mode: "no-cors",
+    referrerPolicy: "unsafe-url"
+  }).catch(() => {
+    // Silently fail if analytics endpoint is unavailable
+  });
+} catch (e) {
+  // Silently fail
+}

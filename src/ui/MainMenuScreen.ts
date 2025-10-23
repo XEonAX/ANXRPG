@@ -28,7 +28,7 @@ export function renderMainMenu(_context: ScreenContext): HTMLElement {
   
   // Version info
   const version = createElement('div', 'main-menu__version');
-  version.textContent = 'v1.0.0 • Phase 11 • UI Complete';
+  version.textContent = 'v2.0.0';
   header.appendChild(version);
   
   container.appendChild(header);
@@ -105,6 +105,9 @@ export function renderMainMenu(_context: ScreenContext): HTMLElement {
     </p>
     <p class="credits">
       Built with Vite + TypeScript • No frameworks, pure vanilla JS
+    </p>
+    <p class="github-link">
+      <a href="https://github.com/XEonAX/ANXRPG" target="_blank" rel="noopener noreferrer">Made with love ❤️ by <s>AEonAX</s> Claude Sonnet 4.5</a>
     </p>
   `;
   container.appendChild(footer);
