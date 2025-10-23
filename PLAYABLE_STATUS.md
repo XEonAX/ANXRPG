@@ -1,15 +1,15 @@
-# ANXRPG - Phase 11 COMPLETE + Critical Fixes! 🎉
+# ANXRPG - Phase 11 COMPLETE + Desktop/Mobile Combat Optimizations! 🎉
 
-**Date**: October 23, 2025 (Evening Update)  
-**Major Milestone**: All UI screens + critical bug fixes - Game 100% playable and stable!
+**Date**: October 23, 2025 (Late Evening Update)  
+**Major Milestone**: All UI screens + critical desktop/mobile fixes - Game 100% playable on all devices!
 
-## 🎮 Game Status: FULLY PLAYABLE WITH POLISHED UI
+## 🎮 Game Status: FULLY PLAYABLE WITH OPTIMIZED COMBAT UI
 
 ### All 10 UI Screens Complete! ✅
 1. ✅ Main Menu (New/Continue/Load/Settings)
 2. ✅ Team Management (Active/Reserve/Roster) - Enhanced card design
 3. ✅ Campaign Map (100 stages, tier sections) - Green theme polish
-4. ✅ **Combat Screen** (Turn-based, multi-action, click-to-target) - **POLISHED Oct 23!**
+4. ✅ **Combat Screen** (Turn-based, multi-action, click-to-target) - **OPTIMIZED Oct 23!**
 5. ✅ Battle Results (XP, loot, level-ups, auto-heal)
 6. ✅ Character Sheet (Stats, equipment, skill tree) - Blue theme polish
 7. ✅ **Inventory** (Filter, sort, equip/unequip) - Purple theme polish
@@ -19,9 +19,27 @@
 
 **Total UI Code**: 9,155+ lines (6,201 TypeScript + 3,900+ CSS)
 
-## Recent Updates (Oct 23, 2025)
+## Latest Updates (Oct 23, 2025 - Late Evening)
 
-### Critical Bug Fixes (Evening) 🐛
+### Combat Layout Optimizations 🖥️📱
+- **Desktop Combat Fixed (CRITICAL)**: Combat area was literally invisible on desktop
+  - **Space Reallocation**: Combat area now gets 50-60% of screen height (was ~20%)
+    - Changed `flex: 1` → `flex: 2` (double priority), large screens get `flex: 3`
+    - Combat log reduced: 200px → 150px (120px on large desktops)
+    - Action panel compacted: reduced padding and gaps throughout
+  - **Result**: Characters/enemies fully visible, minimal scrolling, actually playable!
+
+- **Mobile Ability Buttons Optimized**: More compact, less wasted space
+  - Mobile (≤768px): 140px → 110px width, tighter padding (21% narrower)
+  - Small mobile (≤480px): 110px → 100px width, minimal padding
+  - 3-4 abilities visible at once instead of 2-3
+
+- **End Turn Button Inline**: Moved into ability grid, saved ~50-60px vertical space
+  - No longer takes entire row by itself
+  - Appears as last item in ability grid
+  - More room for combat area
+
+### Critical Bug Fixes (Earlier Today) 🐛
 - **Stackable Effects Fixed**: DOT/HOT effects now properly multiply (Poison: 10→20→30, Burn: 15→30→45)
   - Template mutation prevented by cloning effects before applying
   - Stacking logic fixed to multiply base values correctly

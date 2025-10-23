@@ -1,5 +1,231 @@
 # ANXRPG Development Changelog
 
+## Version 1.6.6 - Combat UI Polish (October 23, 2025) - 📱 UX IMPROVEMENTS
+
+### Improved
+- ✅ **Mobile Ability Buttons More Compact!** - Better space utilization on small screens
+  - **Issue**: Ability buttons too wide on mobile with excessive padding
+    - 140px width with large padding wasting horizontal space
+    - Only 2-3 abilities visible in scroll area
+    - Unnecessary gaps between button elements
+  - **Solution**: Progressive width reduction for mobile breakpoints
+    - **Mobile (≤768px)**:
+      - Width: 140px → 110px (21% narrower)
+      - Padding: `var(--space-sm)` → `var(--space-xs) var(--space-sm)` (tighter vertical)
+      - Gap: 4px → 2px (tighter internal spacing)
+    - **Small Mobile (≤480px)**:
+      - Width: 110px → 100px (even more compact)
+      - Padding: `var(--space-xs) var(--space-sm)` → `var(--space-xs)` (minimal padding)
+  - **Impact**:
+    - 3-4 abilities visible at once instead of 2-3
+    - Less horizontal scrolling needed
+    - More efficient use of mobile screen space
+    - Text still fully readable
+  - **Files Modified**: `src/style.css`
+
+- ✅ **End Turn Button Now Inline with Abilities!** - Saved vertical space
+  - **Issue**: End Turn button taking entire row by itself
+    - Wasting vertical space in action panel
+    - Action panel unnecessarily tall
+    - Combat area getting squeezed
+  - **Solution**: Moved End Turn into ability grid
+    - Removed `.combat-action-panel__end-turn` special styling
+    - Appended button to ability container instead of panel
+    - Styled as regular ability button (uses `.ability-btn` class)
+    - Shows as last item in ability grid
+  - **Impact**:
+    - Saved ~50-60px of vertical space
+    - Action panel more compact
+    - More room for combat area
+    - Still easily accessible
+  - **Files Modified**: `src/style.css`, `src/ui/CombatScreen.ts`
+
+## Version 1.6.5 - Desktop Combat Optimization (October 23, 2025) - 🖥️ CRITICAL FIX
+
+### Fixed
+- ✅ **CRITICAL: Combat Area Now Actually Visible on Desktop!** - Major space allocation fix
+  - **Issue**: Combat teams/enemies completely unusable on desktop
+    - Combat area getting only tiny sliver of screen space (teams barely visible)
+    - Combat log taking 200px fixed height
+    - Action panel taking too much vertical space
+    - Character/enemy cards literally not visible - extreme scrolling needed
+    - Combat area had `flex: 1` competing equally with other panels
+  - **Solution**: Aggressive space reallocation and compacting
+    - **Combat Area Priority**:
+      - Changed `flex: 1` → `flex: 2` (double the space priority)
+      - Added `min-height: 0` for proper flex child behavior
+      - Large desktop: `flex: 3` for even more space
+    - **Combat Log Reduction**:
+      - Default: 200px → 150px height
+      - Large desktop: 150px → 120px height
+    - **Action Panel Compacting**:
+      - Padding: `var(--space-md)` → `var(--space-sm) var(--space-md)`
+      - Gap: `var(--space-md)` → `var(--space-sm)`
+      - Large desktop: Further reduced to `var(--space-xs) var(--space-md)`
+    - **Ability Buttons**: 200px → 160px → 140px (large desktop)
+    - **Character Cards**: More compact padding throughout
+  - **Impact**:
+    - Combat teams/enemies now take 50-60% of screen height (was ~20%)
+    - Characters/enemies fully visible without scrolling
+    - 4-5 abilities visible at once
+    - Combat log still functional but much more compact
+    - Actually playable on desktop now!
+  - **Files Modified**: `src/style.css`
+  - **Testing**: Critical fix - game was unplayable on desktop before this
+
+## Version 1.6.4 - UI Consistency & UX Improvements (October 23, 2025) - 🎨 POLISH
+
+### Improved
+- ✅ **Consistent Header Styling Across All Screens!** - Better visual cohesion
+  - **Issue**: Screen headers had inconsistent colors and styles
+    - Team Management: Plain header (no background)
+    - Inventory: Purple theme (168, 85, 247)
+    - Campaign: Green theme (16, 185, 129)
+  - **Solution**: Unified header design across all screens
+    - All screens now use consistent blue theme (59, 130, 246)
+    - Same padding, borders, shadows, and backdrop blur
+    - Consistent font sizes and spacing
+    - Same gradient top accent line
+  - **Impact**:
+    - More professional, cohesive UI
+    - Better visual consistency throughout the game
+    - Easier to navigate between screens
+  - **Files Modified**: `src/style.css`
+  - **Screens Updated**: Team Management, Campaign Map, Inventory
+
+### Fixed
+- ✅ **Removed Obstructive Game Load Notifications!** - Better UX on game start
+  - **Issue**: "Game loaded!" and "Welcome!" notifications appeared immediately after loading/starting game
+    - Blocked navigation buttons on Team Management screen
+    - User had to wait for notification to disappear before clicking buttons
+  - **Solution**: Removed notifications that appear on screen transitions
+    - Removed "Game loaded!" on Continue
+    - Removed "Save loaded!" on Load Game
+    - Removed "Welcome, [Character]!" on New Game
+    - Kept "Starting new game..." loading indicator (clears before transition)
+  - **Impact**:
+    - Navigation buttons immediately accessible
+    - Smoother user experience
+    - No accidental clicks on notifications instead of buttons
+  - **Files Modified**: `src/ui/MainMenuScreen.ts`
+
+## Version 1.6.3 - Mobile Responsiveness Complete (October 23, 2025) - 📱 UX FIX
+
+### Fixed
+- ✅ **Team Management Screen Now Mobile-Friendly!** - Major layout fix for small screens
+  - **Issue**: Team management completely unusable on mobile
+    - Character cards cut off at screen edges
+    - 300px minimum width too wide for mobile screens
+    - Header navigation cramped and overlapping
+    - No responsive breakpoints for the screen
+  - **Solution**: Comprehensive mobile responsive design
+    - **Mobile (≤768px)**:
+      - Single column layout for character cards
+      - Full-width buttons and controls
+      - Compact padding and spacing
+      - Responsive header with stacked layout
+    - **Small Mobile (≤480px)**:
+      - Ultra-compact spacing
+      - Smaller fonts and reduced padding
+      - Stacked card headers
+      - Smaller AP dots (8px)
+  - **Impact**:
+    - Team management fully usable on phones
+    - Character cards fit perfectly on screen
+    - Easy to read and interact with on mobile
+    - Consistent with combat screen mobile design
+  - **Files Modified**: 
+    - `src/style.css`: Added 150+ lines of responsive CSS for team management
+
+- ✅ **Campaign Map Screen Mobile Optimization!** - Better layout and navigation
+  - **Issue**: Navigation buttons cut off on mobile (Menu button not visible)
+  - **Solution**: Optimized mobile layout
+    - **Mobile (≤768px)**:
+      - 2-column grid for navigation buttons
+      - Reduced stage card minimum width (150px)
+      - Compact padding throughout
+      - Better font sizes for readability
+    - **Small Mobile (≤480px)**:
+      - 3-column navigation grid (fits all buttons)
+      - Single column stage layout
+      - Ultra-compact spacing
+      - Smaller fonts optimized for small screens
+  - **Impact**:
+    - All navigation buttons visible and accessible
+    - Stage cards readable and tappable
+    - Better use of screen space
+    - Smooth experience on phones
+  - **Files Modified**: 
+    - `src/style.css`: Added 140+ lines of responsive CSS for campaign
+  - **Technical**: Two breakpoints (768px, 480px) with progressive enhancement
+
+## Version 1.6.2 - Combat Log Full History (October 23, 2025) - ✨ ENHANCEMENT
+
+### Improved
+- ✅ **Combat Log Now Shows Full Combat History!** - Better combat tracking
+  - **Issue**: Combat log limited to last 20 entries, losing earlier battle information
+  - **Solution**: Show all combat log entries with scrollable view
+    - Removed 20-entry limit
+    - Full battle history preserved and viewable
+    - Auto-scrolls to latest message
+    - Existing scrollbar styling maintained
+  - **Impact**:
+    - Can review entire battle from start to finish
+    - Better for understanding long battles
+    - Useful for strategizing and learning
+  - **Files Modified**: 
+    - `src/ui/CombatScreen.ts`: Use full `combat.combatLog` instead of `getRecentLog(20)`
+  - **Technical**: Simple change, just removed artificial limit
+
+### Fixed
+- ✅ **Combat Log Scrollbar Now Works Properly!** - Critical UX fix
+  - **Issue**: Scrollbar not appearing in combat log even with many messages
+  - **Root Cause**: `justify-content: flex-end` and `height: 100%` prevented proper flex scrolling
+  - **Solution**: 
+    - Removed `justify-content: flex-end` (JS auto-scroll handles bottom positioning)
+    - Removed redundant `height: 100%` (using `flex: 1` already)
+    - Added `min-height: 0` (critical for flex child scrolling in some browsers)
+  - **Impact**: Scrollbar now appears correctly when messages exceed container height
+  - **Files Modified**: `src/style.css`
+
+## Version 1.6.1 - Mobile Responsiveness Update (October 23, 2025) - 📱 UX IMPROVEMENT
+
+### Improved
+- ✅ **Combat Screen Now Mobile-Friendly!** - Major usability improvement for small screens
+  - **Issue**: Combat screen unusable on mobile devices
+    - Ability buttons stacked vertically, consuming entire screen
+    - No responsive breakpoints for different device sizes
+    - Poor spacing and layout on tablets/phones
+  - **Solution**: Three-tier responsive system
+    - **Tablet (≤1024px)**: Vertical combat area, optimized spacing
+    - **Mobile (≤768px)**: Horizontal scrolling ability grid, compact layout
+    - **Extra Small (≤480px)**: Ultra-compact mode with minimal padding
+  - **Key Innovation**: Horizontal scrolling ability buttons
+    - Fixed 140px width cards for consistent touch targets
+    - Smooth momentum scrolling on iOS/Android
+    - Hidden keyboard shortcuts (irrelevant on touch)
+  - **Impact**:
+    - Game fully playable on phones (375px+)
+    - Combat area visible alongside abilities
+    - Touch-friendly interface throughout
+  - **Files Modified**: 
+    - `src/style.css`: Added 176 lines of responsive CSS
+  - **Documentation**: `docs/MOBILE_RESPONSIVENESS_UPDATE.md`
+
+### Technical Details
+- Added 3 new `@media` breakpoints for combat screen
+- Horizontal scrolling with `-webkit-overflow-scrolling: touch`
+- Cascading size reductions: padding, fonts, element heights
+- GPU-accelerated scrolling on modern devices
+
+### Testing Recommendations
+Test on these breakpoints:
+- iPhone SE (375px)
+- iPhone 12 Pro (390px) 
+- Pixel 5 (393px)
+- iPad Mini (768px)
+- iPad Pro (1024px)
+
 ## Version 1.6.0 - Critical Bug Fixes & UI Improvements (October 23, 2025) - 🐛 BUG FIX RELEASE
 
 ### Fixed

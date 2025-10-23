@@ -18,7 +18,6 @@ import {
   getCurrentCombatant,
   executeAbility,
   endTurn,
-  getRecentLog,
   swapReserveTeam,
   acceptDefeat,
   processEnemyAI
@@ -356,13 +355,13 @@ function renderActionPanel(combat: CombatState, uiState: UIGameState, stageNumbe
     abilityContainer.appendChild(btn);
   });
   
-  panel.appendChild(abilityContainer);
-  
-  // End turn button
+  // End turn button - inline with abilities
   const endTurnBtn = createButton('🛑 End Turn (Enter)', () => {
     endCharacterTurn(combat, uiState, stageNumber);
-  }, 'btn btn--secondary combat-action-panel__end-turn');
-  panel.appendChild(endTurnBtn);
+  }, 'btn btn--secondary ability-btn');
+  abilityContainer.appendChild(endTurnBtn);
+  
+  panel.appendChild(abilityContainer);
   
   // Setup keyboard shortcuts
   setupCombatKeyboardShortcuts(character, combat, uiState, stageNumber);
@@ -638,15 +637,15 @@ function renderCombatLog(combat: CombatState): HTMLElement {
   
   const messages = createElement('div', 'combat-log__messages');
   
-  // Get recent log entries (last 20)
-  const recentLog = getRecentLog(combat, 20);
+  // Show all log entries (full combat history)
+  const allLog = combat.combatLog;
   
-  if (recentLog.length === 0) {
+  if (allLog.length === 0) {
     const emptyMsg = createElement('p', 'combat-log__empty');
     emptyMsg.textContent = 'Combat starting...';
     messages.appendChild(emptyMsg);
   } else {
-    recentLog.forEach(entry => {
+    allLog.forEach(entry => {
       const msgDiv = createElement('div', `combat-log__entry combat-log__entry--${entry.type}`);
       
       const timestamp = createElement('span', 'combat-log__timestamp');

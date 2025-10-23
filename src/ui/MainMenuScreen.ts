@@ -128,7 +128,7 @@ function handleContinue(): void {
   
   // Emit event with save data
   EventBus.emit(GameEvents.GAME_LOADED, saveData);
-  showNotification('Game loaded!', 'success');
+  // Note: Notification removed as it obstructs navigation buttons
   
   // Navigate to team management with UI state
   ScreenManager.navigateTo('teamManagement', { uiState });
@@ -149,7 +149,7 @@ function handleLoadGame(): void {
   const uiState = initializeUIState(saveData);
   
   EventBus.emit(GameEvents.GAME_LOADED, saveData);
-  showNotification('Save loaded!', 'success');
+  // Note: Notification removed as it obstructs navigation buttons
   
   // Navigate to team management with UI state
   ScreenManager.navigateTo('teamManagement', { uiState });
@@ -284,7 +284,7 @@ function startNewGame(characterType: CharacterTypeName, characterName: string): 
     const uiState = initializeUIState(gameState.saveData);
     
     EventBus.emit(GameEvents.GAME_LOADED, gameState.saveData);
-    showNotification(`Welcome, ${characterName}!`, 'success');
+    // Note: Welcome notification removed as it obstructs navigation buttons
     
     // Navigate to team management with UI state
     ScreenManager.navigateTo('teamManagement', { uiState });

@@ -1,12 +1,24 @@
 # ANXRPG
 A web-based turn-based fighting RPG with deep character progression, equipment systems, and 100 stages of increasingly difficult combat.
 
-## 🎮 Game Status: **100% PLAYABLE WITH POLISHED UI + CRITICAL FIXES!** 🎉
+## 🎮 Game Status: **100% PLAYABLE ON ALL DEVICES!** 🎉
 
-**Version 1.6.0 - Critical Bug Fixes** (Oct 23, 2025 - Evening):
+**Version 1.6.6 - Combat UI Polish** (Oct 23, 2025 - Late Evening):
+- ✅ **Mobile Ability Buttons Optimized** - 21% narrower, less wasted space (110px on mobile, 100px on small screens)
+- ✅ **End Turn Button Inline** - No longer takes entire row, saves ~50-60px vertical space
+- ✅ **Better Mobile UX** - 3-4 abilities visible at once instead of 2-3
+
+**Version 1.6.5 - Desktop Combat Fixed (CRITICAL)** (Oct 23, 2025 - Evening):
+- ✅ **Combat Area Visibility Fixed** - Was literally invisible on desktop (characters/enemies barely visible)
+- ✅ **Space Reallocation** - Combat area now gets 50-60% of screen (was ~20%), properly prioritized with `flex: 2-3`
+- ✅ **Combat Log Reduced** - 200px → 150px (120px on large screens), action panel compacted
+- ✅ **Desktop Now Playable** - Characters/enemies fully visible, minimal scrolling needed
+
+**Version 1.6.4 & Earlier** (Oct 23, 2025):
 - ✅ **Stackable Effects Fixed** - DOT/HOT now properly multiply (Poison: 10→20→30 damage/turn)
 - ✅ **Team Persistence Fixed** - Active/Reserve assignments now save permanently
 - ✅ **Full-Width UI** - Better screen utilization
+- ✅ **UI Consistency** - Unified header styling across all screens (blue theme)
 - ✅ **Test Coverage Added** - Stacking effects test passing
 
 **Phase 12 COMPLETE!** Game juice and polish added:
@@ -25,6 +37,7 @@ A web-based turn-based fighting RPG with deep character progression, equipment s
 - ✅ Save/load/export/import progress
 - ✅ Auto-healing between battles
 - ✅ 100-stage campaign with boss battles
+- ✅ **Responsive design** - Works great on desktop AND mobile!
 
 **Status**: Ready for final testing and deployment! Only 1 phase remains (Balance, Testing & Deployment)
 
@@ -82,11 +95,21 @@ A web-based turn-based fighting RPG with deep character progression, equipment s
 ### ⏳ Remaining Phase (1/14)
 - ⏳ **Phase 13-14**: Balance, Testing & Deployment (FINAL!)
 
-**Latest Achievements** (Oct 23, 2025 - Evening): 
-- 🐛 **Critical Bug Fixes!** Version 1.6.0 released
+**Latest Achievements** (Oct 23, 2025 - Late Evening): 
+- 🖥️📱 **Combat UI Optimizations!** Version 1.6.6 released
+  - ✅ Mobile ability buttons 21% narrower (110px → 100px on small screens)
+  - ✅ End Turn button now inline with abilities (saves vertical space)
+  - ✅ Better mobile UX - 3-4 abilities visible at once
+- 🖥️ **CRITICAL Desktop Fix!** Version 1.6.5 released (earlier evening)
+  - ✅ Combat area was literally invisible on desktop - NOW FIXED
+  - ✅ Space reallocation - combat gets 50-60% of screen (was ~20%)
+  - ✅ Combat log reduced, action panel compacted
+  - ✅ Game actually playable on desktop now!
+- 🐛 **Critical Bug Fixes!** Version 1.6.4 released
   - ✅ Stackable effects now properly multiply (major game balance fix)
   - ✅ Team assignments persist across sessions (no data loss)
   - ✅ Full-width UI for better screen utilization
+  - ✅ Unified header styling (blue theme consistency)
   - ✅ Test suite added for stacking effects
 - 🎉 **Phase 12 COMPLETE!** Game juice and polish added (earlier today)
   - ✅ Flavor text system - Complete lore for all game content
@@ -95,7 +118,7 @@ A web-based turn-based fighting RPG with deep character progression, equipment s
   - ✅ Visual polish - Game feels alive with transitions
 - 🎉 **Phase 11 COMPLETE!** All UI screens implemented (Oct 22)
 
-**Build Size**: 203.55 KB JS (51.95 KB gzipped), 48.09 KB CSS (7.84 KB gzipped)
+**Build Size**: 223.68 KB JS (56.85 KB gzipped), 81.27 KB CSS (12.47 KB gzipped)
 
 **Estimate to v1.0**: 1 session (~2-4 hours) - Just balance, testing, and deployment!
 
