@@ -1,5 +1,111 @@
 # ANXRPG Development Changelog
 
+## Version 1.5.0 - Recruitment & Team Management Enhancements (October 23, 2025) - 🎉 MAJOR UPDATE
+
+### Added
+- ✅ **Recruitment System UI** - Complete character recruitment interface
+  - **File**: `src/ui/RecruitmentScreen.ts` (236 lines)
+  - Triggers automatically after victories at milestones (20, 40, 60, 80, 100)
+  - Displays all 6 character types with full details
+  - Shows base stats, AP regen, role descriptions, and traits
+  - Color-coded character type names and borders
+  - Responsive grid layout (3 → 2 → 1 columns)
+  - Auto-saves after recruitment
+  - **CSS**: `style.css` - Recruitment screen styles (217 lines)
+
+- ✅ **Drag-and-Drop Team Management** - Intuitive character organization
+  - **Reorder characters** within Active/Reserve teams (set turn order!)
+  - **Swap between teams** by dragging Active ↔ Reserve
+  - **Assign unassigned** characters from roster to teams
+  - **Drop on character**: Swap positions or reorder
+  - **Drop on empty slot**: Assign to that position
+  - **Visual feedback**: 
+    - Dragging card becomes semi-transparent (40% opacity)
+    - Drop zones glow blue with pulse animation
+    - Compact drag preview (name + type + level)
+  - **Smart detection**: Characters in roster detected as assigned/unassigned
+  - **CSS**: Added `.dragging`, `.drop-target`, `@keyframes pulse-drop-zone`
+
+- ✅ **Team Assignment Buttons** - Fallback for non-drag users
+  - Unassigned characters show "To Active" / "To Reserve" buttons
+  - Validation for full teams
+  - Success notifications on assignment
+
+### Changed
+- ✅ **Team Management Enhanced** - Better character organization
+  - Character order preserved in Active/Reserve teams
+  - Roster section shows all 6 characters (including assigned ones)
+  - Visual distinction between assigned/unassigned roster characters
+  - **Files Modified**:
+    - `src/ui/TeamManagementScreen.ts`: +185 lines for drag-drop
+    - `src/style.css`: +45 lines for drag states
+
+- ✅ **Battle Results Integration** - Recruitment check after victories
+  - Checks if player can recruit after victory
+  - Redirects to recruitment screen when eligible
+  - Passes context (milestone, return stage) for seamless flow
+  - **File Modified**: `src/ui/BattleResultsScreen.ts`
+
+- ✅ **Screen Manager** - Added recruitment to navigation
+  - New screen type: `'recruitment'`
+  - Registered `renderRecruitment` in main.ts
+  - Full navigation support
+
+### Fixed
+- ✅ **Team Wipe Dialog Duplicates** - Multiple dialogs stacking at bottom
+  - Added check for existing dialog before creating new one
+  - Changed to proper modal structure with overlay wrapper
+  - Now centers properly on screen with backdrop
+  - Only shows once per team wipe
+  - **File Modified**: `src/ui/CombatScreen.ts`
+
+- ✅ **Reserve Character Count** - Incorrect count in team wipe dialog
+  - Now filters reserve team to count only alive characters
+  - Shows correct number (e.g., "2 reserve characters" not "3")
+  - Proper pluralization (character vs characters)
+
+- ✅ **Drag-from-Roster Duplication** - Characters duplicating when dragged
+  - Issue: Roster shows all characters (including assigned ones)
+  - Dragging assigned characters was treating them as "unassigned"
+  - **Solution**: Check if character already assigned to a team
+  - If assigned: Treat as move between teams (remove from old, add to new)
+  - If unassigned: Add to team (original behavior)
+  - No more duplication!
+
+- ✅ **Combat Stuck on "Unable to Act"** - Characters frozen at battle start
+  - Issue: Status effects from previous battles persisting
+  - Control effects (Stun, Sleep) preventing all actions
+  - **Solution**: Clear all status effects before starting new battle
+  - Added `character.statusEffects = []` in `handleStageSelect()`
+  - Fresh start for every battle
+  - **File Modified**: `src/ui/CampaignMapScreen.ts`
+
+- ✅ **Compact Drag Preview** - Drag image was full character card
+  - Old: Entire card with stats, buttons (too big)
+  - New: Compact preview showing name, type, level
+  - ~200px wide with color-coded border
+  - Positioned near cursor for smooth following
+
+### Documentation Added
+- `docs/FEATURE_RECRUITMENT_SYSTEM.md` - Recruitment implementation details
+- `docs/BUG_FIX_TEAM_ASSIGNMENT.md` - Team assignment fix documentation
+- `docs/FEATURE_DRAG_DROP_TEAMS.md` - Drag-and-drop implementation guide
+
+### Technical Details
+- **Files Modified/Created**:
+  - `src/ui/RecruitmentScreen.ts`: NEW (236 lines)
+  - `src/ui/TeamManagementScreen.ts`: +185 lines (drag-drop)
+  - `src/ui/BattleResultsScreen.ts`: +18 lines (recruitment check)
+  - `src/ui/CombatScreen.ts`: +18 lines (modal fix)
+  - `src/ui/CampaignMapScreen.ts`: +4 lines (status clear)
+  - `src/ui/core/ScreenManager.ts`: +1 line (screen type)
+  - `src/main.ts`: +2 lines (screen registration)
+  - `src/style.css`: +262 lines (recruitment + drag-drop)
+- **Total Lines Added**: ~740 lines (TypeScript + CSS)
+- **Build Size**: 215.46 KB JS (55.08 KB gzipped), 73.72 KB CSS (11.48 KB gzipped)
+
+---
+
 ## Version 1.4.1 - Combat UI Polish & Bug Fixes (October 23, 2025)
 
 ### Added

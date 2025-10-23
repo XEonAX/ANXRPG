@@ -26,7 +26,7 @@ interface InventoryFilters {
 }
 
 interface InventorySorting {
-  sortBy: 'rarity' | 'level' | 'name' | 'slot';
+  sortBy: 'rarity' | 'level' | 'name' | 'slot' | 'vibes';
   direction: 'asc' | 'desc';
 }
 
@@ -43,7 +43,7 @@ let currentFilters: InventoryFilters = {
 };
 
 let currentSorting: InventorySorting = {
-  sortBy: 'rarity',
+  sortBy: 'vibes',
   direction: 'desc',
 };
 
@@ -189,6 +189,7 @@ function renderControls(uiState: UIGameState): HTMLElement {
   
   const sortSelect = createElement('select', 'inventory__sort-select') as HTMLSelectElement;
   const sortOptions: Array<{ value: InventorySorting['sortBy'], label: string }> = [
+    { value: 'vibes', label: '✨ Vibes (Power)' },
     { value: 'rarity', label: 'Rarity' },
     { value: 'level', label: 'Level' },
     { value: 'name', label: 'Name' },
@@ -609,12 +610,48 @@ function filterAndSortEquipment(uiState: UIGameState): Equipment[] {
       case 'slot':
         comparison = a.slot.localeCompare(b.slot);
         break;
+      case 'vibes': {
+        // Calculate total power/vibes based on stat bonuses
+        const vibesA = calculateEquipmentVibes(a);
+        const vibesB = calculateEquipmentVibes(b);
+        comparison = vibesA - vibesB;
+        break;
+      }
     }
     
     return currentSorting.direction === 'asc' ? comparison : -comparison;
   });
   
   return equipment;
+}
+
+/**
+ * Calculate equipment "vibes" (total power level)
+ * Higher vibes = more powerful equipment
+ */
+function calculateEquipmentVibes(equipment: Equipment): number {
+  let totalPower = 0;
+  
+  // Stat weights - how much each stat contributes to overall power
+  const statWeights: Record<string, number> = {
+    'maxHp': 0.5,    // HP is valuable but has large numbers
+    'atk': 2.5,      // Attack is very valuable
+    'def': 2.0,      // Defense is valuable
+    'mag': 2.5,      // Magic is very valuable
+    'res': 2.0,      // Resistance is valuable
+    'spd': 3.0,      // Speed is extremely valuable (turn order)
+    'crt': 4.0,      // Crit % is very powerful (multiplicative)
+    'eva': 3.5,      // Evasion % is very powerful (avoids damage)
+    'acc': 3.0,      // Accuracy % is important (ensures hits)
+  };
+  
+  // Sum up weighted stat bonuses
+  equipment.statBonuses.forEach(bonus => {
+    const weight = statWeights[bonus.stat] || 1.0;
+    totalPower += bonus.value * weight;
+  });
+  
+  return totalPower;
 }
 
 /**

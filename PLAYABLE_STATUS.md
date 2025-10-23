@@ -21,6 +21,15 @@
 
 ## Recent Updates (Oct 23, 2025)
 
+### New Features & Fixes ✨
+- **Recruitment System**: Full UI for recruiting characters every 20 victories (6 character types)
+- **Team Assignment**: Assign unassigned characters to Active/Reserve teams
+- **Drag-and-Drop Teams**: Reorder characters, swap between teams, assign from roster
+- **Compact Drag Preview**: Small preview card when dragging (character name + type)
+- **Team Wipe Dialog**: Fixed duplicate dialogs, proper centering, correct reserve count
+- **Status Effect Clearing**: Status effects now properly cleared between battles
+- **Combat UI Polish**: Color-coded HP bars, professional card design, enhanced animations
+
 ### Combat UI Polish ✨
 - **Visual HP Bars**: Color-coded (green/orange/red) with glossy gradients
 - **Professional Card Design**: Red header, blue team cards with glass morphism
@@ -30,7 +39,11 @@
 - **Animation Cleanup**: Removed distracting pulses (kept only "YOUR TURN")
 - **Screen Fix**: No more fade-in on every click
 
-See `docs/COMBAT_UI_POLISH_OCT23.md` for full details.
+See documentation in `docs/` for full details:
+- `FEATURE_RECRUITMENT_SYSTEM.md`
+- `BUG_FIX_TEAM_ASSIGNMENT.md`
+- `FEATURE_DRAG_DROP_TEAMS.md`
+- `COMBAT_UI_POLISH_OCT23.md`
 
 ## Try It Now!
 
@@ -81,25 +94,29 @@ npm run dev  # Start at http://localhost:5173
 
 ### Playable Features (All Complete!)
 ✅ Character creation (6 types)  
+✅ **Recruitment system** - recruit new characters every 20 victories (NEW Oct 23!)  
 ✅ Team management (active/reserve/roster)  
+✅ **Drag-and-drop team management** - reorder, swap, assign (NEW Oct 23!)  
 ✅ Campaign progression (100 stages)  
 ✅ Turn-based combat with abilities  
 ✅ Multi-action combat (use multiple abilities per turn)  
 ✅ Click-to-target enemy selection  
 ✅ Enemy AI (strategic ability usage)  
 ✅ XP and loot rewards  
-✅ **Auto-healing between battles** (NEW!)  
-✅ **Inventory management** with filters/sorting (NEW!)  
-✅ **Equipment system** - equip/unequip with validation (NEW!)  
-✅ Character sheets with stats/equipment/skill tree (NEW!)  
-✅ **Settings screen** with 8 options (NEW!)  
-✅ **Save management** - export/import JSON (NEW!)  
-✅ **Statistics dashboard** (NEW!)  
-✅ **Visual HP bars** with color-coding (Oct 23!)  
-✅ **Enemy turn delays** for visual feedback (Oct 23!)  
+✅ **Auto-healing between battles**  
+✅ **Status effect clearing** - clean slate for each battle (FIXED Oct 23!)  
+✅ **Inventory management** with filters/sorting  
+✅ **Equipment system** - equip/unequip with validation  
+✅ Character sheets with stats/equipment/skill tree  
+✅ **Settings screen** with 8 options  
+✅ **Save management** - export/import JSON  
+✅ **Statistics dashboard**  
+✅ **Visual HP bars** with color-coding  
+✅ **Enemy turn delays** for visual feedback  
 ✅ Save/load system with auto-save  
 ✅ Stage unlocking and completion tracking  
 ✅ Reserve team swapping on defeat  
+✅ **Team wipe dialog** - proper modal, correct counts (FIXED Oct 23!)  
 
 ### UI Features
 ✅ Dark theme with 3,900+ lines CSS  
@@ -140,9 +157,10 @@ npm run dev  # Start at http://localhost:5173
 
 ### Quality Metrics
 - **TypeScript Errors**: 0
-- **Known Bugs**: 0 (all critical bugs fixed)
-- **Build Time**: ~250ms
-- **Bundle Size**: <50 KB gzipped (excellent!)
+- **Known Bugs**: 0 (all critical bugs fixed Oct 23!)
+- **Build Time**: ~260ms
+- **Bundle Size**: ~55 KB gzipped (excellent!)
+- **Total Code**: ~16,000+ lines TypeScript
 
 ## Recent Additions
 
