@@ -1,6 +1,7 @@
 # Documentation Index - ANXRPG
 
-**Last Updated**: January 2025  
+**Last Updated**: October 23, 2025 (Evening)  
+**Version**: 1.6.0  
 **Purpose**: Quick reference for all project documentation
 
 ---
@@ -25,21 +26,21 @@
 
 **README.md**
 - Project overview
-- Current status: 6/14 phases complete, 2 partial (~47%)
+- Current status: 13/14 phases complete (~92%)
 - Tech stack (Vite + TypeScript)
 - Quick start instructions
 - Phase completion summary
+- **Latest**: v1.6.0 with critical bug fixes
 
 **CHANGELOG.md**
 - Version history
-- **Latest**: Version 0.6.0 (Phase 6 complete, Phase 7 at 90%)
+- **Latest**: Version 1.6.0 (Critical bug fixes - Oct 23 evening)
 - Key achievements per version
 - Detailed feature additions
 
 **NEXT_STEPS.md** ⭐ **CRITICAL FOR CONTINUATION**
-- Immediate priorities (finish Phase 7 - 10% remaining)
-- Phase 8 breakdown (skill trees, recruitment)
-- Technical debt tracking
+- Immediate priorities (Phase 13-14: Testing & Deployment)
+- Final polish tasks
 - Testing instructions
 - Key file references
 - Tips for next session
@@ -68,23 +69,23 @@
 
 ### docs/ Directory
 
-**docs/SESSION_SUMMARY.md** ⭐ **CRITICAL FOR CONTEXT**
-- Complete chronicle of Phase 6-7 work
-- What was completed (reward integration, enemy abilities)
+**docs/SESSION_SUMMARY_OCT23_EVENING.md** ⭐ **CRITICAL FOR CONTEXT**
+- Complete chronicle of Oct 23 work (full day)
+- Recruitment system + critical bug fixes
+- What was completed (stacking effects, team persistence, UI)
 - Code examples and patterns used
 - Technical insights and lessons learned
-- Known issues and remaining work
 - Files changed summary
-- Testing instructions
-- Handoff checklist for fresh chat
+- Testing results
+- Version 1.6.0 release notes
 
 **docs/PHASE_AUDIT.md** ⭐ **ACCURATE STATUS**
-- Phase-by-phase completion audit
+- Phase-by-phase completion audit (13/14 phases)
 - What's implemented vs documented
 - Function inventories per phase
-- Accurate percentage completions
+- Accurate percentage completions (~92% overall)
 - "What Works" vs "What Doesn't Work"
-- Critical path forward
+- Critical path forward (Phase 13-14 remaining)
 
 **docs/PHASE_5_SUMMARY.md**
 - Phase 5 (Status Effects) completion summary
@@ -93,9 +94,21 @@
 - Testing results
 
 **docs/PHASE_6_SUMMARY.md**
-- Phase 6 (Combat Engine) progress summary
-- Core combat functional (was 85%)
-- Reward integration (now 100%)
+- Phase 6 (Combat Engine) completion summary
+- Core combat functional (100%)
+- Reward integration complete
+
+**docs/BUG_FIX_STACKABLE_EFFECTS.md** ⭐ **NEW (Oct 23)**
+- Critical fix for DOT/HOT stacking
+- Root cause analysis
+- Solution implementation
+- Game balance impact
+
+**docs/BUG_FIX_TEAM_PERSISTENCE.md** ⭐ **NEW (Oct 23)**
+- Critical fix for team assignments
+- SaveData structure changes
+- Migration strategy
+- Backward compatibility
 
 **docs/PHASE_7_SUMMARY.md**
 - Phase 7 (Enemy System) progress summary

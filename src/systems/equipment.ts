@@ -44,13 +44,17 @@ export function generateEquipment(level: number, slot?: EquipmentSlot): Equipmen
   const suffix = randomElement(template.nameSuffixes);
   const name = `${prefix} ${suffix}`;
   
+  // Use provided slot or template slot
+  // This allows wrist1 template to generate wrist2 items
+  const finalSlot = slot || template.slot;
+  
   // Create equipment
   return {
     id: generateId(),
     name,
     description: `A ${rarity} quality ${template.baseType}.`,
     type: template.baseType,
-    slot: template.slot,
+    slot: finalSlot,
     rarity,
     level,
     statBonuses,

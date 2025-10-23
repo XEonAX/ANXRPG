@@ -12,7 +12,7 @@
 
 import type { Character } from '../types/character';
 import type { Enemy } from '../types/enemy';
-import type { Equipment } from '../types/equipment';
+import type { Equipment, EquipmentSlot } from '../types/equipment';
 import type { 
   CombatState, 
   CombatLogEntry,
@@ -28,6 +28,7 @@ import {
   applyStatusEffect,
   type CombatEntity
 } from './statusEffects';
+import { cloneStatusEffect } from '../data/statusEffects';
 import { awardXp } from './character';
 import { generateEquipment } from './equipment';
 import { calculateEnemyXpReward, rollEquipmentDrop } from './enemy';
@@ -614,7 +615,9 @@ export function executeAbility(
       const roll = randomInt(1, 100);
       if (roll <= statusEffect.chance) {
         for (const target of targets) {
-          const { applied, message } = applyStatusEffect(target as CombatEntity, statusEffect.effect);
+          // Clone the effect to prevent modifying the template object
+          const effectClone = cloneStatusEffect(statusEffect.effect);
+          const { applied, message } = applyStatusEffect(target as CombatEntity, effectClone);
           
           if (applied) {
             addCombatLog(state, {
@@ -785,9 +788,12 @@ function checkBattleEnd(state: CombatState): void {
     
     // Generate equipment drops (max 1 per enemy, can be 0)
     const loot: Equipment[] = [];
+    const possibleSlots: EquipmentSlot[] = ['mainHand', 'offHand', 'head', 'chest', 'legs', 'neck', 'wrist1', 'wrist2'];
     for (const enemy of state.enemyTeam) {
       if (!enemy.isAlive && rollEquipmentDrop(enemy)) {
-        const equipment = generateEquipment(enemy.level);
+        // Randomly select a slot for more variety
+        const randomSlot = possibleSlots[Math.floor(Math.random() * possibleSlots.length)];
+        const equipment = generateEquipment(enemy.level, randomSlot);
         loot.push(equipment);
       }
     }

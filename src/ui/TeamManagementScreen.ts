@@ -484,6 +484,10 @@ function handleAssignToTeam(characterId: string, targetTeam: 'active' | 'reserve
   // Add to team
   targetTeamIds.push(characterId);
   
+  // Sync to save data
+  uiState.saveData.activeTeamIds = [...uiState.activeTeamIds];
+  uiState.saveData.reserveTeamIds = [...uiState.reserveTeamIds];
+  
   showNotification(
     `${character.name} assigned to ${targetTeam === 'active' ? 'active' : 'reserve'} team!`,
     'success'
@@ -561,6 +565,7 @@ function handleDrop(
       showNotification(`Reordered ${draggedChar.name} in ${targetLocation} team`, 'success');
     }
     
+    syncTeamIdsToSaveData(uiState);
     ScreenManager.updateContext({ uiState });
     return;
   }
@@ -611,6 +616,7 @@ function handleDrop(
         }
       }
       
+      syncTeamIdsToSaveData(uiState);
       ScreenManager.updateContext({ uiState });
       return;
     }
@@ -631,6 +637,7 @@ function handleDrop(
     }
     
     showNotification(`${draggedChar.name} assigned to ${targetLocation} team`, 'success');
+    syncTeamIdsToSaveData(uiState);
     ScreenManager.updateContext({ uiState });
     return;
   }
@@ -674,8 +681,17 @@ function handleDrop(
       );
     }
     
+    syncTeamIdsToSaveData(uiState);
     ScreenManager.updateContext({ uiState });
   }
+}
+
+/**
+ * Sync team IDs to save data
+ */
+function syncTeamIdsToSaveData(uiState: UIGameState): void {
+  uiState.saveData.activeTeamIds = [...uiState.activeTeamIds];
+  uiState.saveData.reserveTeamIds = [...uiState.reserveTeamIds];
 }
 
 /**

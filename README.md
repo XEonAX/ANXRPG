@@ -1,7 +1,13 @@
 # ANXRPG
 A web-based turn-based fighting RPG with deep character progression, equipment systems, and 100 stages of increasingly difficult combat.
 
-## 🎮 Game Status: **100% PLAYABLE WITH POLISHED UI!** 🎉
+## 🎮 Game Status: **100% PLAYABLE WITH POLISHED UI + CRITICAL FIXES!** 🎉
+
+**Version 1.6.0 - Critical Bug Fixes** (Oct 23, 2025 - Evening):
+- ✅ **Stackable Effects Fixed** - DOT/HOT now properly multiply (Poison: 10→20→30 damage/turn)
+- ✅ **Team Persistence Fixed** - Active/Reserve assignments now save permanently
+- ✅ **Full-Width UI** - Better screen utilization
+- ✅ **Test Coverage Added** - Stacking effects test passing
 
 **Phase 12 COMPLETE!** Game juice and polish added:
 - ✅ **Flavor Text** - Complete lore for all abilities, enemies, and equipment
@@ -76,12 +82,17 @@ A web-based turn-based fighting RPG with deep character progression, equipment s
 ### ⏳ Remaining Phase (1/14)
 - ⏳ **Phase 13-14**: Balance, Testing & Deployment (FINAL!)
 
-**Latest Achievements** (Oct 23, 2025): 
-- 🎉 **Phase 12 COMPLETE!** Game juice and polish added
-- ✅ Flavor text system - Complete lore for all game content
-- ✅ CSS animations - 15+ animations for smooth gameplay
-- ✅ Enhanced tooltips - Lore-rich descriptions everywhere
-- ✅ Visual polish - Game feels alive with transitions
+**Latest Achievements** (Oct 23, 2025 - Evening): 
+- 🐛 **Critical Bug Fixes!** Version 1.6.0 released
+  - ✅ Stackable effects now properly multiply (major game balance fix)
+  - ✅ Team assignments persist across sessions (no data loss)
+  - ✅ Full-width UI for better screen utilization
+  - ✅ Test suite added for stacking effects
+- 🎉 **Phase 12 COMPLETE!** Game juice and polish added (earlier today)
+  - ✅ Flavor text system - Complete lore for all game content
+  - ✅ CSS animations - 15+ animations for smooth gameplay
+  - ✅ Enhanced tooltips - Lore-rich descriptions everywhere
+  - ✅ Visual polish - Game feels alive with transitions
 - 🎉 **Phase 11 COMPLETE!** All UI screens implemented (Oct 22)
 
 **Build Size**: 203.55 KB JS (51.95 KB gzipped), 48.09 KB CSS (7.84 KB gzipped)

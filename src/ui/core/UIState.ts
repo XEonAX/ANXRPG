@@ -30,9 +30,19 @@ let currentUIState: UIGameState | null = null;
  * Initialize UI state from save data
  */
 export function initializeUIState(saveData: SaveData): UIGameState {
-  // Default: first character in active team, rest in reserve (up to 3)
-  const activeTeamIds = saveData.roster.length > 0 ? [saveData.roster[0].id] : [];
-  const reserveTeamIds = saveData.roster.slice(1, 4).map((c: Character) => c.id);
+  // Use team IDs from save data, with fallback for legacy saves
+  let activeTeamIds = saveData.activeTeamIds || [];
+  let reserveTeamIds = saveData.reserveTeamIds || [];
+  
+  // Fallback for legacy saves without team assignments
+  if (activeTeamIds.length === 0 && reserveTeamIds.length === 0 && saveData.roster.length > 0) {
+    activeTeamIds = [saveData.roster[0].id];
+    reserveTeamIds = saveData.roster.slice(1, 4).map((c: Character) => c.id);
+    
+    // Update save data with initial team assignments
+    saveData.activeTeamIds = activeTeamIds;
+    saveData.reserveTeamIds = reserveTeamIds;
+  }
   
   currentUIState = {
     saveData,
@@ -104,6 +114,10 @@ export function swapCharacter(
   sourceIds.splice(index, 1);
   targetIds.push(characterId);
   
+  // Sync to save data
+  currentUIState.saveData.activeTeamIds = [...currentUIState.activeTeamIds];
+  currentUIState.saveData.reserveTeamIds = [...currentUIState.reserveTeamIds];
+  
   return true;
 }
 
@@ -122,6 +136,11 @@ export function addToActiveTeam(characterId: string): boolean {
   }
   
   currentUIState.activeTeamIds.push(characterId);
+  
+  // Sync to save data
+  currentUIState.saveData.activeTeamIds = [...currentUIState.activeTeamIds];
+  currentUIState.saveData.reserveTeamIds = [...currentUIState.reserveTeamIds];
+  
   return true;
 }
 
@@ -140,5 +159,10 @@ export function addToReserveTeam(characterId: string): boolean {
   }
   
   currentUIState.reserveTeamIds.push(characterId);
+  
+  // Sync to save data
+  currentUIState.saveData.activeTeamIds = [...currentUIState.activeTeamIds];
+  currentUIState.saveData.reserveTeamIds = [...currentUIState.reserveTeamIds];
+  
   return true;
 }

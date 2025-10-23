@@ -1,7 +1,63 @@
-# Session Summary - October 23, 2025 (Evening)
+# Session Summary - October 23, 2025 (Full Day)
 
 **Date**: October 23, 2025  
-**Duration**: ~2 hours  
+**Duration**: Full day (~6 hours total)  
+**Focus**: Recruitment System, Team Management, Critical Bug Fixes  
+**Version**: 1.6.0
+
+## Evening Session (2 hours) - Critical Bug Fixes
+
+### 1. Stackable Status Effects Fixed ⚠️ CRITICAL
+**Issue**: DOT/HOT effects only extended duration, not multiplying damage/healing.
+
+**Root Cause**: Template object mutation + incorrect stacking logic.
+
+**Solution**:
+- Clone effects before applying (`cloneStatusEffect()`)
+- Fixed multiplication logic in stacking calculation
+- Test suite added and passing ✅
+
+**Impact**: Major game balance fix - DOT strategies now viable!
+
+**Files**:
+- `src/systems/combat.ts` - Clone effects
+- `src/systems/statusEffects.ts` - Fixed stacking
+- `src/tests/stackingTest.ts` - NEW test suite
+- `docs/BUG_FIX_STACKABLE_EFFECTS.md` - NEW documentation
+
+### 2. Team Persistence Fixed 🔴 HIGH PRIORITY
+**Issue**: Team assignments lost on game reload.
+
+**Root Cause**: Team IDs not in SaveData structure.
+
+**Solution**:
+- Added `activeTeamIds` and `reserveTeamIds` to SaveData
+- All 6 team modification points now sync to save
+- Legacy save migration with backward compatibility
+
+**Impact**: No more data loss - teams preserved across sessions!
+
+**Files**:
+- `src/types/save.ts` - Added team ID fields
+- `src/systems/game.ts` - Initialize team IDs
+- `src/ui/core/UIState.ts` - Load from save + sync
+- `src/ui/TeamManagementScreen.ts` - Sync all operations
+- `src/ui/RecruitmentScreen.ts` - Sync recruits
+- `src/utils/storage.ts` - Migration support
+- `docs/BUG_FIX_TEAM_PERSISTENCE.md` - NEW documentation
+
+### 3. Full-Width UI
+**Issue**: App constrained to 1400px centered box.
+
+**Solution**: Removed max-width, changed to `width: 100%`.
+
+**Impact**: Better screen utilization.
+
+---
+
+## Earlier Session (4 hours) - Recruitment & Team Management
+
+**Duration**: ~4 hours  
 **Focus**: Recruitment System, Team Management Enhancements, Bug Fixes
 
 ## Overview

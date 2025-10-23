@@ -1,7 +1,7 @@
-# ANXRPG - Phase 11 COMPLETE! 🎉
+# ANXRPG - Phase 11 COMPLETE + Critical Fixes! 🎉
 
-**Date**: October 23, 2025  
-**Major Milestone**: All UI screens implemented with professional polish - Game 100% playable!
+**Date**: October 23, 2025 (Evening Update)  
+**Major Milestone**: All UI screens + critical bug fixes - Game 100% playable and stable!
 
 ## 🎮 Game Status: FULLY PLAYABLE WITH POLISHED UI
 
@@ -21,7 +21,20 @@
 
 ## Recent Updates (Oct 23, 2025)
 
-### New Features & Fixes ✨
+### Critical Bug Fixes (Evening) 🐛
+- **Stackable Effects Fixed**: DOT/HOT effects now properly multiply (Poison: 10→20→30, Burn: 15→30→45)
+  - Template mutation prevented by cloning effects before applying
+  - Stacking logic fixed to multiply base values correctly
+  - Major game balance improvement - DOT strategies now viable!
+  - Test suite added and passing ✅
+- **Team Persistence Fixed**: Active/Reserve assignments now saved permanently
+  - Team IDs added to SaveData structure
+  - All 6 modification points now sync to save
+  - Legacy save migration with backward compatibility
+  - No more losing team compositions on reload!
+- **Full-Width UI**: App container now uses entire screen (removed 1400px constraint)
+
+### New Features & Fixes (Earlier) ✨
 - **Recruitment System**: Full UI for recruiting characters every 20 victories (6 character types)
 - **Team Assignment**: Assign unassigned characters to Active/Reserve teams
 - **Drag-and-Drop Teams**: Reorder characters, swap between teams, assign from roster
@@ -157,10 +170,11 @@ npm run dev  # Start at http://localhost:5173
 
 ### Quality Metrics
 - **TypeScript Errors**: 0
-- **Known Bugs**: 0 (all critical bugs fixed Oct 23!)
-- **Build Time**: ~260ms
+- **Known Bugs**: 0 (all critical bugs fixed Oct 23 evening!)
+- **Build Time**: ~270ms
 - **Bundle Size**: ~55 KB gzipped (excellent!)
 - **Total Code**: ~16,000+ lines TypeScript
+- **Test Coverage**: Stacking effects test passing ✅
 
 ## Recent Additions
 
@@ -231,6 +245,10 @@ npm run dev  # Start at http://localhost:5173
 
 ## Documentation
 
+### Bug Fix Documentation (Oct 23 Evening)
+- **[BUG_FIX_STACKABLE_EFFECTS.md](docs/BUG_FIX_STACKABLE_EFFECTS.md)** - Stackable effects fix (NEW!)
+- **[BUG_FIX_TEAM_PERSISTENCE.md](docs/BUG_FIX_TEAM_PERSISTENCE.md)** - Team persistence fix (NEW!)
+
 ### Phase 11 Implementation Docs
 - **[SETTINGS_SCREEN_COMPLETE.md](docs/SETTINGS_SCREEN_COMPLETE.md)** - Settings implementation (Oct 22, 2025)
 - **[INVENTORY_SCREEN_COMPLETE.md](docs/INVENTORY_SCREEN_COMPLETE.md)** - Inventory implementation
@@ -263,6 +281,7 @@ Remaining work is optional polish (flavor text) and final testing. Ready for v1.
 
 ---
 
-**Last Updated**: October 23, 2025  
+**Last Updated**: October 23, 2025 (Evening)  
 **Build Status**: ✅ Passing (0 errors)  
-**Game Status**: 🎮 **100% PLAYABLE WITH COMPLETE UI!** 🎉
+**Game Status**: 🎮 **100% PLAYABLE WITH COMPLETE UI + CRITICAL FIXES!** 🎉  
+**Version**: 1.6.0

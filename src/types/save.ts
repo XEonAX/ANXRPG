@@ -33,6 +33,12 @@ export interface SaveData {
   
   /** Game settings and preferences */
   settings: GameSettings;
+  
+  /** Active team character IDs (1-3) */
+  activeTeamIds: string[];
+  
+  /** Reserve team character IDs (up to 3) */
+  reserveTeamIds: string[];
 }
 
 /**

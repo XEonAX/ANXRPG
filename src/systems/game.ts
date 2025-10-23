@@ -72,6 +72,8 @@ export function initializeNewGame(
     inventory: startingEquipment,
     statistics: { ...DEFAULT_PLAYER_STATISTICS },
     settings: { ...DEFAULT_GAME_SETTINGS },
+    activeTeamIds: [starterChar.id], // Starter character in active team
+    reserveTeamIds: [], // Empty reserve initially
   };
   
   // Create game state

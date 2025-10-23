@@ -1,5 +1,60 @@
 # ANXRPG Development Changelog
 
+## Version 1.6.0 - Critical Bug Fixes & UI Improvements (October 23, 2025) - 🐛 BUG FIX RELEASE
+
+### Fixed
+- ✅ **Stackable Status Effects Now Actually Stack!** - Major game balance fix
+  - **Issue**: Stackable DOT/HOT effects (Poison, Burn, Regeneration) were only extending duration, not multiplying damage/healing
+  - **Root Cause**: Template objects being mutated + incorrect stacking calculation
+  - **Solution**: 
+    - Clone status effects before applying (prevent template mutation)
+    - Fixed multiplication logic to use base values per stack
+  - **Impact**: 
+    - Poison now properly scales: 10 → 20 → 30 → 40 → 50 damage/turn (5 stacks)
+    - Burn scales: 15 → 30 → 45 damage/turn (3 stacks)
+    - Regeneration scales: 20 → 40 → 60 healing/turn (3 stacks)
+  - **Files Modified**: 
+    - `src/systems/combat.ts`: Clone effects before applying
+    - `src/systems/statusEffects.ts`: Fixed stacking logic
+  - **Test**: `src/tests/stackingTest.ts` - All tests pass ✅
+  - **Documentation**: `docs/BUG_FIX_STACKABLE_EFFECTS.md`
+
+- ✅ **Team Assignments Now Persist!** - No more losing your team setup
+  - **Issue**: Active/Reserve team assignments reset on every game load
+  - **Root Cause**: Team IDs stored only in runtime UIState, not in SaveData
+  - **Solution**:
+    - Added `activeTeamIds` and `reserveTeamIds` to SaveData structure
+    - All 6 team modification points now sync to save data
+    - Backward compatible migration for legacy saves
+  - **Impact**: Team compositions preserved across sessions
+  - **Files Modified**:
+    - `src/types/save.ts`: Added team ID fields
+    - `src/systems/game.ts`: Initialize team IDs
+    - `src/ui/core/UIState.ts`: Load from save + sync changes
+    - `src/ui/TeamManagementScreen.ts`: Sync all operations
+    - `src/ui/RecruitmentScreen.ts`: Sync new recruits
+    - `src/utils/storage.ts`: Migration for legacy saves
+  - **Documentation**: `docs/BUG_FIX_TEAM_PERSISTENCE.md`
+
+- ✅ **Full-Width UI** - App container now uses entire screen
+  - **Issue**: Game UI constrained to 1400px centered box
+  - **Solution**: Removed max-width constraint, changed to `width: 100%`
+  - **Impact**: Better screen utilization, more immersive experience
+  - **File Modified**: `src/style.css`
+
+### Technical Impact
+- **Game Balance**: DOT/HOT strategies now viable (significant buff to stacking effects)
+- **Data Integrity**: Team assignments permanently saved (no data loss)
+- **User Experience**: Better screen usage, teams stay organized
+
+### Testing
+- ✅ Stacking test passes (poison/burn multiply correctly)
+- ✅ Legacy saves auto-migrate without errors
+- ✅ Team persistence verified across reload
+- ✅ Build successful (no TypeScript errors)
+
+---
+
 ## Version 1.5.0 - Recruitment & Team Management Enhancements (October 23, 2025) - 🎉 MAJOR UPDATE
 
 ### Added

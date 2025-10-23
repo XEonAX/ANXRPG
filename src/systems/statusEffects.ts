@@ -39,10 +39,12 @@ export function applyStatusEffect(
         existingEffect.duration = effect.duration; // Refresh duration
 
         // Update stat modifiers based on stacks
+        // Important: effect parameter contains the BASE values (per stack)
         if (effect.statModifiers) {
           existingEffect.statModifiers = effect.statModifiers.map(mod => ({
-            ...mod,
+            stat: mod.stat,
             value: mod.value * existingEffect.currentStacks!,
+            multiplier: mod.multiplier,
           }));
         }
 

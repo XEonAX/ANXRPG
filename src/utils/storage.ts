@@ -302,6 +302,16 @@ export function migrateSaveData(data: any): SaveData | null {
       campaign.victoriesPerStage = new Map(campaign.victoriesPerStage || []);
     }
     
+    // Determine team assignments (with fallback for legacy saves)
+    let activeTeamIds = data.activeTeamIds || [];
+    let reserveTeamIds = data.reserveTeamIds || [];
+    
+    // Fallback for legacy saves without team assignments
+    if (activeTeamIds.length === 0 && reserveTeamIds.length === 0 && data.roster && data.roster.length > 0) {
+      activeTeamIds = [data.roster[0].id];
+      reserveTeamIds = data.roster.slice(1, 4).map((c: any) => c.id);
+    }
+    
     // Create migrated save with current structure
     const migrated: SaveData = {
       version: SAVE_VERSION,
@@ -317,6 +327,8 @@ export function migrateSaveData(data: any): SaveData | null {
       inventory: data.inventory || [],
       statistics: data.statistics || { ...DEFAULT_PLAYER_STATISTICS },
       settings: data.settings || { ...DEFAULT_GAME_SETTINGS },
+      activeTeamIds,
+      reserveTeamIds,
     };
     
     // Ensure settings have all current fields

@@ -5,7 +5,7 @@
 
 import type { Character } from '../types/character';
 import type { Enemy } from '../types/enemy';
-import type { Equipment } from '../types/equipment';
+import type { Equipment, EquipmentSlot } from '../types/equipment';
 import type { 
   Stage, 
   CampaignProgress, 
@@ -197,8 +197,10 @@ export function generateStageEquipment(
     
     // Roll with modified chance
     if (Math.random() < modifiedDropChance) {
-      // Generate equipment at enemy's level
-      const equipment = generateEquipment(enemy.level);
+      // Generate equipment at enemy's level with random slot
+      const possibleSlots: EquipmentSlot[] = ['mainHand', 'offHand', 'head', 'chest', 'legs', 'neck', 'wrist1', 'wrist2'];
+      const randomSlot = possibleSlots[Math.floor(Math.random() * possibleSlots.length)];
+      const equipment = generateEquipment(enemy.level, randomSlot);
       drops.push(equipment);
     }
   }

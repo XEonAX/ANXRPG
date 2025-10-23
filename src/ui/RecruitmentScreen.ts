@@ -199,6 +199,8 @@ function handleRecruitment(
   // Add to reserve team if there's space
   if (uiState.reserveTeamIds.length < 3) {
     uiState.reserveTeamIds.push(newCharacter.id);
+    // Sync to save data
+    uiState.saveData.reserveTeamIds = [...uiState.reserveTeamIds];
   }
   
   // Save game
