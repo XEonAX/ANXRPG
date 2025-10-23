@@ -59,6 +59,89 @@ export function renderBattleResults(context: ScreenContext): HTMLElement {
   
   // Process results and healing
   const processResults = () => {
+    // Update statistics
+    const stats = uiState.saveData.statistics;
+    
+    // Always increment total battles
+    stats.totalBattles++;
+    
+    if (isVictory) {
+      // Update victory statistics
+      stats.totalVictories++;
+      
+      // Update enemies defeated count (all enemies should be dead in victory)
+      const enemiesDefeated = combat.enemyTeam.filter(e => !e.isAlive).length;
+      stats.totalEnemiesDefeated += enemiesDefeated;
+      
+      // Check if this was a boss battle (stage is multiple of 10)
+      if (stageNumber && stageNumber % 10 === 0) {
+        stats.totalBossesDefeated++;
+      }
+      
+      // Update equipment obtained
+      if (combat.lootDropped && combat.lootDropped.length > 0) {
+        stats.totalEquipmentObtained += combat.lootDropped.length;
+      }
+      
+      // Update highest level reached
+      const highestLevel = Math.max(...uiState.saveData.roster.map(c => c.level));
+      if (highestLevel > stats.highestLevelReached) {
+        stats.highestLevelReached = highestLevel;
+      }
+    } else {
+      // Update defeat statistics
+      stats.totalDefeats++;
+    }
+    
+    // Calculate total damage dealt and healing done from combat log
+    if (combat.combatLog) {
+      combat.combatLog.forEach(entry => {
+        if (entry.type === 'damage' && entry.actorId) {
+          // Check if actor is player character
+          const isPlayerCharacter = [...combat.playerTeam, ...combat.reserveTeam]
+            .some(c => c.id === entry.actorId);
+          
+          if (isPlayerCharacter) {
+            // Parse damage from message (format: "[Target] takes X damage!")
+            const damageMatch = entry.message.match(/takes\s+(\d+(?:,\d+)*)\s+/i);
+            if (damageMatch) {
+              const damage = parseInt(damageMatch[1].replace(/,/g, ''), 10);
+              stats.totalDamageDealt += damage;
+            }
+          }
+        } else if (entry.type === 'healing') {
+          // Healing can come from abilities (has actorId) or lifesteal
+          // For lifesteal: "[Name] heals for X HP from lifesteal!" (actorId is the healer)
+          // For healing abilities: "[Target] recovers X HP!" (no actorId, but targetIds)
+          
+          // Check if this is a player-initiated healing
+          let isPlayerHealing = false;
+          
+          if (entry.actorId) {
+            // Lifesteal healing - check if actor is player
+            isPlayerHealing = [...combat.playerTeam, ...combat.reserveTeam]
+              .some(c => c.id === entry.actorId);
+          } else if (entry.targetIds && entry.targetIds.length > 0) {
+            // Healing ability - check if target is player character
+            // (player abilities heal player targets)
+            isPlayerHealing = [...combat.playerTeam, ...combat.reserveTeam]
+              .some(c => entry.targetIds?.includes(c.id));
+          }
+          
+          if (isPlayerHealing) {
+            // Parse healing from messages:
+            // "[Name] heals for X HP from lifesteal!"
+            // "[Target] recovers X HP!"
+            const healMatch = entry.message.match(/(?:heals for|recovers)\s+(\d+(?:,\d+)*)\s+HP/i);
+            if (healMatch) {
+              const healing = parseInt(healMatch[1].replace(/,/g, ''), 10);
+              stats.totalHealingDone += healing;
+            }
+          }
+        }
+      });
+    }
+    
     // Fully restore all characters after battle (heal HP and AP) - whether victory or defeat
     uiState.saveData.roster.forEach(char => {
       fullyRestoreCharacter(char);
@@ -75,7 +158,8 @@ export function renderBattleResults(context: ScreenContext): HTMLElement {
       );
       
       // Auto-save
-      saveGame(uiState.saveData);
+      saveGame(uiState.saveData, false); // Save to manual save
+      saveGame(uiState.saveData, true);  // Save to auto-save
       EventBus.emit(GameEvents.GAME_SAVED);
       
       // Emit stage completion event
@@ -83,8 +167,9 @@ export function renderBattleResults(context: ScreenContext): HTMLElement {
       
       showNotification('✅ Party fully healed! Progress saved!', 'success');
     } else {
-      // Defeat - just save the healing
-      saveGame(uiState.saveData);
+      // Defeat - just save the healing and statistics
+      saveGame(uiState.saveData, false); // Save to manual save
+      saveGame(uiState.saveData, true);  // Save to auto-save
       EventBus.emit(GameEvents.GAME_SAVED);
       
       showNotification('✅ Party fully healed!', 'success');

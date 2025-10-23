@@ -1,5 +1,23 @@
 # ANXRPG Development Changelog
 
+## Version 1.3.1 - Bug Fix: Statistics Tracking (October 23, 2025)
+
+### Fixed
+- ✅ **Statistics Tracking** - Fixed statistics showing as 0 in Settings screen
+  - Added comprehensive statistics tracking in `BattleResultsScreen.ts`
+  - Now properly tracks all 10 statistics after each battle:
+    - Total Battles, Victories, Defeats
+    - Enemies Defeated, Bosses Defeated  
+    - Total Damage Dealt, Total Healing Done
+    - Equipment Obtained, Highest Level Reached
+    - Win Rate (calculated from victories/battles)
+  - Damage and healing parsed from combat log messages
+  - Only counts player character actions (not enemy actions)
+  - Fixed save synchronization issue: now saves to BOTH manual save AND auto-save
+  - This prevents statistics from reverting to old values when auto-save is loaded
+  - Works for both victory and defeat outcomes
+  - See `docs/BUG_FIX_STATISTICS_TRACKING.md` for details
+
 ## Version 1.3.0 - Phase 11 COMPLETE: Settings Screen (October 22, 2025) - 🎉 MILESTONE
 
 ### Added

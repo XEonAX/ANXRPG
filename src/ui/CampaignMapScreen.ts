@@ -207,15 +207,15 @@ function renderStageCard(stage: Stage, uiState: UIGameState): HTMLElement {
   // Status indicator
   const status = createElement('div', 'stage-card__status');
   if (isCompleted) {
-    status.textContent = '✓ Completed';
+    status.textContent = '✓ Completed (Replay)';
   } else if (isUnlocked) {
     status.textContent = '🔓 Ready';
   } else {
     status.textContent = '🔒 Locked';
   }
   
-  // Click handler
-  if (isUnlocked && !isCompleted) {
+  // Click handler - allow both unlocked incomplete stages AND completed stages (for grinding)
+  if (isUnlocked) {
     card.classList.add('stage-card--clickable');
     card.addEventListener('click', () => handleStageSelect(stage, uiState));
   }
