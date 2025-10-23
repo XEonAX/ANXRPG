@@ -1861,6 +1861,15 @@ a:hover {
 .ability-card__desc {
   font-size: var(--font-size-sm);
   color: var(--text-primary);
+  font-style: italic;
+}
+
+.ability-card__effect {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary);
+  padding-top: var(--spacing-xs);
+  margin-top: var(--spacing-xs);
+  border-top: 1px solid var(--border-color);
 }
 
 /* Skill tree */
@@ -2317,6 +2326,16 @@ a:hover {
   justify-content: flex-end;
 }
 
+.inventory__equipment-description {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  font-style: italic;
+  margin-top: var(--spacing-xs);
+  padding-top: var(--spacing-xs);
+  border-top: 1px solid var(--border-color);
+  line-height: 1.4;
+}
+
 /* ==========================================================================
    End Inventory Screen Styles
    ========================================================================== */
@@ -2696,4 +2715,250 @@ a:hover {
 
 /* ==========================================================================
    End Settings Screen Styles
+   ========================================================================== */
+
+/* ==========================================================================
+   Animations & Transitions (Phase 12 - Game Juice)
+   ========================================================================== */
+
+/* Screen fade-in animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.screen {
+  animation: fadeIn var(--transition-base);
+}
+
+/* Combat hit animation */
+@keyframes combatHit {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  75% { transform: translateX(5px); }
+}
+
+.combat-character-card--hit,
+.combat-enemy-card--hit {
+  animation: combatHit 300ms ease-in-out;
+}
+
+/* Damage number pop-up */
+@keyframes damagePopup {
+  0% {
+    opacity: 0;
+    transform: translateY(0) scale(0.5);
+  }
+  50% {
+    opacity: 1;
+    transform: translateY(-20px) scale(1.2);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-40px) scale(0.8);
+  }
+}
+
+.damage-popup {
+  position: absolute;
+  font-weight: bold;
+  font-size: var(--font-size-xl);
+  color: var(--color-accent-danger);
+  animation: damagePopup 1s ease-out forwards;
+  pointer-events: none;
+  z-index: 100;
+}
+
+.damage-popup--heal {
+  color: var(--color-accent-success);
+}
+
+.damage-popup--critical {
+  color: var(--color-accent-warning);
+  font-size: var(--font-size-2xl);
+}
+
+/* Ability use glow */
+@keyframes abilityGlow {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(99, 102, 241, 0);
+  }
+  50% {
+    box-shadow: 0 0 20px 5px rgba(99, 102, 241, 0.6);
+  }
+}
+
+.ability-btn--active {
+  animation: abilityGlow 600ms ease-in-out;
+}
+
+/* Victory celebration */
+@keyframes victoryCelebration {
+  0%, 100% {
+    transform: scale(1) rotate(0deg);
+  }
+  25% {
+    transform: scale(1.1) rotate(-5deg);
+  }
+  75% {
+    transform: scale(1.1) rotate(5deg);
+  }
+}
+
+.battle-results-screen--victory h1 {
+  animation: victoryCelebration 800ms ease-in-out;
+}
+
+/* Defeat fade */
+@keyframes defeatFade {
+  0% {
+    opacity: 1;
+    filter: grayscale(0%);
+  }
+  100% {
+    opacity: 0.7;
+    filter: grayscale(100%);
+  }
+}
+
+.battle-results-screen--defeat {
+  animation: defeatFade 1s ease-in-out forwards;
+}
+
+/* Pulse animation for active turn */
+@keyframes pulse {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.7);
+  }
+  50% {
+    box-shadow: 0 0 0 10px rgba(99, 102, 241, 0);
+  }
+}
+
+.combat-character-card--active,
+.combat-enemy-card--active {
+  animation: pulse 2s infinite;
+}
+
+/* HP bar smooth transition */
+.hp-bar__fill {
+  transition: width var(--transition-base), background-color var(--transition-base);
+}
+
+/* Button hover effects enhanced */
+.btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+  transition: all var(--transition-fast);
+}
+
+.btn:active:not(:disabled) {
+  transform: translateY(0);
+  transition: all 50ms;
+}
+
+/* Notification slide-in */
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.notification {
+  animation: slideInRight var(--transition-base);
+}
+
+/* Modal backdrop fade */
+@keyframes backdropFade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.modal-backdrop {
+  animation: backdropFade var(--transition-fast);
+}
+
+/* Equipment rarity glow */
+.inventory__equipment-card--legendary,
+.inventory__equipment-card--mythic {
+  position: relative;
+}
+
+.inventory__equipment-card--legendary::before,
+.inventory__equipment-card--mythic::before {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border-radius: var(--radius-md);
+  background: linear-gradient(45deg, 
+    var(--color-rarity-legendary), 
+    var(--color-rarity-mythic));
+  z-index: -1;
+  opacity: 0.3;
+  transition: opacity var(--transition-base);
+}
+
+.inventory__equipment-card--legendary:hover::before,
+.inventory__equipment-card--mythic:hover::before {
+  opacity: 0.6;
+}
+
+/* Skill node unlock animation */
+@keyframes unlockNode {
+  0% {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.skill-node--unlocked {
+  animation: unlockNode var(--transition-slow);
+}
+
+/* Target selection pulse */
+.combat-enemy-card--selected {
+  animation: pulse 1.5s infinite;
+  border-color: var(--color-accent-primary);
+}
+
+/* Combat log entry fade */
+@keyframes logEntryFade {
+  from {
+    opacity: 0;
+    transform: translateX(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.combat-log__entry {
+  animation: logEntryFade var(--transition-fast);
+}
+
+/* ==========================================================================
+   End Animations
    ========================================================================== */

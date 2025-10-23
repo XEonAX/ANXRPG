@@ -69,7 +69,18 @@ export function calculateCurrentStats(
   character: Character,
   equipmentInventory: Equipment[] = []
 ): CharacterStats {
-  const baseStats = { ...character.stats };
+  // Start with base stats from character type and level
+  const characterType = CHARACTER_TYPES[character.type];
+  const baseStats = calculateStatsAtLevel(
+    characterType.baseStats,
+    characterType.statGrowth,
+    character.level
+  );
+  
+  const currentStats = { ...baseStats };
+  
+  // Preserve current HP (don't recalculate it)
+  currentStats.hp = character.stats.hp;
   
   // Apply skill tree bonuses (Phase 8)
   const skillTreeBonuses = calculateSkillTreeBonuses(character);
@@ -148,6 +159,21 @@ export function calculateCurrentStats(
   baseStats.acc = Math.max(5, Math.min(100, baseStats.acc)); // Acc between 5-100%
   
   return baseStats;
+}
+
+/**
+ * Update character stats in-place with equipment and skill tree bonuses
+ * This should be called before combat or when displaying character stats
+ */
+export function syncCharacterStats(
+  character: Character,
+  equipmentInventory: Equipment[] = []
+): void {
+  const calculatedStats = calculateCurrentStats(character, equipmentInventory);
+  // Update character's stats with calculated values (preserving current HP)
+  const currentHp = character.stats.hp;
+  character.stats = calculatedStats;
+  character.stats.hp = Math.min(currentHp, calculatedStats.maxHp); // Don't exceed new max HP
 }
 
 /**

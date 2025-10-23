@@ -10,6 +10,7 @@ import type { UIGameState } from './core/UIState';
 import type { Character } from '../types/character';
 import type { Equipment, EquipmentSlot, EquipmentRarity } from '../types/equipment';
 import { equipItem, unequipItem, canEquipItem } from '../systems/equipment';
+import { getEquipmentFlavorText } from '../data/flavorText';
 import { saveGame } from '../utils/storage';
 
 /**
@@ -649,6 +650,13 @@ function renderEquipmentCard(
     stats.appendChild(statDiv);
   });
   card.appendChild(stats);
+  
+  // Flavor text description
+  const flavorText = getEquipmentFlavorText(equipment.rarity);
+  const description = createElement('div', 'inventory__equipment-description');
+  description.textContent = equipment.description || flavorText;
+  description.title = flavorText; // Show full flavor text on hover
+  card.appendChild(description);
   
   // Equipped indicator
   if (isEquipped) {

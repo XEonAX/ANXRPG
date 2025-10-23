@@ -6,6 +6,7 @@ import type { Stage } from '../types/campaign';
 import { STAGES } from '../data/stages';
 import { getStageInfo, generateStageEnemies } from '../systems/campaign';
 import { initializeCombat } from '../systems/combat';
+import { syncCharacterStats } from '../systems/character';
 
 /**
  * Render the campaign map screen showing all 100 stages
@@ -256,6 +257,11 @@ function handleStageSelect(stage: Stage, uiState: UIGameState): void {
   
   // Generate enemies for this stage
   const enemies = generateStageEnemies(stage);
+  
+  // Sync character stats with equipment bonuses before combat
+  [...activeTeam, ...reserveTeam].forEach(character => {
+    syncCharacterStats(character, uiState.saveData.inventory);
+  });
   
   // Initialize combat
   try {

@@ -12,6 +12,7 @@ import type { Character } from '../types/character';
 import type { Enemy } from '../types/enemy';
 import type { Ability } from '../types/ability';
 import { getAbility } from '../data/abilities';
+import { getAbilityFlavorText, getEnemyFlavorText } from '../data/flavorText';
 import { 
   startCombat,
   getCurrentCombatant,
@@ -267,6 +268,12 @@ function renderEnemyCard(enemy: Enemy, combat: CombatState): HTMLElement {
   header.appendChild(level);
   card.appendChild(header);
   
+  // Add flavor text tooltip
+  const flavorText = getEnemyFlavorText(enemy.templateId || '');
+  if (flavorText) {
+    card.title = flavorText.description;
+  }
+  
   // HP bar (Enemy uses stats.hp for current HP)
   const hpBar = createHPBar(enemy.stats.hp, enemy.stats.maxHp);
   card.appendChild(hpBar);
@@ -393,10 +400,16 @@ function createAbilityButton(
     btn.appendChild(shortcutSpan);
   }
   
-  // Tooltip
+  // Tooltip with flavor text
+  const flavorText = getAbilityFlavorText(ability.id);
   const dmgMult = ability.effects.damageMultiplier || 0;
   const shortcutText = shortcutKey ? `\nShortcut: ${shortcutKey}` : '';
-  btn.title = `${ability.description}\nTarget: ${ability.targetType}\nDamage: ${dmgMult}x${shortcutText}`;
+  
+  if (flavorText) {
+    btn.title = `${flavorText.description}\n\n${flavorText.effectDescription}\nAP Cost: ${ability.apCost} | Target: ${ability.targetType}${shortcutText}`;
+  } else {
+    btn.title = `${ability.description}\nTarget: ${ability.targetType}\nDamage: ${dmgMult}x${shortcutText}`;
+  }
   
   if (canUse) {
     btn.addEventListener('click', () => {

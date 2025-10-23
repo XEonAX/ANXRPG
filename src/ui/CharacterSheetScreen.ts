@@ -12,7 +12,9 @@ import type { Character } from '../types/character';
 import type { SkillNode } from '../types/skillTree';
 import { getSkillTree } from '../data/skillTrees';
 import { canUnlockNode, unlockSkillNode, calculateSkillTreeBonuses } from '../systems/skillTree';
+import { calculateCurrentStats, syncCharacterStats } from '../systems/character';
 import { getAbility } from '../data/abilities';
+import { getAbilityFlavorText } from '../data/flavorText';
 import { saveGame } from '../utils/storage';
 
 /**
@@ -36,6 +38,9 @@ export function renderCharacterSheet(context: ScreenContext): HTMLElement {
     container.innerHTML = '<p>Error: Character not found</p>';
     return container;
   }
+  
+  // Sync character stats with current equipment and skill tree bonuses
+  syncCharacterStats(character, uiState.saveData.inventory);
   
   // Header with character info
   const header = createElement('div', 'character-sheet__header');
@@ -79,7 +84,7 @@ export function renderCharacterSheet(context: ScreenContext): HTMLElement {
   const content = createElement('div', 'character-sheet__content');
   
   // Left column: Stats
-  const statsSection = renderStatsSection(character);
+  const statsSection = renderStatsSection(character, uiState);
   
   // Middle column: Equipment
   const equipmentSection = renderEquipmentSection(character, uiState);
@@ -103,26 +108,41 @@ export function renderCharacterSheet(context: ScreenContext): HTMLElement {
 /**
  * Render stats section
  */
-function renderStatsSection(character: Character): HTMLElement {
+function renderStatsSection(character: Character, uiState: UIGameState): HTMLElement {
   const section = createElement('div', 'character-sheet__section');
   
   const title = createElement('h2', 'character-sheet__section-title');
   title.textContent = '📊 Stats';
   section.appendChild(title);
   
+  // Calculate total stats including equipment and skill tree bonuses
+  const totalStats = calculateCurrentStats(character, uiState.saveData.inventory);
+  const baseStats = character.stats;
+  
   const statsTable = createElement('table', 'stats-table');
   
+  // Helper function to format stat display
+  const formatStat = (base: number, total: number, suffix: string = ''): string => {
+    if (total === base) {
+      return `${base}${suffix}`;
+    } else {
+      const bonus = total - base;
+      const sign = bonus > 0 ? '+' : '';
+      return `${total}${suffix} (${base}${suffix} ${sign}${bonus}${suffix})`;
+    }
+  };
+  
   const stats = [
-    { name: 'HP', value: `${character.stats.hp} / ${character.stats.maxHp}` },
-    { name: 'Max HP', value: character.stats.maxHp },
-    { name: 'ATK', value: character.stats.atk, desc: 'Physical damage' },
-    { name: 'DEF', value: character.stats.def, desc: 'Physical defense' },
-    { name: 'MAG', value: character.stats.mag, desc: 'Magical damage' },
-    { name: 'RES', value: character.stats.res, desc: 'Magical defense' },
-    { name: 'SPD', value: character.stats.spd, desc: 'Turn order' },
-    { name: 'CRT', value: `${character.stats.crt}%`, desc: 'Critical hit chance' },
-    { name: 'EVA', value: `${character.stats.eva}%`, desc: 'Evasion chance' },
-    { name: 'ACC', value: `${character.stats.acc}%`, desc: 'Accuracy' },
+    { name: 'HP', value: `${totalStats.hp} / ${totalStats.maxHp}`, desc: 'Current / Maximum Hit Points' },
+    { name: 'Max HP', value: formatStat(baseStats.maxHp, totalStats.maxHp), desc: 'Maximum health' },
+    { name: 'ATK', value: formatStat(baseStats.atk, totalStats.atk), desc: 'Physical damage' },
+    { name: 'DEF', value: formatStat(baseStats.def, totalStats.def), desc: 'Physical defense' },
+    { name: 'MAG', value: formatStat(baseStats.mag, totalStats.mag), desc: 'Magical damage' },
+    { name: 'RES', value: formatStat(baseStats.res, totalStats.res), desc: 'Magical defense' },
+    { name: 'SPD', value: formatStat(baseStats.spd, totalStats.spd), desc: 'Turn order' },
+    { name: 'CRT', value: formatStat(baseStats.crt, totalStats.crt, '%'), desc: 'Critical hit chance' },
+    { name: 'EVA', value: formatStat(baseStats.eva, totalStats.eva, '%'), desc: 'Evasion chance' },
+    { name: 'ACC', value: formatStat(baseStats.acc, totalStats.acc, '%'), desc: 'Accuracy' },
   ];
   
   stats.forEach(stat => {
@@ -266,11 +286,22 @@ function renderAbilitiesSection(character: Character): HTMLElement {
     abilityInfo.textContent = `${ability.apCost} AP | ${ability.targetType}`;
     
     const abilityDesc = createElement('div', 'ability-card__desc');
-    abilityDesc.textContent = ability.description;
+    const flavorText = getAbilityFlavorText(ability.id);
+    abilityDesc.textContent = flavorText ? flavorText.description : ability.description;
     
-    abilityCard.appendChild(abilityName);
-    abilityCard.appendChild(abilityInfo);
-    abilityCard.appendChild(abilityDesc);
+    // Add effect description on second line
+    if (flavorText) {
+      const effectDesc = createElement('div', 'ability-card__effect');
+      effectDesc.textContent = flavorText.effectDescription;
+      abilityCard.appendChild(abilityName);
+      abilityCard.appendChild(abilityInfo);
+      abilityCard.appendChild(abilityDesc);
+      abilityCard.appendChild(effectDesc);
+    } else {
+      abilityCard.appendChild(abilityName);
+      abilityCard.appendChild(abilityInfo);
+      abilityCard.appendChild(abilityDesc);
+    }
     
     equippedDiv.appendChild(abilityCard);
   });

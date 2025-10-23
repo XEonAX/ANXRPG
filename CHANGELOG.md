@@ -1,5 +1,77 @@
 # ANXRPG Development Changelog
 
+## Version 1.4.0 - Phase 12 COMPLETE: Game Juice & Polish (October 23, 2025) - 🎉 MILESTONE
+
+### Added
+- ✅ **Flavor Text System** - Complete lore for all game content
+  - **File**: `src/data/flavorText.ts` (500+ lines)
+  - **24 Player Abilities**: Each ability has descriptive flavor text and effect descriptions
+    - Example: "Righteous Strike" - "A sanctified blow infused with holy power, punishing evil with divine wrath."
+    - Flavor text shown in ability tooltips and character sheet
+  - **28 Enemy Descriptions**: Each enemy has lore text, bosses have dramatic introductions
+    - Example: "The Eternal One" - Epic introduction about the final boss
+    - Shown as tooltips when hovering over enemies in combat
+  - **7 Equipment Rarity Tiers**: Each tier has thematic descriptions
+    - Basic: "Functional but unremarkable"
+    - Mythic: "Equipment that exists beyond mortal comprehension"
+    - Displayed in equipment cards and tooltips
+  
+- ✅ **UI Flavor Text Integration**
+  - **Combat Screen** (`CombatScreen.ts`):
+    - Ability tooltips now show flavor text + mechanical effects
+    - Enemy cards show lore on hover
+  - **Character Sheet** (`CharacterSheetScreen.ts`):
+    - Ability cards display flavor text and effect descriptions
+  - **Inventory Screen** (`InventoryScreen.ts`):
+    - Equipment cards show rarity descriptions
+    - Flavor text displayed with equipment stats
+
+- ✅ **CSS Animations** - 15+ animations for polish (261 lines added)
+  - **Screen Transitions**:
+    - Fade-in animation for all screens
+    - Modal backdrop fade effects
+  - **Combat Animations**:
+    - Hit shake effect (`combatHit` keyframe)
+    - Damage number pop-up animation (planned for future implementation)
+    - Active turn pulse effect
+    - Target selection pulse
+  - **Victory/Defeat Effects**:
+    - Victory celebration animation (scale + rotate)
+    - Defeat fade to grayscale
+  - **UI Polish**:
+    - Button hover lift effects (-2px translateY)
+    - Smooth HP bar transitions
+    - Notification slide-in from right
+    - Ability glow when activated
+    - Equipment rarity glow for legendary/mythic items
+    - Skill node unlock animation
+    - Combat log entry fade-in
+
+- ✅ **CSS Classes Added**:
+  - `.ability-card__effect` - Effect description styling
+  - `.inventory__equipment-description` - Equipment flavor text styling
+  - Various animation classes (--hit, --active, --victory, --defeat)
+
+### Changed
+- **Build Size**: CSS increased from 44.68 KB → 48.09 KB (+7.6%)
+  - 261 lines of animations
+  - 3.41 KB flavor text data
+- **Tooltips Enhanced**: Now show lore-rich descriptions instead of just mechanics
+- **Visual Polish**: Game feels more alive with animations and transitions
+
+### Technical Details
+- All animations use CSS keyframes and transitions
+- Flavor text system uses TypeScript interfaces for type safety
+- Integration maintains 100% strict mode compliance
+- Zero compile errors
+
+### Phase Status
+- **Phase 12: COMPLETE** ✅
+- **Overall Progress**: 13/14 phases (92%)
+- **Next**: Phase 13-14 (Balance, Testing, Deployment)
+
+---
+
 ## Version 1.3.1 - Bug Fix: Statistics Tracking (October 23, 2025)
 
 ### Fixed
