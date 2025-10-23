@@ -14,6 +14,7 @@ import { renderBattleResults } from './ui/BattleResultsScreen';
 import { renderCharacterSheet } from './ui/CharacterSheetScreen';
 import { renderInventory } from './ui/InventoryScreen';
 import { renderSettings } from './ui/SettingsScreen';
+import { renderRecruitment } from './ui/RecruitmentScreen';
 
 // Development: Make test functions available in console
 import {
@@ -72,6 +73,7 @@ if (!app) {
   ScreenManager.registerScreen('battleResults', renderBattleResults);
   ScreenManager.registerScreen('characterSheet', renderCharacterSheet);
   ScreenManager.registerScreen('inventory', renderInventory);
+  ScreenManager.registerScreen('recruitment', renderRecruitment);
   ScreenManager.registerScreen('settings', renderSettings);
   
   // Event listeners

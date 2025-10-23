@@ -516,6 +516,9 @@ function executeAbilityWithTargets(
   uiState: UIGameState,
   stageNumber?: number
 ): void {
+  // Get current combatant before executing ability
+  const currentCombatant = getCurrentCombatant(combat);
+  
   // Execute ability (signature is: state, abilityId, targetIds)
   const result = executeAbility(combat, abilityId, targetIds);
   
@@ -537,6 +540,33 @@ function executeAbilityWithTargets(
   
   // Check if combat ended after ability execution
   checkCombatEnd(combat, uiState, stageNumber);
+  
+  // Check if character should auto-end turn (0 AP or no usable abilities)
+  if (combat.phase === 'active' && currentCombatant?.type === 'player') {
+    const character = currentCombatant.character;
+    if (character) {
+      // Check if any equipped ability can be used with remaining AP
+      const hasUsableAbility = character.equippedAbilities.some(abilityId => {
+        const ability = getAbility(abilityId);
+        return ability && character.currentAp >= ability.apCost;
+      });
+      
+      // Auto-end turn if no usable abilities
+      if (!hasUsableAbility) {
+        const reason = character.currentAp === 0 
+          ? '⚡ Out of AP - Turn ended automatically'
+          : `⚡ No usable abilities (${character.currentAp} AP remaining) - Turn ended`;
+        
+        showNotification(reason, 'info');
+        
+        // Wait a moment for the notification to be visible, then end turn
+        setTimeout(() => {
+          endCharacterTurn(combat, uiState, stageNumber);
+        }, 800);
+        return; // Don't re-render yet, wait for auto-end turn
+      }
+    }
+  }
   
   // Re-render combat screen with updated state (only if combat hasn't ended)
   if (combat.phase === 'active') {
@@ -687,38 +717,52 @@ function checkCombatEnd(combat: CombatState, uiState: UIGameState, stageNumber?:
  * Show dialog for swapping to reserve team
  */
 function showReserveSwapDialog(combat: CombatState, uiState: UIGameState, stageNumber?: number): void {
-  const modal = createElement('div', 'modal modal--active');
-  const content = createElement('div', 'modal__content');
+  // Check if modal already exists - prevent duplicates
+  const existingOverlay = document.querySelector('.modal-overlay.modal-overlay--team-wipe');
+  if (existingOverlay) {
+    return; // Dialog already showing
+  }
   
+  // Count alive reserve characters
+  const aliveReserveCount = combat.reserveTeam.filter(c => c.isAlive).length;
+  
+  // Create overlay wrapper
+  const overlay = createElement('div', 'modal-overlay modal-overlay--team-wipe');
+  
+  const modal = createElement('div', 'modal');
+  const header = createElement('div', 'modal__header');
   const title = createElement('h2', 'modal__title');
   title.textContent = '💀 Team Wiped!';
+  header.appendChild(title);
   
+  const body = createElement('div', 'modal__body');
   const message = createElement('p', 'modal__message');
-  message.textContent = `Your active team has been defeated. You have ${combat.reserveTeam.length} reserve characters available.`;
+  message.textContent = `Your active team has been defeated. You have ${aliveReserveCount} reserve character${aliveReserveCount !== 1 ? 's' : ''} available.`;
+  body.appendChild(message);
   
-  const actions = createElement('div', 'modal__actions');
+  const footer = createElement('div', 'modal__footer');
   
   const swapBtn = createButton('⚔️ Swap to Reserve', () => {
     swapReserveTeam(combat);
-    document.body.removeChild(modal);
+    document.body.removeChild(overlay);
     ScreenManager.updateContext({ combat, uiState, stage: stageNumber });
-  }, 'btn btn--primary');
+  }, 'btn btn--primary btn--large');
   
   const defeatBtn = createButton('🏳️ Accept Defeat', () => {
     acceptDefeat(combat);
-    document.body.removeChild(modal);
+    document.body.removeChild(overlay);
     ScreenManager.updateContext({ combat, uiState, stage: stageNumber });
-  }, 'btn btn--danger');
+  }, 'btn btn--danger btn--large');
   
-  actions.appendChild(swapBtn);
-  actions.appendChild(defeatBtn);
+  footer.appendChild(swapBtn);
+  footer.appendChild(defeatBtn);
   
-  content.appendChild(title);
-  content.appendChild(message);
-  content.appendChild(actions);
-  modal.appendChild(content);
+  modal.appendChild(header);
+  modal.appendChild(body);
+  modal.appendChild(footer);
+  overlay.appendChild(modal);
   
-  document.body.appendChild(modal);
+  document.body.appendChild(overlay);
 }
 
 /**

@@ -7,6 +7,7 @@ import type { Equipment } from '../types/equipment';
 import { saveGame } from '../utils/storage';
 import { completeStage } from '../systems/campaign';
 import { fullyRestoreCharacter } from '../systems/character';
+import { canRecruitCharacter } from '../systems/recruitment';
 
 /**
  * Render the battle results screen showing victory/defeat, rewards, and level-ups
@@ -181,6 +182,22 @@ export function renderBattleResults(context: ScreenContext): HTMLElement {
     cleanupBattleResultsKeyboardShortcuts();
     processResults();
     
+    // Check if recruitment is available after victory
+    if (isVictory) {
+      const victories = uiState.saveData.statistics.totalVictories;
+      const rosterSize = uiState.saveData.roster.length;
+      
+      if (canRecruitCharacter(victories, rosterSize)) {
+        // Show recruitment screen
+        ScreenManager.navigateTo('recruitment', { 
+          uiState, 
+          milestone: victories,
+          returnToStage: stageNumber ? stageNumber + 1 : undefined
+        });
+        return;
+      }
+    }
+    
     // Go to next stage (current stage + 1)
     if (isVictory && stageNumber) {
       const nextStageNumber = stageNumber + 1;
@@ -201,6 +218,22 @@ export function renderBattleResults(context: ScreenContext): HTMLElement {
   const handleBackToCampaign = () => {
     cleanupBattleResultsKeyboardShortcuts();
     processResults();
+    
+    // Check if recruitment is available after victory
+    if (isVictory) {
+      const victories = uiState.saveData.statistics.totalVictories;
+      const rosterSize = uiState.saveData.roster.length;
+      
+      if (canRecruitCharacter(victories, rosterSize)) {
+        // Show recruitment screen
+        ScreenManager.navigateTo('recruitment', { 
+          uiState, 
+          milestone: victories,
+          returnToStage: undefined // Don't auto-start next stage
+        });
+        return;
+      }
+    }
     
     // Return to campaign map
     ScreenManager.navigateTo('campaignMap', { uiState });

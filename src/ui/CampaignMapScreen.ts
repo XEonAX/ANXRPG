@@ -261,6 +261,11 @@ function handleStageSelect(stage: Stage, uiState: UIGameState): void {
   // Generate enemies for this stage
   const enemies = generateStageEnemies(stage);
   
+  // Clear status effects from previous battles
+  [...activeTeam, ...reserveTeam].forEach(character => {
+    character.statusEffects = [];
+  });
+  
   // Sync character stats with equipment bonuses before combat
   [...activeTeam, ...reserveTeam].forEach(character => {
     syncCharacterStats(character, uiState.saveData.inventory);

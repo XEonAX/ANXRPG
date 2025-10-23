@@ -9,7 +9,8 @@ import { calculateStatsAtLevel, calculateXpForLevel } from '../utils/formulas';
 import { generateId } from '../utils/random';
 import { calculateEquipmentBonuses } from './equipment';
 import { calculateStatusEffectStatModifiers } from './statusEffects';
-import { calculateSkillTreeBonuses } from './skillTree';
+import { calculateSkillTreeBonuses, getMaxAbilitySlots } from './skillTree';
+import { getAbilitiesForCharacterType } from '../data/abilities';
 
 /**
  * Create a new character instance
@@ -279,11 +280,42 @@ export function awardXp(character: Character, xp: number): number {
     // Award skill point
     character.skillPoints++;
     
+    // Check for new abilities to unlock based on level
+    unlockAbilitiesByLevel(character);
+    
     // Update XP requirement for next level
     character.xpToNextLevel = calculateXpForLevel(character.level + 1);
   }
   
   return levelsGained;
+}
+
+/**
+ * Unlock abilities that the character has reached the required level for
+ * This checks all abilities for the character's type and unlocks any that:
+ * 1. Match the character type
+ * 2. Have a required level <= character's current level
+ * 3. Are not already unlocked
+ */
+function unlockAbilitiesByLevel(character: Character): void {
+  const availableAbilities = getAbilitiesForCharacterType(character.type);
+  
+  for (const ability of availableAbilities) {
+    // Check if ability should be unlocked at this level
+    const requiredLevel = ability.requiredLevel ?? 1;
+    if (
+      requiredLevel <= character.level &&
+      !character.unlockedAbilities.includes(ability.id)
+    ) {
+      character.unlockedAbilities.push(ability.id);
+      
+      // Also add to equipped abilities if there's room (max 4 slots initially + skill tree bonuses)
+      const maxSlots = getMaxAbilitySlots(character);
+      if (character.equippedAbilities.length < maxSlots) {
+        character.equippedAbilities.push(ability.id);
+      }
+    }
+  }
 }
 
 /**

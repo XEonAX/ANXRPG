@@ -11,6 +11,7 @@ export type Screen =
   | 'combat'
   | 'inventory'
   | 'battleResults'
+  | 'recruitment'
   | 'settings';
 
 export interface ScreenContext {

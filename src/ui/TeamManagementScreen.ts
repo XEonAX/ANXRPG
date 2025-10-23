@@ -109,16 +109,21 @@ function renderActiveTeamSection(uiState: UIGameState): HTMLElement {
   
   const grid = createElement('div', 'character-grid');
   
+  // Make grid a drop zone
+  setupDropZone(grid, 'active', uiState);
+  
   // Render active team characters
   const activeChars = uiState.saveData.roster.filter((c: Character) => uiState.activeTeamIds.includes(c.id));
-  activeChars.forEach((char: Character) => {
+  // Maintain order from activeTeamIds
+  const orderedChars = uiState.activeTeamIds.map(id => activeChars.find(c => c.id === id)).filter(Boolean) as Character[];
+  orderedChars.forEach((char: Character) => {
     const card = renderCharacterCard(char, 'active', uiState);
     grid.appendChild(card);
   });
   
   // Add empty slots
   for (let i = uiState.activeTeamIds.length; i < 3; i++) {
-    const emptySlot = renderEmptySlot('active', i);
+    const emptySlot = renderEmptySlot('active', i, uiState);
     grid.appendChild(emptySlot);
   }
   
@@ -144,16 +149,21 @@ function renderReserveTeamSection(uiState: UIGameState): HTMLElement {
   
   const grid = createElement('div', 'character-grid');
   
+  // Make grid a drop zone
+  setupDropZone(grid, 'reserve', uiState);
+  
   // Render reserve team characters
   const reserveChars = uiState.saveData.roster.filter((c: Character) => uiState.reserveTeamIds.includes(c.id));
-  reserveChars.forEach((char: Character) => {
+  // Maintain order from reserveTeamIds
+  const orderedChars = uiState.reserveTeamIds.map(id => reserveChars.find(c => c.id === id)).filter(Boolean) as Character[];
+  orderedChars.forEach((char: Character) => {
     const card = renderCharacterCard(char, 'reserve', uiState);
     grid.appendChild(card);
   });
   
   // Add empty slots
   for (let i = uiState.reserveTeamIds.length; i < 3; i++) {
-    const emptySlot = renderEmptySlot('reserve', i);
+    const emptySlot = renderEmptySlot('reserve', i, uiState);
     grid.appendChild(emptySlot);
   }
   
@@ -202,6 +212,81 @@ function renderCharacterCard(
   const card = createElement('div', 'character-card');
   card.setAttribute('data-character-id', character.id);
   card.setAttribute('data-location', location);
+  
+  // Make card draggable
+  card.setAttribute('draggable', 'true');
+  
+  // Drag start handler
+  card.addEventListener('dragstart', (e: DragEvent) => {
+    if (!e.dataTransfer) return;
+    
+    e.dataTransfer.effectAllowed = 'move';
+    e.dataTransfer.setData('text/plain', character.id);
+    e.dataTransfer.setData('application/character-id', character.id);
+    e.dataTransfer.setData('application/source-location', location);
+    
+    card.classList.add('dragging');
+    
+    // Create compact custom drag image
+    const dragImage = document.createElement('div');
+    dragImage.style.cssText = `
+      position: absolute;
+      top: -1000px;
+      left: -1000px;
+      background: linear-gradient(135deg, rgba(30, 41, 59, 0.95) 0%, rgba(15, 23, 42, 0.98) 100%);
+      border: 2px solid ${getCharacterTypeColor(character.type)};
+      border-radius: 8px;
+      padding: 12px 16px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
+      color: white;
+      font-family: inherit;
+      min-width: 200px;
+      backdrop-filter: blur(10px);
+    `;
+    dragImage.innerHTML = `
+      <div style="font-size: 16px; font-weight: bold; margin-bottom: 4px;">${character.name}</div>
+      <div style="font-size: 12px; color: rgba(255, 255, 255, 0.7);">${character.type} • Lv ${character.level}</div>
+    `;
+    document.body.appendChild(dragImage);
+    e.dataTransfer.setDragImage(dragImage, 100, 30);
+    setTimeout(() => dragImage.remove(), 0);
+  });
+  
+  // Drag end handler
+  card.addEventListener('dragend', () => {
+    card.classList.remove('dragging');
+  });
+  
+  // Make card a drop target (for reordering/swapping)
+  if (location === 'active' || location === 'reserve') {
+    card.addEventListener('dragover', (e: DragEvent) => {
+      e.preventDefault();
+      if (e.dataTransfer) {
+        e.dataTransfer.dropEffect = 'move';
+      }
+      card.classList.add('drop-target');
+    });
+    
+    card.addEventListener('dragleave', () => {
+      card.classList.remove('drop-target');
+    });
+    
+    card.addEventListener('drop', (e: DragEvent) => {
+      e.preventDefault();
+      e.stopPropagation(); // Prevent parent drop handler
+      card.classList.remove('drop-target');
+      
+      if (!e.dataTransfer) return;
+      
+      const draggedCharId = e.dataTransfer.getData('application/character-id');
+      const sourceLocation = e.dataTransfer.getData('application/source-location') as 'active' | 'reserve' | 'roster';
+      
+      // Don't drop on self
+      if (draggedCharId === character.id) return;
+      
+      handleDrop(draggedCharId, sourceLocation, location, character.id, uiState);
+    });
+  }
   
   // Character header
   const cardHeader = createElement('div', 'character-card__header');
@@ -255,14 +340,40 @@ function renderCharacterCard(
     ScreenManager.navigateTo('characterSheet', { uiState, characterId: character.id });
   }, 'btn btn--small btn--secondary');
   
-  // Swap button (only show for active/reserve)
+  // Swap/Assign buttons based on location
   if (location === 'active' || location === 'reserve') {
+    // Swap button for characters already in teams
     const swapBtn = createButton(
       location === 'active' ? '⬇️ To Reserve' : '⬆️ To Active',
       () => handleSwap(character.id, location, uiState),
       'btn btn--small btn--secondary'
     );
     actions.appendChild(swapBtn);
+  } else if (location === 'roster') {
+    // Check if character is unassigned
+    const isUnassigned = !uiState.activeTeamIds.includes(character.id) && 
+                        !uiState.reserveTeamIds.includes(character.id);
+    
+    if (isUnassigned) {
+      // Show assign buttons for unassigned characters
+      if (uiState.activeTeamIds.length < 3) {
+        const assignActiveBtn = createButton(
+          '⬆️ To Active',
+          () => handleAssignToTeam(character.id, 'active', uiState),
+          'btn btn--small btn--primary'
+        );
+        actions.appendChild(assignActiveBtn);
+      }
+      
+      if (uiState.reserveTeamIds.length < 3) {
+        const assignReserveBtn = createButton(
+          '⬇️ To Reserve',
+          () => handleAssignToTeam(character.id, 'reserve', uiState),
+          'btn btn--small btn--primary'
+        );
+        actions.appendChild(assignReserveBtn);
+      }
+    }
   }
   
   actions.appendChild(viewBtn);
@@ -280,10 +391,35 @@ function renderCharacterCard(
 /**
  * Render an empty team slot
  */
-function renderEmptySlot(location: 'active' | 'reserve', index: number): HTMLElement {
+function renderEmptySlot(location: 'active' | 'reserve', index: number, uiState: UIGameState): HTMLElement {
   const slot = createElement('div', 'character-card character-card--empty');
   slot.setAttribute('data-location', location);
   slot.setAttribute('data-index', index.toString());
+  
+  // Make empty slot a drop zone
+  slot.addEventListener('dragover', (e: DragEvent) => {
+    e.preventDefault();
+    if (e.dataTransfer) {
+      e.dataTransfer.dropEffect = 'move';
+    }
+    slot.classList.add('drop-target');
+  });
+  
+  slot.addEventListener('dragleave', () => {
+    slot.classList.remove('drop-target');
+  });
+  
+  slot.addEventListener('drop', (e: DragEvent) => {
+    e.preventDefault();
+    slot.classList.remove('drop-target');
+    
+    if (!e.dataTransfer) return;
+    
+    const characterId = e.dataTransfer.getData('application/character-id');
+    const sourceLocation = e.dataTransfer.getData('application/source-location') as 'active' | 'reserve' | 'roster';
+    
+    handleDrop(characterId, sourceLocation, location, null, uiState);
+  });
   
   const icon = createElement('div', 'empty-slot__icon');
   icon.textContent = '➕';
@@ -319,6 +455,227 @@ function handleSwap(characterId: string, currentLocation: 'active' | 'reserve', 
   
   // Refresh screen
   ScreenManager.updateContext({ uiState });
+}
+
+/**
+ * Handle assigning an unassigned character to a team
+ */
+function handleAssignToTeam(characterId: string, targetTeam: 'active' | 'reserve', uiState: UIGameState): void {
+  const character = uiState.saveData.roster.find((c: Character) => c.id === characterId);
+  
+  if (!character) {
+    showNotification('Character not found!', 'error');
+    return;
+  }
+  
+  // Check if character is already assigned
+  if (uiState.activeTeamIds.includes(characterId) || uiState.reserveTeamIds.includes(characterId)) {
+    showNotification('Character is already assigned to a team!', 'warning');
+    return;
+  }
+  
+  // Check if target team is full
+  const targetTeamIds = targetTeam === 'active' ? uiState.activeTeamIds : uiState.reserveTeamIds;
+  if (targetTeamIds.length >= 3) {
+    showNotification(`${targetTeam === 'active' ? 'Active' : 'Reserve'} team is full!`, 'warning');
+    return;
+  }
+  
+  // Add to team
+  targetTeamIds.push(characterId);
+  
+  showNotification(
+    `${character.name} assigned to ${targetTeam === 'active' ? 'active' : 'reserve'} team!`,
+    'success'
+  );
+  
+  // Refresh screen
+  ScreenManager.updateContext({ uiState });
+}
+
+/**
+ * Setup drop zone for a team grid
+ */
+function setupDropZone(grid: HTMLElement, targetLocation: 'active' | 'reserve', uiState: UIGameState): void {
+  grid.addEventListener('dragover', (e: DragEvent) => {
+    e.preventDefault();
+    if (e.dataTransfer) {
+      e.dataTransfer.dropEffect = 'move';
+    }
+  });
+  
+  grid.addEventListener('drop', (e: DragEvent) => {
+    e.preventDefault();
+    
+    if (!e.dataTransfer) return;
+    
+    // Check if dropped on a character card
+    const target = e.target as HTMLElement;
+    const targetCard = target.closest('.character-card:not(.character-card--empty)') as HTMLElement;
+    
+    const characterId = e.dataTransfer.getData('application/character-id');
+    const sourceLocation = e.dataTransfer.getData('application/source-location') as 'active' | 'reserve' | 'roster';
+    
+    if (targetCard) {
+      // Dropped on another character - swap or reorder
+      const targetCharacterId = targetCard.getAttribute('data-character-id');
+      handleDrop(characterId, sourceLocation, targetLocation, targetCharacterId, uiState);
+    } else {
+      // Dropped on empty area - add to end of team
+      handleDrop(characterId, sourceLocation, targetLocation, null, uiState);
+    }
+  });
+}
+
+/**
+ * Handle drop operation
+ */
+function handleDrop(
+  draggedCharId: string,
+  sourceLocation: 'active' | 'reserve' | 'roster',
+  targetLocation: 'active' | 'reserve',
+  targetCharId: string | null,
+  uiState: UIGameState
+): void {
+  const sourceTeamIds = sourceLocation === 'active' ? uiState.activeTeamIds : 
+                        sourceLocation === 'reserve' ? uiState.reserveTeamIds : null;
+  const targetTeamIds = targetLocation === 'active' ? uiState.activeTeamIds : uiState.reserveTeamIds;
+  
+  const draggedChar = uiState.saveData.roster.find(c => c.id === draggedCharId);
+  if (!draggedChar) return;
+  
+  // Case 1: Reordering within the same team
+  if (sourceLocation === targetLocation && sourceTeamIds) {
+    const draggedIndex = sourceTeamIds.indexOf(draggedCharId);
+    if (draggedIndex === -1) return;
+    
+    if (targetCharId) {
+      const targetIndex = sourceTeamIds.indexOf(targetCharId);
+      if (targetIndex === -1) return;
+      
+      // Reorder: remove from old position and insert at new position
+      sourceTeamIds.splice(draggedIndex, 1);
+      const newTargetIndex = sourceTeamIds.indexOf(targetCharId);
+      sourceTeamIds.splice(newTargetIndex + (draggedIndex < targetIndex ? 1 : 0), 0, draggedCharId);
+      
+      showNotification(`Reordered ${draggedChar.name} in ${targetLocation} team`, 'success');
+    }
+    
+    ScreenManager.updateContext({ uiState });
+    return;
+  }
+  
+  // Case 2: Moving from roster (unassigned) to a team
+  if (sourceLocation === 'roster') {
+    // Check if character is already assigned to a team
+    const isInActive = uiState.activeTeamIds.includes(draggedCharId);
+    const isInReserve = uiState.reserveTeamIds.includes(draggedCharId);
+    
+    if (isInActive || isInReserve) {
+      // Character is already assigned - treat as move between teams
+      const actualSourceTeamIds = isInActive ? uiState.activeTeamIds : uiState.reserveTeamIds;
+      const actualSourceLocation = isInActive ? 'active' : 'reserve';
+      
+      // Check if trying to move to same team
+      if (actualSourceLocation === targetLocation) {
+        showNotification(`${draggedChar.name} is already in ${targetLocation} team`, 'warning');
+        return;
+      }
+      
+      // Handle as team-to-team move
+      if (targetCharId) {
+        // Swap positions
+        const sourceIndex = actualSourceTeamIds.indexOf(draggedCharId);
+        const targetIndex = targetTeamIds.indexOf(targetCharId);
+        
+        if (sourceIndex !== -1 && targetIndex !== -1) {
+          actualSourceTeamIds[sourceIndex] = targetCharId;
+          targetTeamIds[targetIndex] = draggedCharId;
+          
+          const targetChar = uiState.saveData.roster.find(c => c.id === targetCharId);
+          showNotification(`Swapped ${draggedChar.name} and ${targetChar?.name || 'character'}`, 'success');
+        }
+      } else {
+        // Check if target has space
+        if (targetTeamIds.length >= 3) {
+          showNotification(`${targetLocation === 'active' ? 'Active' : 'Reserve'} team is full!`, 'warning');
+          return;
+        }
+        
+        // Move from source to target
+        const sourceIndex = actualSourceTeamIds.indexOf(draggedCharId);
+        if (sourceIndex !== -1) {
+          actualSourceTeamIds.splice(sourceIndex, 1);
+          targetTeamIds.push(draggedCharId);
+          showNotification(`${draggedChar.name} moved to ${targetLocation} team`, 'success');
+        }
+      }
+      
+      ScreenManager.updateContext({ uiState });
+      return;
+    }
+    
+    // Character is truly unassigned - add to team
+    if (targetTeamIds.length >= 3) {
+      showNotification(`${targetLocation === 'active' ? 'Active' : 'Reserve'} team is full!`, 'warning');
+      return;
+    }
+    
+    if (targetCharId) {
+      // Insert before target
+      const targetIndex = targetTeamIds.indexOf(targetCharId);
+      targetTeamIds.splice(targetIndex, 0, draggedCharId);
+    } else {
+      // Add to end
+      targetTeamIds.push(draggedCharId);
+    }
+    
+    showNotification(`${draggedChar.name} assigned to ${targetLocation} team`, 'success');
+    ScreenManager.updateContext({ uiState });
+    return;
+  }
+  
+  // Case 3: Moving between active and reserve
+  if (sourceTeamIds && sourceLocation !== targetLocation) {
+    // Check if target team is full
+    if (targetCharId) {
+      // Swap positions
+      const sourceIndex = sourceTeamIds.indexOf(draggedCharId);
+      const targetIndex = targetTeamIds.indexOf(targetCharId);
+      
+      if (sourceIndex === -1 || targetIndex === -1) return;
+      
+      // Swap the two characters
+      sourceTeamIds[sourceIndex] = targetCharId;
+      targetTeamIds[targetIndex] = draggedCharId;
+      
+      const targetChar = uiState.saveData.roster.find(c => c.id === targetCharId);
+      showNotification(
+        `Swapped ${draggedChar.name} and ${targetChar?.name || 'character'}`,
+        'success'
+      );
+    } else {
+      // Check if target has space
+      if (targetTeamIds.length >= 3) {
+        showNotification(`${targetLocation === 'active' ? 'Active' : 'Reserve'} team is full!`, 'warning');
+        return;
+      }
+      
+      // Move from source to target
+      const sourceIndex = sourceTeamIds.indexOf(draggedCharId);
+      if (sourceIndex === -1) return;
+      
+      sourceTeamIds.splice(sourceIndex, 1);
+      targetTeamIds.push(draggedCharId);
+      
+      showNotification(
+        `${draggedChar.name} moved to ${targetLocation} team`,
+        'success'
+      );
+    }
+    
+    ScreenManager.updateContext({ uiState });
+  }
 }
 
 /**
