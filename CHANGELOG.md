@@ -1,5 +1,66 @@
 # ANXRPG Development Changelog
 
+## Version 1.4.1 - Combat UI Polish & Bug Fixes (October 23, 2025)
+
+### Added
+- ✅ **Visual HP Bars in Combat** - Color-coded health tracking
+  - Glossy gradient progress bars with smooth width transitions
+  - Color states: Green (>50%), Orange (25-50%), Red (<25% with pulse)
+  - Centered HP text with strong shadow for readability
+  - Glowing effects matching health state
+  - Added `@keyframes criticalPulse` for low HP warning
+
+- ✅ **Enemy Turn Timing System** - Visual feedback for AI actions
+  - 1 second delay to show which enemy is acting (orange border)
+  - 0.5 second delay after action to show results
+  - ~1.5 seconds total per enemy turn
+  - Recursive processing for multiple consecutive enemy turns
+  - Modified `processStartOfTurn()` to allow UI-controlled timing
+  - Exported `processEnemyAI()` for UI layer control
+
+### Changed
+- ✅ **Professional Combat Card Design** - Applied consistent design system
+  - Combat header: Red gradient theme with enhanced borders
+  - Team containers: Blue gradient with glass morphism
+  - Character/Enemy cards: Enhanced with gradients, shadows, top accent lines
+  - Action panel: Blue theme with gradient background
+  - Combat log: Card design with custom scrollbar and color-coded entries
+  
+- ✅ **Enhanced Combat Elements**
+  - Ability buttons: Blue gradients, top accent lines, improved hover states
+  - Status badges: Color-coded variants (buff=green, debuff=red, DOT=orange)
+  - AP bar: Blue gradient background with enhanced styling
+  - Turn indicator: Improved orange gradient with better shadows
+
+- ✅ **CSS Improvements** - ~200+ lines added/modified in `style.css`
+  - Added `.hp-bar-container`, `.hp-bar`, `.hp-bar-text` with state variants
+  - Enhanced ability button gradients and hover effects
+  - Improved combat log with scrollbar styling
+  - Added status badge color variants
+  - Enhanced AP bar styling
+
+### Fixed
+- ✅ **Removed Distracting Animations**
+  - Removed `.screen` fade-in animation (was triggering on every click)
+  - Removed `pulseGlow` from active character/enemy cards
+  - Removed `targetPulse` from targetable enemies
+  - Removed `targetPulse` from "SELECTED" indicator
+  - Kept only "YOUR TURN" indicator pulsing (most important cue)
+
+- ✅ **Enemy Turn Processing** - Instant AI actions fixed
+  - Previously: All enemy turns happened instantly with no visual feedback
+  - Now: Timed delays allow players to see each enemy action
+  - Combat feels more turn-based and less chaotic
+
+### Technical Details
+- **Files Modified**:
+  - `src/style.css`: HP bars, combat cards, animations (~200+ lines)
+  - `src/systems/combat.ts`: Removed auto-enemy-turn processing, exported `processEnemyAI()`
+  - `src/ui/CombatScreen.ts`: Added `processEnemyTurns()` with setTimeout delays
+- **Documentation**: Created `docs/COMBAT_UI_POLISH_OCT23.md` with full details
+
+---
+
 ## Version 1.4.0 - Phase 12 COMPLETE: Game Juice & Polish (October 23, 2025) - 🎉 MILESTONE
 
 ### Added

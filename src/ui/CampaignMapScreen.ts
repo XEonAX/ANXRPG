@@ -165,13 +165,16 @@ function renderStageCard(stage: Stage, uiState: UIGameState): HTMLElement {
   const isCompleted = stageInfo.isCompleted;
   const isUnlocked = stageInfo.canAccess;
   const isBoss = stage.isBossStage;
-  const isCurrent = stage.stageNumber === uiState.saveData.campaign.currentStage;
+  
+  // Determine if this is the next stage to play (unlocked but not completed)
+  const isNextStage = isUnlocked && !isCompleted;
   
   // Add modifiers
   if (isCompleted) card.classList.add('stage-card--completed');
   if (!isUnlocked) card.classList.add('stage-card--locked');
   if (isBoss) card.classList.add('stage-card--boss');
-  if (isCurrent) card.classList.add('stage-card--current');
+  // Mark as current if it's the next stage to play (unlocked and not completed)
+  if (isNextStage) card.classList.add('stage-card--current');
   
   // Stage number
   const number = createElement('div', 'stage-card__number');

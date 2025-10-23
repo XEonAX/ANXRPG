@@ -1,23 +1,36 @@
 # ANXRPG - Phase 11 COMPLETE! 🎉
 
 **Date**: October 23, 2025  
-**Major Milestone**: All UI screens implemented - Game 100% playable!
+**Major Milestone**: All UI screens implemented with professional polish - Game 100% playable!
 
-## 🎮 Game Status: FULLY PLAYABLE WITH COMPLETE UI
+## 🎮 Game Status: FULLY PLAYABLE WITH POLISHED UI
 
 ### All 10 UI Screens Complete! ✅
 1. ✅ Main Menu (New/Continue/Load/Settings)
-2. ✅ Team Management (Active/Reserve/Roster)
-3. ✅ Campaign Map (100 stages, tier sections)
-4. ✅ Combat Screen (Turn-based, multi-action, enemy AI, click-to-target)
+2. ✅ Team Management (Active/Reserve/Roster) - Enhanced card design
+3. ✅ Campaign Map (100 stages, tier sections) - Green theme polish
+4. ✅ **Combat Screen** (Turn-based, multi-action, click-to-target) - **POLISHED Oct 23!**
 5. ✅ Battle Results (XP, loot, level-ups, auto-heal)
-6. ✅ Character Sheet (Stats, equipment, skill tree)
-7. ✅ **Inventory** (Filter, sort, equip/unequip) - NEW Oct 22
+6. ✅ Character Sheet (Stats, equipment, skill tree) - Blue theme polish
+7. ✅ **Inventory** (Filter, sort, equip/unequip) - Purple theme polish
 8. ✅ **Settings** (8 settings, save mgmt, statistics) - NEW Oct 22
 9. ✅ UI Foundation (ScreenManager, EventBus, UIHelpers)
-10. ✅ CSS System (2,754 lines, dark theme)
+10. ✅ CSS System (3,900+ lines, dark theme with professional card design)
 
-**Total UI Code**: 8,955 lines (6,201 TypeScript + 2,754 CSS)
+**Total UI Code**: 9,155+ lines (6,201 TypeScript + 3,900+ CSS)
+
+## Recent Updates (Oct 23, 2025)
+
+### Combat UI Polish ✨
+- **Visual HP Bars**: Color-coded (green/orange/red) with glossy gradients
+- **Professional Card Design**: Red header, blue team cards with glass morphism
+- **Enhanced Buttons**: Gradient backgrounds with hover animations
+- **Polished Combat Log**: Color-coded entries with custom scrollbar
+- **Enemy Turn Timing**: 1.5s delays per enemy action for visual feedback
+- **Animation Cleanup**: Removed distracting pulses (kept only "YOUR TURN")
+- **Screen Fix**: No more fade-in on every click
+
+See `docs/COMBAT_UI_POLISH_OCT23.md` for full details.
 
 ## Try It Now!
 
@@ -45,17 +58,17 @@ npm run dev  # Start at http://localhost:5173
 ## Current Status
 
 ### Phase 11: UI Implementation (100% COMPLETE!) 🎉
-**All 10 Screens Implemented**:
+**All 10 Screens Implemented with Professional Polish**:
 - ✅ Main Menu (271 lines)
-- ✅ Team Management (338 lines)
-- ✅ Campaign Map (264 lines)
-- ✅ Combat Screen (660 lines)
+- ✅ Team Management (338 lines) - Enhanced card design
+- ✅ Campaign Map (264 lines) - Green theme polish
+- ✅ **Combat Screen** (660 lines) - **POLISHED with HP bars, timing, animations!**
 - ✅ Battle Results (197 lines)
-- ✅ Character Sheet (450 lines)
-- ✅ **Inventory** (717 lines) - **NEW!**
-- ✅ **Settings** (715 lines) - **NEW!**
+- ✅ Character Sheet (450 lines) - Blue theme polish
+- ✅ **Inventory** (717 lines) - Purple theme polish
+- ✅ **Settings** (715 lines)
 - ✅ UI Foundation (835 lines)
-- ✅ CSS System (2,754 lines)
+- ✅ CSS System (3,900+ lines) - **Expanded with combat polish**
 
 ### Overall Progress
 - **12 / 14 Phases Complete (~85%)**
@@ -82,12 +95,17 @@ npm run dev  # Start at http://localhost:5173
 ✅ **Settings screen** with 8 options (NEW!)  
 ✅ **Save management** - export/import JSON (NEW!)  
 ✅ **Statistics dashboard** (NEW!)  
+✅ **Visual HP bars** with color-coding (Oct 23!)  
+✅ **Enemy turn delays** for visual feedback (Oct 23!)  
 ✅ Save/load system with auto-save  
 ✅ Stage unlocking and completion tracking  
 ✅ Reserve team swapping on defeat  
 
 ### UI Features
-✅ Dark theme with 2,754 lines CSS  
+✅ Dark theme with 3,900+ lines CSS  
+✅ Professional card-based design system  
+✅ Color-coded HP bars (green/orange/red)  
+✅ Enhanced gradients and animations  
 ✅ Responsive design  
 ✅ Toast notifications  
 ✅ Modal dialogs  

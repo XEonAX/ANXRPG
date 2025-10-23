@@ -633,10 +633,23 @@ function renderEquipmentCard(
   name.textContent = equipment.name;
   card.appendChild(name);
   
+  // Slot icon mapping
+  const slotIcons: Record<EquipmentSlot, string> = {
+    'mainHand': '🗡️',
+    'offHand': '🛡️',
+    'head': '⛑️',
+    'chest': '🦺',
+    'legs': '👖',
+    'neck': '📿',
+    'wrist1': '⌚',
+    'wrist2': '⌚',
+  };
+
   // Info row
   const info = createElement('div', 'inventory__equipment-info');
+  const slotIcon = slotIcons[equipment.slot] || '📦';
   info.innerHTML = `
-    <span class="inventory__equipment-slot">${equipment.slot}</span>
+    <span class="inventory__equipment-slot">${slotIcon} ${equipment.slot}</span>
     <span class="inventory__equipment-level">Lv ${equipment.level}</span>
     <span class="inventory__equipment-rarity inventory__equipment-rarity--${equipment.rarity}">${equipment.rarity}</span>
   `;

@@ -256,17 +256,15 @@ function processStartOfTurn(state: CombatState): void {
     return;
   }
   
-  // Auto-process enemy turns
-  if (combatant.type === 'enemy') {
-    processEnemyAI(state);
-    endTurn(state);
-  }
+  // Enemy turns are now handled by the UI with delays
+  // processEnemyAI is exported and called from UI layer
 }
 
 /**
  * Process enemy AI (select and execute ability)
+ * Exported for UI to call with timing control
  */
-function processEnemyAI(state: CombatState): void {
+export function processEnemyAI(state: CombatState): void {
   const currentCombatant = getCurrentCombatant(state);
   if (!currentCombatant || currentCombatant.type !== 'enemy') {
     return;

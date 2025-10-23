@@ -20,7 +20,8 @@ import {
   endTurn,
   getRecentLog,
   swapReserveTeam,
-  acceptDefeat
+  acceptDefeat,
+  processEnemyAI
 } from '../systems/combat';
 
 // Selected target state - tracks which enemy is currently selected
@@ -544,7 +545,7 @@ function executeAbilityWithTargets(
 }
 
 /**
- * End current character's turn
+ * End current character's turn and process enemy turns with delays
  */
 function endCharacterTurn(combat: CombatState, uiState: UIGameState, stageNumber?: number): void {
   endTurn(combat);
@@ -552,10 +553,47 @@ function endCharacterTurn(combat: CombatState, uiState: UIGameState, stageNumber
   // Check if combat ended
   checkCombatEnd(combat, uiState, stageNumber);
   
-  // Re-render to show next combatant (only if combat hasn't ended)
-  if (combat.phase === 'active') {
-    ScreenManager.updateContext({ combat, uiState, stage: stageNumber });
+  // If combat ended, don't process enemy turns
+  if (combat.phase !== 'active') {
+    return;
   }
+  
+  // Process enemy turns with delays
+  processEnemyTurns(combat, uiState, stageNumber);
+}
+
+/**
+ * Process consecutive enemy turns with delays for visual feedback
+ */
+function processEnemyTurns(combat: CombatState, uiState: UIGameState, stageNumber?: number): void {
+  const currentCombatant = getCurrentCombatant(combat);
+  
+  // If it's a player's turn now, just re-render
+  if (!currentCombatant || currentCombatant.type === 'player') {
+    ScreenManager.updateContext({ combat, uiState, stage: stageNumber });
+    return;
+  }
+  
+  // It's an enemy turn - show the enemy acting
+  ScreenManager.updateContext({ combat, uiState, stage: stageNumber });
+  
+  // Wait 1 second, then execute enemy action
+  setTimeout(() => {
+    processEnemyAI(combat);
+    
+    // Wait another 0.5 seconds to show the result
+    setTimeout(() => {
+      endTurn(combat);
+      
+      // Check if combat ended
+      checkCombatEnd(combat, uiState, stageNumber);
+      
+      // If still active, recursively process next turn (might be another enemy)
+      if (combat.phase === 'active') {
+        processEnemyTurns(combat, uiState, stageNumber);
+      }
+    }, 500);
+  }, 1000);
 }
 
 /**

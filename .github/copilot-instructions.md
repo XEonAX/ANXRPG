@@ -305,7 +305,7 @@ Development follows 14-phase plan:
 - ✅ Character Sheet (Stats, equipment, skill tree) - 450 lines
 - ✅ **Inventory Screen** (Filter, sort, equip/unequip) - 717 lines
 - ✅ **Settings Screen** (8 settings, save management, statistics) - 715 lines
-- ✅ CSS System (Dark theme, 2,754 lines)
+- ✅ CSS System (Dark theme, 2,754 lines) → **3,900+ lines with Phase 11 enhancements**
 
 **Recent Additions (Oct 22-23, 2025)**:
 - ✅ Auto-healing after victories
@@ -315,6 +315,15 @@ Development follows 14-phase plan:
 - ✅ Updated `getAbility()` to check enemy ability database
 - ✅ Fixed auto-victory trigger
 - ✅ Added click-to-target feature with animations
+- ✅ **Combat UI Improvements** (Oct 23):
+  - Professional card-based design with color theming (red header, blue cards)
+  - Enhanced HP bars with color-coding (green/orange/red) and glossy gradients
+  - Improved ability buttons with gradient backgrounds and hover effects
+  - Polished combat log with scrollbar, color-coded entries, and enhanced styling
+  - Status badges with buff/debuff/DOT color variants
+  - Removed distracting pulsing animations (kept only "YOUR TURN" pulse)
+  - Added enemy turn delays (1.5s per turn) for better visual feedback
+  - Fixed screen fade-in on every click/interaction
 - See `docs/SETTINGS_SCREEN_COMPLETE.md` and `docs/COMBAT_SCREEN_BUG_FIXES.md` for details
 
 ## Game Design Reference
