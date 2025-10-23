@@ -2619,6 +2619,24 @@ a:hover {
   border-top: 1px solid rgba(59, 130, 246, 0.2);
 }
 
+.ability-card__actions {
+  display: flex;
+  gap: var(--space-sm);
+  margin-top: var(--space-md);
+  padding-top: var(--space-sm);
+  border-top: 1px solid rgba(59, 130, 246, 0.15);
+}
+
+.ability-card__actions .btn {
+  flex: 1;
+  min-width: auto;
+}
+
+.ability-card__actions .btn--small {
+  padding: var(--space-xs) var(--space-sm);
+  font-size: var(--font-size-xs);
+}
+
 /* Skill tree */
 .skill-tree {
   display: flex;

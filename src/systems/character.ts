@@ -348,3 +348,67 @@ export function canUseAbility(character: Character, abilityId: string, apCost: n
     character.currentAp >= apCost
   );
 }
+
+/**
+ * Equip an ability (adds to equipped abilities if there's room)
+ */
+export function equipAbility(character: Character, abilityId: string): boolean {
+  // Check if already equipped
+  if (character.equippedAbilities.includes(abilityId)) {
+    return false;
+  }
+  
+  // Check if ability is unlocked
+  if (!character.unlockedAbilities.includes(abilityId)) {
+    return false;
+  }
+  
+  // Check if there's room (max slots from skill tree)
+  const maxSlots = getMaxAbilitySlots(character);
+  if (character.equippedAbilities.length >= maxSlots) {
+    return false;
+  }
+  
+  character.equippedAbilities.push(abilityId);
+  return true;
+}
+
+/**
+ * Unequip an ability (removes from equipped abilities)
+ */
+export function unequipAbility(character: Character, abilityId: string): boolean {
+  const index = character.equippedAbilities.indexOf(abilityId);
+  if (index === -1) {
+    return false;
+  }
+  
+  character.equippedAbilities.splice(index, 1);
+  return true;
+}
+
+/**
+ * Swap ability positions in equipped list (for ordering)
+ */
+export function swapAbilityPositions(character: Character, index1: number, index2: number): boolean {
+  if (
+    index1 < 0 || index1 >= character.equippedAbilities.length ||
+    index2 < 0 || index2 >= character.equippedAbilities.length
+  ) {
+    return false;
+  }
+  
+  const temp = character.equippedAbilities[index1];
+  character.equippedAbilities[index1] = character.equippedAbilities[index2];
+  character.equippedAbilities[index2] = temp;
+  return true;
+}
+
+/**
+ * Get available abilities that can be equipped (unlocked but not equipped)
+ */
+export function getAvailableAbilities(character: Character): string[] {
+  return character.unlockedAbilities.filter(
+    abilityId => !character.equippedAbilities.includes(abilityId)
+  );
+}
+

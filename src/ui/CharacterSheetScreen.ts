@@ -11,11 +11,22 @@ import type { UIGameState } from './core/UIState';
 import type { Character } from '../types/character';
 import type { SkillNode } from '../types/skillTree';
 import { getSkillTree } from '../data/skillTrees';
-import { canUnlockNode, unlockSkillNode, calculateSkillTreeBonuses } from '../systems/skillTree';
-import { calculateCurrentStats, syncCharacterStats } from '../systems/character';
+import { 
+  canUnlockNode, 
+  unlockSkillNode, 
+  calculateSkillTreeBonuses,
+  getMaxAbilitySlots 
+} from '../systems/skillTree';
+import { 
+  calculateCurrentStats, 
+  syncCharacterStats,
+  equipAbility,
+  unequipAbility,
+  swapAbilityPositions 
+} from '../systems/character';
 import { getAbility } from '../data/abilities';
 import { getAbilityFlavorText } from '../data/flavorText';
-import { saveGame } from '../utils/storage';
+import { saveGame } from '../systems/game';
 
 /**
  * Render the character sheet screen
@@ -90,7 +101,7 @@ export function renderCharacterSheet(context: ScreenContext): HTMLElement {
   const equipmentSection = renderEquipmentSection(character, uiState);
   
   // Right column: Abilities
-  const abilitiesSection = renderAbilitiesSection(character);
+  const abilitiesSection = renderAbilitiesSection(character, uiState);
   
   content.appendChild(statsSection);
   content.appendChild(equipmentSection);
@@ -219,7 +230,7 @@ function renderEquipmentSection(character: Character, uiState: UIGameState): HTM
         
         const unequipBtn = createButton('Unequip', () => {
           character.equipment[slot.key] = null;
-          saveGame(uiState.saveData);
+          saveGame();
           showNotification('Equipment unequipped', 'success');
           ScreenManager.updateContext({ uiState, characterId: character.id });
         }, 'btn btn--small');
@@ -260,20 +271,25 @@ function renderEquipmentSection(character: Character, uiState: UIGameState): HTM
 /**
  * Render abilities section
  */
-function renderAbilitiesSection(character: Character): HTMLElement {
+/**
+ * Render abilities section
+ */
+function renderAbilitiesSection(character: Character, uiState: UIGameState): HTMLElement {
   const section = createElement('div', 'character-sheet__section');
   
   const title = createElement('h2', 'character-sheet__section-title');
   title.textContent = '✨ Abilities';
   section.appendChild(title);
   
+  const maxSlots = getMaxAbilitySlots(character);
+  
   // Equipped abilities
   const equippedDiv = createElement('div', 'abilities-list');
   const equippedTitle = createElement('h3', 'abilities-list__title');
-  equippedTitle.textContent = `Equipped (${character.equippedAbilities.length}/${character.skillTreeNodes.find(n => n.nodeId.includes('ability_slot'))?.pointsInvested || 4})`;
+  equippedTitle.textContent = `Equipped (${character.equippedAbilities.length}/${maxSlots})`;
   equippedDiv.appendChild(equippedTitle);
   
-  character.equippedAbilities.forEach((abilityId: string) => {
+  character.equippedAbilities.forEach((abilityId: string, index: number) => {
     const ability = getAbility(abilityId);
     if (!ability) return;
     
@@ -289,20 +305,55 @@ function renderAbilitiesSection(character: Character): HTMLElement {
     const flavorText = getAbilityFlavorText(ability.id);
     abilityDesc.textContent = flavorText ? flavorText.description : ability.description;
     
+    abilityCard.appendChild(abilityName);
+    abilityCard.appendChild(abilityInfo);
+    abilityCard.appendChild(abilityDesc);
+    
     // Add effect description on second line
     if (flavorText) {
       const effectDesc = createElement('div', 'ability-card__effect');
       effectDesc.textContent = flavorText.effectDescription;
-      abilityCard.appendChild(abilityName);
-      abilityCard.appendChild(abilityInfo);
-      abilityCard.appendChild(abilityDesc);
       abilityCard.appendChild(effectDesc);
-    } else {
-      abilityCard.appendChild(abilityName);
-      abilityCard.appendChild(abilityInfo);
-      abilityCard.appendChild(abilityDesc);
     }
     
+    // Unequip button
+    const unequipBtn = createButton('Unequip', () => {
+      if (unequipAbility(character, abilityId)) {
+        saveGame();
+        showNotification('Ability unequipped');
+        // Update context without navigation to preserve scroll position
+        ScreenManager.updateContext({ uiState, characterId: character.id });
+      }
+    }, 'btn btn--small btn--danger');
+    
+    const buttonContainer = createElement('div', 'ability-card__actions');
+    buttonContainer.appendChild(unequipBtn);
+    
+    // Add position swap buttons if multiple abilities
+    if (character.equippedAbilities.length > 1) {
+      if (index > 0) {
+        const upBtn = createButton('↑', () => {
+          if (swapAbilityPositions(character, index, index - 1)) {
+            saveGame();
+            // Update context without navigation to preserve scroll position
+            ScreenManager.updateContext({ uiState, characterId: character.id });
+          }
+        }, 'btn btn--small');
+        buttonContainer.appendChild(upBtn);
+      }
+      if (index < character.equippedAbilities.length - 1) {
+        const downBtn = createButton('↓', () => {
+          if (swapAbilityPositions(character, index, index + 1)) {
+            saveGame();
+            // Update context without navigation to preserve scroll position
+            ScreenManager.updateContext({ uiState, characterId: character.id });
+          }
+        }, 'btn btn--small');
+        buttonContainer.appendChild(downBtn);
+      }
+    }
+    
+    abilityCard.appendChild(buttonContainer);
     equippedDiv.appendChild(abilityCard);
   });
   
@@ -316,7 +367,7 @@ function renderAbilitiesSection(character: Character): HTMLElement {
   if (unlockedNotEquipped.length > 0) {
     const unlockedDiv = createElement('div', 'abilities-list');
     const unlockedTitle = createElement('h3', 'abilities-list__title');
-    unlockedTitle.textContent = 'Unlocked (not equipped)';
+    unlockedTitle.textContent = `Available to Equip (${unlockedNotEquipped.length})`;
     unlockedDiv.appendChild(unlockedTitle);
     
     unlockedNotEquipped.forEach((abilityId: string) => {
@@ -331,8 +382,43 @@ function renderAbilitiesSection(character: Character): HTMLElement {
       const abilityInfo = createElement('div', 'ability-card__info');
       abilityInfo.textContent = `${ability.apCost} AP | ${ability.targetType}`;
       
+      const abilityDesc = createElement('div', 'ability-card__desc');
+      const flavorText = getAbilityFlavorText(ability.id);
+      abilityDesc.textContent = flavorText ? flavorText.description : ability.description;
+      
       abilityCard.appendChild(abilityName);
       abilityCard.appendChild(abilityInfo);
+      abilityCard.appendChild(abilityDesc);
+      
+      // Add effect description
+      if (flavorText) {
+        const effectDesc = createElement('div', 'ability-card__effect');
+        effectDesc.textContent = flavorText.effectDescription;
+        abilityCard.appendChild(effectDesc);
+      }
+      
+      // Equip button
+      const canEquip = character.equippedAbilities.length < maxSlots;
+      const equipBtn = createButton(
+        canEquip ? 'Equip' : `Full (${maxSlots}/${maxSlots})`,
+        () => {
+          if (equipAbility(character, abilityId)) {
+            saveGame();
+            showNotification('Ability equipped');
+            // Update context without navigation to preserve scroll position
+            ScreenManager.updateContext({ uiState, characterId: character.id });
+          }
+        },
+        canEquip ? 'btn btn--small btn--primary' : 'btn btn--small btn--disabled'
+      );
+      
+      if (!canEquip) {
+        equipBtn.disabled = true;
+      }
+      
+      const buttonContainer = createElement('div', 'ability-card__actions');
+      buttonContainer.appendChild(equipBtn);
+      abilityCard.appendChild(buttonContainer);
       
       unlockedDiv.appendChild(abilityCard);
     });
@@ -447,7 +533,7 @@ function renderSkillNode(node: SkillNode, character: Character, uiState: UIGameS
         // Recalculate bonuses
         calculateSkillTreeBonuses(character);
         
-        saveGame(uiState.saveData);
+        saveGame();
         EventBus.emit(GameEvents.CHARACTER_LEVEL_UP, character);
         showNotification(`Unlocked: ${node.name}`, 'success');
         

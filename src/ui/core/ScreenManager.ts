@@ -107,9 +107,19 @@ class ScreenManagerClass {
   /**
    * Update the current screen context and re-render
    */
-  updateContext(newContext: ScreenContext): void {
+  updateContext(newContext: ScreenContext, preserveScroll: boolean = true): void {
+    // Save current scroll position
+    const scrollY = preserveScroll ? window.scrollY : 0;
+    
     this.context = { ...this.context, ...newContext };
-    this.render();
+    this.render(preserveScroll);
+    
+    // Restore scroll position after render
+    if (preserveScroll) {
+      requestAnimationFrame(() => {
+        window.scrollTo(0, scrollY);
+      });
+    }
   }
 
   /**
@@ -129,7 +139,7 @@ class ScreenManagerClass {
   /**
    * Internal render method
    */
-  private render(): void {
+  private render(preserveScroll: boolean = false): void {
     if (!this.rootElement) return;
 
     const renderer = this.screenRenderers.get(this.currentScreen);
@@ -142,8 +152,10 @@ class ScreenManagerClass {
     const screenElement = renderer(this.context);
     this.rootElement.appendChild(screenElement);
 
-    // Scroll to top
-    window.scrollTo(0, 0);
+    // Scroll to top only if not preserving scroll
+    if (!preserveScroll) {
+      window.scrollTo(0, 0);
+    }
 
     // Emit screen change event
     this.emitScreenChange();

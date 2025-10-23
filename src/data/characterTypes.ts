@@ -192,7 +192,7 @@ export const CHARACTER_TYPES: Record<CharacterTypeName, CharacterType> = {
     baseApRegen: 5,
     maxAp: 10,
     
-    startingAbilities: ['epsilon_heal'],
+    startingAbilities: ['epsilon_smite'],
   },
   
   Zeta: {
