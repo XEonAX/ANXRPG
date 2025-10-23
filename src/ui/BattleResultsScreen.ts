@@ -57,48 +57,106 @@ export function renderBattleResults(context: ScreenContext): HTMLElement {
     }
   }
   
-  // Continue button
-  const actions = createElement('div', 'battle-results__actions');
-  const continueBtn = createButton(
-    isVictory ? '➡️ Continue' : '⬅️ Return to Campaign',
-    () => {
-      // Fully restore all characters after battle (heal HP and AP) - whether victory or defeat
-      uiState.saveData.roster.forEach(char => {
-        fullyRestoreCharacter(char);
-      });
+  // Process results and healing
+  const processResults = () => {
+    // Fully restore all characters after battle (heal HP and AP) - whether victory or defeat
+    uiState.saveData.roster.forEach(char => {
+      fullyRestoreCharacter(char);
+    });
+    
+    if (isVictory && stageNumber) {
+      // Mark stage as complete
+      completeStage(
+        uiState.saveData.campaign,
+        stageNumber,
+        true, // victory
+        combat.xpEarned || 0,
+        combat.lootDropped || []
+      );
       
-      if (isVictory && stageNumber) {
-        // Mark stage as complete
-        completeStage(
-          uiState.saveData.campaign,
-          stageNumber,
-          true, // victory
-          combat.xpEarned || 0,
-          combat.lootDropped || []
-        );
-        
-        // Auto-save
-        saveGame(uiState.saveData);
-        EventBus.emit(GameEvents.GAME_SAVED);
-        
-        // Emit stage completion event
-        EventBus.emit(GameEvents.STAGE_COMPLETED, stageNumber);
-        
-        showNotification('✅ Party fully healed! Progress saved!', 'success');
+      // Auto-save
+      saveGame(uiState.saveData);
+      EventBus.emit(GameEvents.GAME_SAVED);
+      
+      // Emit stage completion event
+      EventBus.emit(GameEvents.STAGE_COMPLETED, stageNumber);
+      
+      showNotification('✅ Party fully healed! Progress saved!', 'success');
+    } else {
+      // Defeat - just save the healing
+      saveGame(uiState.saveData);
+      EventBus.emit(GameEvents.GAME_SAVED);
+      
+      showNotification('✅ Party fully healed!', 'success');
+    }
+  };
+  
+  // Continue to next battle handler
+  const handleNextBattle = () => {
+    cleanupBattleResultsKeyboardShortcuts();
+    processResults();
+    
+    // Go to next stage (current stage + 1)
+    if (isVictory && stageNumber) {
+      const nextStageNumber = stageNumber + 1;
+      if (nextStageNumber <= 100) {
+        ScreenManager.navigateTo('campaignMap', { uiState, autoStartStage: nextStageNumber });
       } else {
-        // Defeat - just save the healing
-        saveGame(uiState.saveData);
-        EventBus.emit(GameEvents.GAME_SAVED);
-        
-        showNotification('✅ Party fully healed!', 'success');
+        // All stages complete!
+        showNotification('🎉 Congratulations! All stages complete!', 'success');
+        ScreenManager.navigateTo('campaignMap', { uiState });
       }
-      
-      // Return to campaign map
+    } else {
+      // Defeat - go back to campaign
       ScreenManager.navigateTo('campaignMap', { uiState });
-    },
-    'btn btn--primary btn--large'
-  );
-  actions.appendChild(continueBtn);
+    }
+  };
+  
+  // Back to campaign handler
+  const handleBackToCampaign = () => {
+    cleanupBattleResultsKeyboardShortcuts();
+    processResults();
+    
+    // Return to campaign map
+    ScreenManager.navigateTo('campaignMap', { uiState });
+  };
+  
+  // Action buttons
+  const actions = createElement('div', 'battle-results__actions');
+  
+  if (isVictory && stageNumber && stageNumber < 100) {
+    // Victory: Show "Next Battle" as primary and "Back to Campaign" as secondary
+    const nextBattleBtn = createButton(
+      '⚔️ Next Battle (Enter)',
+      handleNextBattle,
+      'btn btn--primary btn--large'
+    );
+    
+    const backBtn = createButton(
+      '🗺️ Back to Campaign (Esc)',
+      handleBackToCampaign,
+      'btn btn--secondary btn--large'
+    );
+    
+    actions.appendChild(nextBattleBtn);
+    actions.appendChild(backBtn);
+    
+    // Setup keyboard shortcuts with both handlers
+    setupBattleResultsKeyboardShortcuts(handleNextBattle, handleBackToCampaign);
+  } else {
+    // Defeat or final stage: Only show "Back to Campaign"
+    const backBtn = createButton(
+      '⬅️ Back to Campaign (Enter)',
+      handleBackToCampaign,
+      'btn btn--primary btn--large'
+    );
+    
+    actions.appendChild(backBtn);
+    
+    // Setup keyboard shortcuts with single handler
+    setupBattleResultsKeyboardShortcuts(handleBackToCampaign, handleBackToCampaign);
+  }
+  
   container.appendChild(actions);
   
   return container;
@@ -208,4 +266,52 @@ function renderLevelUps(_uiState: UIGameState): HTMLElement | null {
   // const leveledUpChars = combat.levelUps || [];
   
   return null;
+}
+
+/**
+ * Setup keyboard shortcuts for battle results screen
+ */
+let currentBattleResultsKeyboardHandler: ((e: KeyboardEvent) => void) | null = null;
+
+function setupBattleResultsKeyboardShortcuts(
+  handleEnter: () => void,
+  handleEscape: () => void
+): void {
+  // Remove previous handler if exists
+  if (currentBattleResultsKeyboardHandler) {
+    document.removeEventListener('keydown', currentBattleResultsKeyboardHandler);
+  }
+  
+  // Create new handler
+  currentBattleResultsKeyboardHandler = (e: KeyboardEvent) => {
+    // Ignore if typing in an input field
+    if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) {
+      return;
+    }
+    
+    // Enter to continue to next battle
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      handleEnter();
+    }
+    
+    // Escape to go back to campaign
+    if (e.key === 'Escape') {
+      e.preventDefault();
+      handleEscape();
+    }
+  };
+  
+  // Add the event listener
+  document.addEventListener('keydown', currentBattleResultsKeyboardHandler);
+}
+
+/**
+ * Clean up keyboard shortcuts when leaving battle results
+ */
+function cleanupBattleResultsKeyboardShortcuts(): void {
+  if (currentBattleResultsKeyboardHandler) {
+    document.removeEventListener('keydown', currentBattleResultsKeyboardHandler);
+    currentBattleResultsKeyboardHandler = null;
+  }
 }

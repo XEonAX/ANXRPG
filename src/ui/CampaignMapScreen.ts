@@ -16,6 +16,7 @@ export function renderCampaignMap(context: ScreenContext): HTMLElement {
   
   // Get UI state from context
   const uiState = context.uiState as UIGameState | undefined;
+  const autoStartStage = context.autoStartStage as number | undefined;
   
   if (!uiState) {
     console.error('[CampaignMap] No UI state found!');
@@ -25,6 +26,16 @@ export function renderCampaignMap(context: ScreenContext): HTMLElement {
   
   console.log('[CampaignMap] UI State:', uiState);
   console.log('[CampaignMap] Campaign progress:', uiState.saveData.campaign);
+  
+  // Auto-start next stage if requested
+  if (autoStartStage !== undefined) {
+    const stage = STAGES.find(s => s.stageNumber === autoStartStage);
+    if (stage) {
+      setTimeout(() => {
+        handleStageSelect(stage, uiState);
+      }, 100);
+    }
+  }
   
   // Header
   const header = createElement('div', 'campaign-header');

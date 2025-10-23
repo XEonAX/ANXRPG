@@ -163,6 +163,108 @@ If desired for balance, could add optional defeat penalties:
 
 These can be added via game settings if needed.
 
+## Bonus Fix: Combat Log UI Stability
+
+### Issue #3: Moving Action Panel (UX)
+**Problem**: As the combat log grows with more messages, it pushes the action panel (ability buttons) down, causing UI elements to move during combat.
+
+**Impact**: Moving UI elements during gameplay is terrible UX - players lose their visual reference points and may misclick abilities.
+
+**Solution**: Changed combat log from `max-height` to fixed `height: 200px` with internal scrolling.
+
+**File**: `src/style.css` (Line 1305-1327)
+
+```css
+/* Before: max-height allows growth */
+.combat-log {
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.combat-log__messages {
+  max-height: 150px;
+  overflow-y: auto;
+}
+
+/* After: fixed height with flex layout */
+.combat-log {
+  height: 200px; /* Fixed height to prevent UI movement */
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.combat-log__title {
+  flex-shrink: 0; /* Title stays fixed */
+}
+
+.combat-log__messages {
+  height: 100%; /* Take remaining space */
+  overflow-y: auto; /* Scroll only messages */
+  flex: 1;
+  justify-content: flex-end; /* Bottom-align messages */
+}
+```
+
+**Result**: 
+- Action panel stays in exactly the same position throughout entire battle
+- Only the messages inside the log scroll
+- Newest messages appear at the bottom (better UX for chat-style logs)
+
+## Enhancement: Keyboard Shortcuts
+
+### Feature #1: Combat Keyboard Shortcuts
+**Added**: Keyboard shortcuts for faster combat gameplay
+
+**Implementation**: `src/ui/CombatScreen.ts`
+
+**Shortcuts**:
+- **Number keys (1-4+)**: Use abilities by pressing their corresponding number
+- **Enter or Space**: End turn
+- **Visual indicators**: Each ability shows `[1]`, `[2]`, etc.
+
+**Features**:
+- Only active during player turns (not enemy turns)
+- Disabled when typing in input fields
+- Only triggers if character has enough AP
+- Auto-cleanup when combat ends
+
+**CSS Addition** (`src/style.css`):
+```css
+.ability-btn__shortcut {
+  font-size: var(--font-size-xs);
+  color: var(--text-muted);
+  background: var(--bg-secondary);
+  padding: 2px 6px;
+  border-radius: var(--radius-sm);
+  font-family: var(--font-family-mono);
+  margin-top: 2px;
+}
+```
+
+### Feature #2: Battle Results Keyboard Shortcuts
+**Added**: Two-button system with keyboard shortcuts for post-battle navigation
+
+**Implementation**: `src/ui/BattleResultsScreen.ts`
+
+**For Victory (Stages 1-99)**:
+1. **⚔️ Next Battle (Enter)** - Primary button, auto-starts next stage
+2. **🗺️ Back to Campaign (Esc)** - Secondary button, returns to map
+
+**For Defeat or Final Stage**:
+- **⬅️ Back to Campaign (Enter)** - Single button to return
+
+**Features**:
+- **Auto-progress**: Enter key chains battles together for fast progression
+- **Escape route**: Esc key returns to campaign map to review progress
+- **Auto-start support**: Campaign map accepts `autoStartStage` parameter
+- Both buttons trigger healing and save progress
+
+**User Flow Examples**:
+- **Fast progression**: Stage 5 Victory → Press Enter → Stage 6 starts
+- **Return to map**: Stage 5 Victory → Press Esc → View campaign map
+- **After defeat**: Press Enter → Healed and returned to campaign
+
 ## Related Documentation
 
 - See `FEATURE_AUTO_HEAL_BETWEEN_BATTLES.md` for original healing implementation
@@ -171,7 +273,18 @@ These can be added via game settings if needed.
 
 ---
 
-**Bug Severity**: Medium (annoying but not game-breaking)  
-**Fix Complexity**: Low (simple logic reorganization)  
-**Impact**: High (improves player experience significantly)  
-**Status**: ✅ **RESOLVED**
+## Summary
+
+**Issues Fixed**: 3 bugs + 2 enhancements  
+**Severity**: Medium (UX improvements)  
+**Complexity**: Low-Medium (logic reorganization, CSS fixes, keyboard handling)  
+**Impact**: High (significantly improves player experience and gameplay speed)
+
+### Changes Summary:
+1. ✅ **Healing after defeat** - Players now heal after both victory and defeat
+2. ✅ **Single character defeat** - Proper defeat handling with no reserve team
+3. ✅ **Fixed UI movement** - Combat log stays fixed height, no more moving buttons
+4. ✅ **Combat shortcuts** - Number keys for abilities, Enter/Space to end turn
+5. ✅ **Battle results shortcuts** - Enter for next battle, Esc for campaign map
+
+**Status**: ✅ **FULLY RESOLVED**

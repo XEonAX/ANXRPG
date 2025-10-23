@@ -1296,6 +1296,16 @@ a:hover {
   color: var(--warning-color);
 }
 
+.ability-btn__shortcut {
+  font-size: var(--font-size-xs);
+  color: var(--text-muted);
+  background: var(--bg-secondary);
+  padding: 2px 6px;
+  border-radius: var(--radius-sm);
+  font-family: var(--font-family-mono);
+  margin-top: 2px;
+}
+
 .combat-action-panel__end-turn {
   align-self: center;
   min-width: 200px;
@@ -1308,9 +1318,11 @@ a:hover {
   border-radius: var(--radius-md);
   padding: var(--spacing-md);
   margin: 0 var(--spacing-md) var(--spacing-md) var(--spacing-md);
-  max-height: 200px;
-  overflow-y: auto;
+  height: 200px; /* Fixed height to prevent UI movement */
+  overflow: hidden; /* Hide overflow on container */
   flex-shrink: 0; /* Prevent log from shrinking */
+  display: flex;
+  flex-direction: column;
 }
 
 .combat-log__title {
@@ -1318,14 +1330,17 @@ a:hover {
   font-size: var(--font-size-md);
   border-bottom: 1px solid var(--border-color);
   padding-bottom: var(--spacing-xs);
+  flex-shrink: 0; /* Title stays fixed */
 }
 
 .combat-log__messages {
   display: flex;
   flex-direction: column;
+  justify-content: flex-end; /* Align messages to bottom */
   gap: var(--spacing-xs);
-  max-height: 150px;
-  overflow-y: auto;
+  height: 100%; /* Take remaining space */
+  overflow-y: auto; /* Scroll only messages */
+  flex: 1; /* Grow to fill available space */
 }
 
 .combat-log__empty {

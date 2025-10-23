@@ -338,22 +338,26 @@ function renderActionPanel(combat: CombatState, uiState: UIGameState, stageNumbe
   // Ability buttons
   const abilityContainer = createElement('div', 'combat-action-panel__abilities');
   
-  character.equippedAbilities.forEach((abilityId: string) => {
+  character.equippedAbilities.forEach((abilityId: string, index: number) => {
     const ability = getAbility(abilityId);
     if (!ability) return;
     
     const canUse = character.currentAp >= ability.apCost;
-    const btn = createAbilityButton(ability, character, combat, uiState, stageNumber, canUse);
+    const shortcutKey = (index + 1).toString(); // 1, 2, 3, 4...
+    const btn = createAbilityButton(ability, character, combat, uiState, stageNumber, canUse, shortcutKey);
     abilityContainer.appendChild(btn);
   });
   
   panel.appendChild(abilityContainer);
   
   // End turn button
-  const endTurnBtn = createButton('🛑 End Turn', () => {
+  const endTurnBtn = createButton('🛑 End Turn (Enter)', () => {
     endCharacterTurn(combat, uiState, stageNumber);
   }, 'btn btn--secondary combat-action-panel__end-turn');
   panel.appendChild(endTurnBtn);
+  
+  // Setup keyboard shortcuts
+  setupCombatKeyboardShortcuts(character, combat, uiState, stageNumber);
   
   return panel;
 }
@@ -367,7 +371,8 @@ function createAbilityButton(
   combat: CombatState,
   uiState: UIGameState,
   stageNumber: number | undefined,
-  canUse: boolean
+  canUse: boolean,
+  shortcutKey?: string
 ): HTMLElement {
   const btn = createElement('button', `ability-btn${!canUse ? ' ability-btn--disabled' : ''}`);
   btn.disabled = !canUse;
@@ -381,9 +386,17 @@ function createAbilityButton(
   btn.appendChild(nameSpan);
   btn.appendChild(costSpan);
   
+  // Add keyboard shortcut indicator
+  if (shortcutKey) {
+    const shortcutSpan = createElement('span', 'ability-btn__shortcut');
+    shortcutSpan.textContent = `[${shortcutKey}]`;
+    btn.appendChild(shortcutSpan);
+  }
+  
   // Tooltip
   const dmgMult = ability.effects.damageMultiplier || 0;
-  btn.title = `${ability.description}\nTarget: ${ability.targetType}\nDamage: ${dmgMult}x`;
+  const shortcutText = shortcutKey ? `\nShortcut: ${shortcutKey}` : '';
+  btn.title = `${ability.description}\nTarget: ${ability.targetType}\nDamage: ${dmgMult}x${shortcutText}`;
   
   if (canUse) {
     btn.addEventListener('click', () => {
@@ -585,6 +598,9 @@ function checkCombatEnd(combat: CombatState, uiState: UIGameState, stageNumber?:
     // Reset selected target on victory
     selectedTarget = null;
     
+    // Clean up keyboard shortcuts
+    cleanupCombatKeyboardShortcuts();
+    
     // Navigate to battle results
     setTimeout(() => {
       EventBus.emit(GameEvents.COMBAT_END);
@@ -597,6 +613,9 @@ function checkCombatEnd(combat: CombatState, uiState: UIGameState, stageNumber?:
   } else if (combat.phase === 'defeat') {
     // Reset selected target on defeat
     selectedTarget = null;
+    
+    // Clean up keyboard shortcuts
+    cleanupCombatKeyboardShortcuts();
     
     // Navigate to battle results to show defeat screen
     setTimeout(() => {
@@ -649,4 +668,66 @@ function showReserveSwapDialog(combat: CombatState, uiState: UIGameState, stageN
   modal.appendChild(content);
   
   document.body.appendChild(modal);
+}
+
+/**
+ * Setup keyboard shortcuts for combat actions
+ */
+let currentKeyboardHandler: ((e: KeyboardEvent) => void) | null = null;
+
+function setupCombatKeyboardShortcuts(
+  character: Character,
+  combat: CombatState,
+  uiState: UIGameState,
+  stageNumber?: number
+): void {
+  // Remove previous handler if exists
+  if (currentKeyboardHandler) {
+    document.removeEventListener('keydown', currentKeyboardHandler);
+  }
+  
+  // Create new handler
+  currentKeyboardHandler = (e: KeyboardEvent) => {
+    // Only handle shortcuts during player turn (not enemy turn or if combat ended)
+    const currentCombatant = getCurrentCombatant(combat);
+    if (!currentCombatant || currentCombatant.type === 'enemy' || combat.phase !== 'active') {
+      return;
+    }
+    
+    // Ignore if typing in an input field
+    if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) {
+      return;
+    }
+    
+    // Number keys (1-4) for abilities
+    if (e.key >= '1' && e.key <= '9') {
+      const abilityIndex = parseInt(e.key) - 1;
+      if (abilityIndex < character.equippedAbilities.length) {
+        const abilityId = character.equippedAbilities[abilityIndex];
+        const ability = getAbility(abilityId);
+        
+        if (ability && character.currentAp >= ability.apCost) {
+          e.preventDefault();
+          handleAbilityClick(ability, character, combat, uiState, stageNumber);
+        }
+      }
+    }
+    
+    // Enter or Space to end turn
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      endCharacterTurn(combat, uiState, stageNumber);
+    }
+  };
+  
+  // Add the event listener
+  document.addEventListener('keydown', currentKeyboardHandler);
+}
+
+// Clean up keyboard handler when combat ends
+function cleanupCombatKeyboardShortcuts(): void {
+  if (currentKeyboardHandler) {
+    document.removeEventListener('keydown', currentKeyboardHandler);
+    currentKeyboardHandler = null;
+  }
 }
