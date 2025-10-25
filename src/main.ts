@@ -24,6 +24,7 @@ import {
   runAllCombatDemos
 } from './tests/combatDemo';
 import { phase8Tests } from './tests/phase8Tests';
+import { playtestHelpers } from './tests/playtestHelpers';
 import { CHARACTER_TYPES } from './data/characterTypes';
 import { ABILITIES } from './data/abilities';
 
@@ -45,12 +46,14 @@ if (typeof window !== 'undefined') {
     all: runAllCombatDemos
   };
   (window as any).phase8Tests = phase8Tests;
+  (window as any).playtest = playtestHelpers;
   (window as any).CHARACTER_TYPES = CHARACTER_TYPES;
   (window as any).ABILITIES = ABILITIES;
   
   console.log('🧪 Test suites available in console:');
   console.log('  - combatDemo.all()');
-  console.log('  - phase8Tests.all()\n');
+  console.log('  - phase8Tests.all()');
+  console.log('  - playtest.help()  ← NEW: Manual playtest helpers!\n');
 }
 
 // ═══════════════════════════════════════════════════════════
