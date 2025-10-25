@@ -42,8 +42,8 @@ export const playtestHelpers = {
     const campaign = state.saveData.campaign;
 
     console.log('=== GAME STATE ===');
-    console.log(`📊 Battles: ${stats.battlesWon}W / ${stats.totalBattles}T (${((stats.battlesWon / stats.totalBattles) * 100).toFixed(1)}% win rate)`);
-    console.log(`🎯 Stage Progress: ${campaign.currentStage} / ${campaign.highestStageReached}`);
+    console.log(`📊 Battles: ${stats.totalVictories}W / ${stats.totalBattles}T (${((stats.totalVictories / stats.totalBattles) * 100).toFixed(1)}% win rate)`);
+    console.log(`🎯 Stage Progress: ${campaign.currentStage} / ${campaign.highestStageUnlocked}`);
     console.log(`👥 Roster: ${roster.length} characters`);
     console.log(`⚔️ Damage Dealt: ${stats.totalDamageDealt.toLocaleString()}`);
     console.log(`💚 Healing Done: ${stats.totalHealingDone.toLocaleString()}`);
@@ -52,8 +52,8 @@ export const playtestHelpers = {
     console.log('\n=== CHARACTERS ===');
     roster.forEach((char, i) => {
       console.log(`${i + 1}. ${char.name} (${char.type}) - Level ${char.level}`);
-      console.log(`   HP: ${char.currentHp}/${char.maxHp}, AP: ${char.currentAP}/${char.maxAP}`);
-      console.log(`   XP: ${char.experience}/${char.xpToNextLevel}`);
+      console.log(`   HP: ${char.stats.hp}/${char.stats.maxHp}, AP: ${char.currentAp}/10`);
+      console.log(`   XP: ${char.currentXp}/${char.xpToNextLevel}`);
     });
   },
 
@@ -69,7 +69,7 @@ export const playtestHelpers = {
 
     const char = roster[characterIndex];
     for (let i = 0; i < levels; i++) {
-      char.experience += char.xpToNextLevel;
+      char.currentXp += char.xpToNextLevel;
     }
 
     console.log(`✅ ${char.name} leveled up ${levels} time(s) to level ${char.level}`);
@@ -80,14 +80,14 @@ export const playtestHelpers = {
    */
   grantVictories(count: number = 20): void {
     for (let i = 0; i < count; i++) {
-      incrementStatistic('battlesWon', 1);
+      incrementStatistic('totalVictories', 1);
       incrementStatistic('totalBattles', 1);
     }
 
     const state = getCurrentGameState();
     if (state) {
-      console.log(`✅ Granted ${count} victories. Total: ${state.saveData.statistics.battlesWon}`);
-      if (state.saveData.statistics.battlesWon % 20 === 0) {
+      console.log(`✅ Granted ${count} victories. Total: ${state.saveData.statistics.totalVictories}`);
+      if (state.saveData.statistics.totalVictories % 20 === 0) {
         console.log('🎉 Recruitment available!');
       }
     }
@@ -99,8 +99,8 @@ export const playtestHelpers = {
   fullHeal(): void {
     const roster = getRoster();
     roster.forEach(char => {
-      char.currentHp = char.maxHp;
-      char.currentAP = char.maxAP;
+      char.stats.hp = char.stats.maxHp;
+      char.currentAp = 10; // Max AP is always 10
     });
     console.log('✅ All characters fully healed!');
   },

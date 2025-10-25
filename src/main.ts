@@ -16,18 +16,6 @@ import { renderInventory } from './ui/InventoryScreen';
 import { renderSettings } from './ui/SettingsScreen';
 import { renderRecruitment } from './ui/RecruitmentScreen';
 
-// Development: Make test functions available in console
-import {
-  demoSimpleBattle,
-  demoBossBattle,
-  demoXpRewards,
-  runAllCombatDemos
-} from './tests/combatDemo';
-import { phase8Tests } from './tests/phase8Tests';
-import { playtestHelpers } from './tests/playtestHelpers';
-import { CHARACTER_TYPES } from './data/characterTypes';
-import { ABILITIES } from './data/abilities';
-
 console.log('╔════════════════════════════════════════╗');
 console.log('║      ANXRPG - Production Build        ║');
 console.log('║        Phase 11: UI Complete!         ║');
@@ -37,23 +25,34 @@ console.log('✅ Phase 1-10: All Core Systems Complete (71%)');
 console.log('🎨 Phase 11: UI Implementation (IN PROGRESS)');
 console.log('⏳ Phase 12-14: Polish, Balance, Testing\n');
 
-// Make test functions available globally (development only)
-if (typeof window !== 'undefined') {
-  (window as any).combatDemo = {
-    simple: demoSimpleBattle,
-    boss: demoBossBattle,
-    xp: demoXpRewards,
-    all: runAllCombatDemos
-  };
-  (window as any).phase8Tests = phase8Tests;
-  (window as any).playtest = playtestHelpers;
-  (window as any).CHARACTER_TYPES = CHARACTER_TYPES;
-  (window as any).ABILITIES = ABILITIES;
-  
-  console.log('🧪 Test suites available in console:');
-  console.log('  - combatDemo.all()');
-  console.log('  - phase8Tests.all()');
-  console.log('  - playtest.help()  ← NEW: Manual playtest helpers!\n');
+// Development mode: Make test functions available in console
+if (import.meta.env.DEV) {
+  // Dynamically import test modules only in development
+  Promise.all([
+    import('./tests/combatDemo'),
+    import('./tests/phase8Tests'),
+    import('./tests/playtestHelpers'),
+    import('./data/characterTypes'),
+    import('./data/abilities')
+  ]).then(([combatDemo, phase8Tests, playtestHelpers, characterTypes, abilities]) => {
+    if (typeof window !== 'undefined') {
+      (window as any).combatDemo = {
+        simple: combatDemo.demoSimpleBattle,
+        boss: combatDemo.demoBossBattle,
+        xp: combatDemo.demoXpRewards,
+        all: combatDemo.runAllCombatDemos
+      };
+      (window as any).phase8Tests = phase8Tests.phase8Tests;
+      (window as any).playtest = playtestHelpers.playtestHelpers;
+      (window as any).CHARACTER_TYPES = characterTypes.CHARACTER_TYPES;
+      (window as any).ABILITIES = abilities.ABILITIES;
+      
+      console.log('🧪 Test suites available in console:');
+      console.log('  - combatDemo.all()');
+      console.log('  - phase8Tests.all()');
+      console.log('  - playtest.help()  ← NEW: Manual playtest helpers!\n');
+    }
+  });
 }
 
 // ═══════════════════════════════════════════════════════════
